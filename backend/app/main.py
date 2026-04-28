@@ -40,7 +40,9 @@ def health_check(db: Session = Depends(get_db)):
         "db_connected": db_status == "ok"
     }
 
-from app.routers import auth
+from app.routers import auth, dashboard, leads
 
 # Include routers here
 app.include_router(auth.router)
+app.include_router(dashboard.router)
+app.include_router(leads.router)
