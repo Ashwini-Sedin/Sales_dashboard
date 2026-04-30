@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
-import Sidebar from './Sidebar';
-import Header from './Header';
-
+import Header from '../components/Header';
+import Sidebar from '../components/Sidebar';
 const MainLayout = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -27,8 +26,8 @@ const MainLayout = () => {
 
             {/* Mobile Overlay */}
             {isSidebarOpen && (
-                <div 
-                    className="fixed inset-0 z-40 bg-black bg-opacity-50 lg:hidden" 
+                <div
+                    className="fixed inset-0 z-40 bg-black bg-opacity-50 lg:hidden"
                     onClick={toggleSidebar}
                 />
             )}
