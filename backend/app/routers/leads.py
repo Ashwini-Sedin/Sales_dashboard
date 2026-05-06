@@ -34,7 +34,7 @@ def create_lead(
     if current_user.role not in [UserRole.super_admin] and lead_in.division_id != current_user.division_id:
         raise HTTPException(status_code=403, detail="Not authorized to create leads for this division")
         
-    lead = lead_service.create_lead(db, lead_in, current_user.id)
+    lead = lead_service.create_lead(db, lead_in, current_user.id, background_tasks=background_tasks)
     background_tasks.add_task(notify_lead_created, db, lead.id, lead.owner_id)
     return lead
 

@@ -21,3 +21,13 @@ class Notification(Base):
     # Relationships
     user = relationship("User")
     lead = relationship("Lead")
+
+class NotificationTemplate(Base):
+    __tablename__ = "notification_templates"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    name = Column(String, unique=True, nullable=False)
+    subject = Column(String, nullable=False)
+    body_html = Column(String, nullable=False)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))

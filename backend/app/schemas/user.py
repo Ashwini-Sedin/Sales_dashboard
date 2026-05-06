@@ -39,3 +39,9 @@ class UserPublic(UserBase):
     updated_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
+
+from app.schemas.division import DivisionResponse
+
+class UserWithDivision(UserPublic):
+    division: Optional[DivisionResponse] = None
+    lead_count: Optional[int] = 0

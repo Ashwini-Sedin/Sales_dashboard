@@ -5,6 +5,7 @@ from .activity import ActivityTimeline, ActivityEventType
 from .pipeline import LeadPipelineStage
 from .notification import Notification
 from .audit import AuditLog
+from .integration_sync import IntegrationSync
 
 # For Alembic to discover all models
 __all__ = [
@@ -14,5 +15,6 @@ __all__ = [
     "ActivityTimeline", "ActivityEventType",
     "LeadPipelineStage",
     "Notification",
-    "AuditLog"
+    "AuditLog",
+    "IntegrationSync",
 ]

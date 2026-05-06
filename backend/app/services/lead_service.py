@@ -3,6 +3,7 @@ from sqlalchemy import or_, and_
 from uuid import UUID
 from datetime import datetime
 from typing import Optional, List
+from fastapi import BackgroundTasks
 
 from app.models.lead import Lead, LeadStatus
 from app.models.activity import ActivityTimeline, ActivityEventType
@@ -21,7 +22,7 @@ def log_activity(db: Session, lead_id: UUID, actor_id: UUID, event_type: Activit
     db.add(activity)
     db.commit()
 
-def create_lead(db: Session, lead_data: LeadCreate, creator_id: UUID) -> Lead:
+def create_lead(db: Session, lead_data: LeadCreate, creator_id: UUID, background_tasks: BackgroundTasks = None) -> Lead:
     db_lead = Lead(**lead_data.model_dump())
     db.add(db_lead)
     db.commit()
@@ -32,6 +33,11 @@ def create_lead(db: Session, lead_data: LeadCreate, creator_id: UUID) -> Lead:
         ActivityEventType.lead_created, 
         f"Lead created by user {creator_id}"
     )
+    
+    if background_tasks:
+        from app.services.notification_service import notification_service
+        background_tasks.add_task(notification_service.notify_new_lead, db, db_lead.id)
+        
     return db_lead
 
 def get_lead(db: Session, lead_id: UUID) -> Optional[Lead]:

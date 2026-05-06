@@ -22,6 +22,13 @@ class Settings(BaseSettings):
     
     # SendGrid
     SENDGRID_API_KEY: Optional[str] = None
+    
+    # Google Ads Integration
+    GOOGLE_ADS_CUSTOMER_ID: Optional[str] = None
+    GOOGLE_ADS_DEVELOPER_TOKEN: Optional[str] = None
+    GOOGLE_ADS_API_KEY: Optional[str] = None
+    GOOGLE_ADS_WEBHOOK_SECRET: Optional[str] = None
+    GOOGLE_ADS_SYNC_INTERVAL_MINUTES: int = 15
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 
