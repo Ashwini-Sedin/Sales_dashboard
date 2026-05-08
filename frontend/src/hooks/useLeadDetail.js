@@ -17,7 +17,7 @@ export const useLeadTimeline = (leadId) => {
     queryKey: ['leadTimeline', leadId],
     queryFn: async () => {
       const response = await axiosInstance.get(`/api/leads/${leadId}/timeline`);
-      return response.data;
+      return response.data.items;
     },
     enabled: !!leadId,
   });

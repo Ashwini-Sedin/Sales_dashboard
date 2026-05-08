@@ -20,6 +20,7 @@ class LeadBase(BaseModel):
     lead_score: int = 0
     estimated_value: Optional[Decimal] = None
     notes: Optional[str] = None
+    team: Optional[List[dict]] = None
 
 class LeadCreate(LeadBase):
     pass
@@ -37,6 +38,7 @@ class LeadUpdate(BaseModel):
     lead_score: Optional[int] = None
     estimated_value: Optional[Decimal] = None
     notes: Optional[str] = None
+    team: Optional[List[dict]] = None
     is_deleted: Optional[bool] = None
 
 class LeadResponse(LeadBase):

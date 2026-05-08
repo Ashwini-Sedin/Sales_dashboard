@@ -45,6 +45,7 @@ class Lead(Base):
     lead_score = Column(Integer, default=0)
     estimated_value = Column(Numeric)
     notes = Column(Text)
+    team = Column(JSONB, default=list)
     is_deleted = Column(Boolean, default=False)
     
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))

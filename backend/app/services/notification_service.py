@@ -14,7 +14,7 @@ from app.models.division import Division
 from app.models.notification import Notification
 from app.core.database import SessionLocal
 from sqlalchemy.orm import Session
-from datetime import datetime
+from datetime import datetime, timezone
 
 TEMPLATES_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "..", "templates", "emails")
 env = Environment(
@@ -89,7 +89,7 @@ class NotificationService:
             "lead_phone": lead.phone or "",
             "division_name": division.name if division else "",
             "action_url": f"https://app.dealflow.com/leads/{lead.id}",
-            "year": datetime.utcnow().year,
+            "year": datetime.now(timezone.utc).year,
         }
         self.send_email(
             to_emails=to_emails,
@@ -121,7 +121,7 @@ class NotificationService:
             "old_stage": old_stage,
             "new_stage": new_stage,
             "action_url": f"https://app.dealflow.com/leads/{lead.id}",
-            "year": datetime.utcnow().year,
+            "year": datetime.now(timezone.utc).year,
         }
         self.send_email(
             to_emails=to_emails,
@@ -137,7 +137,7 @@ class NotificationService:
             type=type_,
             message=message,
             is_read=False,
-            created_at=datetime.utcnow(),
+            created_at=datetime.now(timezone.utc),
         )
         db.add(notification)
         db.commit()
@@ -153,7 +153,7 @@ class NotificationService:
             "first_name": user.first_name or "New User",
             "email": user.email,
             "login_url": "https://app.dealflow.com/login",
-            "year": datetime.utcnow().year,
+            "year": datetime.now(timezone.utc).year,
         }
         self.send_email(
             to_emails=[user.email],

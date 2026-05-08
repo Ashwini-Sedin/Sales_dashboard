@@ -14,8 +14,8 @@ import {
 const LeadSummaryPanel = ({ lead }) => {
   if (!lead) return null;
 
-  const pipelineStages = ['Lead', 'Contacted', 'Qualified', 'Proposal', 'Won'];
-  const currentStageIndex = pipelineStages.indexOf(lead.status || 'Lead');
+  const pipelineStages = ['new', 'contacted', 'qualified', 'proposal_sent', 'negotiation', 'won'];
+  const currentStageIndex = pipelineStages.indexOf(lead.status || 'new');
   const progressPercent = Math.max(10, ((currentStageIndex + 1) / pipelineStages.length) * 100);
 
   const getSourceIcon = (source) => {
@@ -66,7 +66,7 @@ const LeadSummaryPanel = ({ lead }) => {
             <div className="flex items-center gap-2 text-sm font-medium text-slate-500 mb-1">
               <MdPerson className="w-4 h-4" /> Contact Name
             </div>
-            <div className="font-semibold text-slate-800">{lead.contact_name || 'N/A'}</div>
+            <div className="font-semibold text-slate-800">{lead.first_name} {lead.last_name}</div>
           </div>
 
           <div className="group relative p-4 rounded-lg hover:bg-slate-50 border border-transparent hover:border-slate-100 transition-colors cursor-pointer">
@@ -97,7 +97,7 @@ const LeadSummaryPanel = ({ lead }) => {
               <MdOutlineMonetizationOn className="w-4 h-4" /> Estimated Value
             </div>
             <div className="font-semibold text-slate-800">
-              {lead.value ? `$${lead.value.toLocaleString()}` : 'TBD'}
+              {lead.estimated_value ? `$${Number(lead.estimated_value).toLocaleString()}` : 'TBD'}
             </div>
           </div>
         </div>

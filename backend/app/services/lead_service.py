@@ -150,3 +150,27 @@ def get_timeline(db: Session, lead_id: UUID, page: int = 1, limit: int = 20):
     total = query.count()
     items = query.order_by(ActivityTimeline.created_at.desc()).offset((page - 1) * limit).limit(limit).all()
     return items, total
+
+def add_note(db: Session, lead_id: UUID, note: str, user_id: UUID):
+    log_activity(
+        db, lead_id, user_id,
+        ActivityEventType.note_added,
+        note
+    )
+    return {"status": "success"}
+
+def update_team(db: Session, lead_id: UUID, team: List[dict], user_id: UUID):
+    db_lead = get_lead(db, lead_id)
+    if not db_lead:
+        return None
+    
+    db_lead.team = team
+    db.commit()
+    db.refresh(db_lead)
+    
+    log_activity(
+        db, lead_id, user_id,
+        ActivityEventType.team_assigned,
+        f"Deal team updated"
+    )
+    return db_lead

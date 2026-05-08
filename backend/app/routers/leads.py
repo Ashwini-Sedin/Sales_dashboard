@@ -12,17 +12,6 @@ from app.services import lead_service
 
 router = APIRouter(prefix="/api/leads", tags=["leads"])
 
-def notify_lead_created(db: Session, lead_id: UUID, owner_id: UUID):
-    if owner_id:
-        notification = Notification(
-            user_id=owner_id,
-            lead_id=lead_id,
-            type="NEW_LEAD",
-            message="A new lead has been assigned to you."
-        )
-        db.add(notification)
-        db.commit()
-
 @router.post("/", response_model=LeadResponse, status_code=status.HTTP_201_CREATED)
 def create_lead(
     lead_in: LeadCreate, 
@@ -35,7 +24,6 @@ def create_lead(
         raise HTTPException(status_code=403, detail="Not authorized to create leads for this division")
         
     lead = lead_service.create_lead(db, lead_in, current_user.id, background_tasks=background_tasks)
-    background_tasks.add_task(notify_lead_created, db, lead.id, lead.owner_id)
     return lead
 
 @router.get("/", response_model=LeadListResponse)
@@ -157,3 +145,21 @@ def get_lead_timeline(
         "page": page,
         "size": limit
     }
+
+@router.post("/{lead_id}/notes")
+def add_lead_note(
+    lead_id: UUID, 
+    note_in: dict, 
+    db: Session = Depends(get_db), 
+    current_user: User = Depends(get_current_active_user)
+):
+    return lead_service.add_note(db, lead_id, note_in.get("note", ""), current_user.id)
+
+@router.put("/{lead_id}/team", response_model=LeadResponse)
+def update_lead_team(
+    lead_id: UUID, 
+    team: List[dict], 
+    db: Session = Depends(get_db), 
+    current_user: User = Depends(get_current_active_user)
+):
+    return lead_service.update_team(db, lead_id, team, current_user.id)

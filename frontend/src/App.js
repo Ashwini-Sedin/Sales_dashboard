@@ -7,6 +7,11 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import LeadsList from './pages/leads/LeadsList';
 import LeadDetail from './pages/leads/LeadDetail';
+import AdminLayout from './layouts/AdminLayout';
+import UsersAdmin from './pages/admin/UsersAdmin';
+import DivisionsAdmin from './pages/admin/DivisionsAdmin';
+import NotificationTemplatesAdmin from './pages/admin/NotificationTemplatesAdmin';
+import Reports from './pages/Reports';
 
 // Placeholder components for routes
 const Placeholder = ({ name }) => (
@@ -29,14 +34,20 @@ function App() {
                         <Route path="/leads" element={<LeadsList />} />
                         <Route path="/leads/:id" element={<LeadDetail />} />
                         <Route path="/documents" element={<Placeholder name="Document Center" />} />
-                        <Route path="/reports" element={<Placeholder name="Business Reports" />} />
+                        <Route path="/reports" element={<Reports />} />
                         <Route path="/communication" element={<Placeholder name="Communication Hub" />} />
 
                         <Route path="/admin" element={
                             <ProtectedRoute allowedRoles={['super_admin', 'division_head']}>
-                                <Placeholder name="Admin Console" />
+                                <AdminLayout />
                             </ProtectedRoute>
-                        } />
+                        }>
+                            <Route index element={<Navigate to="users" replace />} />
+                            <Route path="users" element={<UsersAdmin />} />
+                            <Route path="divisions" element={<DivisionsAdmin />} />
+                            <Route path="templates" element={<NotificationTemplatesAdmin />} />
+                            <Route path="audit-logs" element={<AuditLogsAdmin />} />
+                        </Route>
 
                         <Route path="/settings" element={<Placeholder name="User Settings" />} />
                     </Route>
