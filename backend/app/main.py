@@ -40,16 +40,18 @@ def health_check(db: Session = Depends(get_db)):
         "db_connected": db_status == "ok"
     }
 
-from app.routers import auth, dashboard, leads, notifications, users, divisions, audit_logs, reports
-from app.routers.integrations import google_ads_router
+from app.routers import auth, dashboard, leads, notifications, users, divisions, auditlogs, notification_templates, emails
+from app.routers.integrations import google_ads_router, graph
 
 # Include routers here
 app.include_router(auth.router)
 app.include_router(dashboard.router)
 app.include_router(leads.router)
 app.include_router(notifications.router)
-app.include_router(reports.router)
 app.include_router(users.router)
 app.include_router(divisions.router)
-app.include_router(audit_logs.router)
 app.include_router(google_ads_router)
+app.include_router(graph.router)
+app.include_router(auditlogs.router)
+app.include_router(notification_templates.router)
+app.include_router(emails.router)

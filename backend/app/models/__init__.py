@@ -6,6 +6,8 @@ from .pipeline import LeadPipelineStage
 from .notification import Notification
 from .audit import AuditLog
 from .integration_sync import IntegrationSync
+from .notification_template import NotificationTemplate
+from .email import EmailMessage, EmailAttachment
 
 # For Alembic to discover all models
 __all__ = [
@@ -17,4 +19,7 @@ __all__ = [
     "Notification",
     "AuditLog",
     "IntegrationSync",
+    "NotificationTemplate",
+    "EmailMessage",
+    "EmailAttachment",
 ]
