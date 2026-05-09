@@ -71,7 +71,7 @@ const LeadDetail = () => {
           
           {activeTab === 'communications' && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <LeadEmailPanel />
+              <LeadEmailPanel leadId={id} lead={lead} />
               <LeadCallsPanel />
             </div>
           )}

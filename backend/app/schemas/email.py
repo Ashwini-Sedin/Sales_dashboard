@@ -41,3 +41,15 @@ class EmailMessageDetail(EmailMessageResponse):
     body_html: Optional[str] = None
     raw_metadata: Optional[Any] = None
     attachments: List[EmailAttachmentResponse] = []
+
+class EmailComposeAttachment(BaseModel):
+    filename: str
+    content_type: str
+    content_bytes_base64: str
+
+class EmailCompose(BaseModel):
+    to_email: str
+    subject: str
+    body_html: str
+    cc: List[str] = []
+    attachments: List[EmailComposeAttachment] = []

@@ -8,11 +8,14 @@ from app.core.database import get_db
 from app.core.dependencies import get_current_active_user, require_roles
 from app.models.user import User, UserRole
 from app.models.email import EmailMessage, EmailAttachment, StorageType
-from app.schemas.email import EmailMessageResponse, EmailMessageDetail, EmailAttachmentResponse
+from app.schemas.email import EmailMessageResponse, EmailMessageDetail, EmailAttachmentResponse, EmailCompose
 from app.services.email_sync_service import process_graph_webhook
 from app.services.s3_service import s3_service
 from app.services.attachment_service import attachment_service
+from app.services.email_send_service import send_email
 from app.tasks.email_tasks import sync_lead_emails
+from app.models.activity import ActivityTimeline, ActivityEventType
+from app.models.lead import Lead
 
 router = APIRouter(tags=["emails"])
 
@@ -168,3 +171,42 @@ async def download_email_attachment(
             return Response(headers={"Location": url}, status_code=302)
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Failed to fetch attachment from Microsoft Graph: {str(e)}")
+
+@router.post("/api/leads/{lead_id}/emails/send")
+async def send_lead_email(
+    lead_id: UUID,
+    compose_data: EmailCompose,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
+):
+    """
+    Sends an email to the lead via the user's Microsoft Graph integration.
+    """
+    lead = db.query(Lead).filter(Lead.id == lead_id).first()
+    if not lead:
+        raise HTTPException(status_code=404, detail="Lead not found")
+        
+    if not current_user.email:
+        raise HTTPException(status_code=400, detail="User email not configured for sending")
+        
+    try:
+        await send_email(current_user.email, compose_data)
+        
+        # Log to activity timeline
+        activity = ActivityTimeline(
+            lead_id=lead_id,
+            actor_id=current_user.id,
+            event_type=ActivityEventType.email_sent,
+            description=f"📧 Email sent: {compose_data.subject}",
+            metadata_={"subject": compose_data.subject, "to": compose_data.to_email, "cc": compose_data.cc}
+        )
+        db.add(activity)
+        db.commit()
+        
+        # Trigger background sync to retrieve the saved sent message
+        sync_lead_emails.delay(str(lead_id))
+        
+        return {"status": "success", "message": "Email sent successfully"}
+    except Exception as e:
+        print(f"Error sending email: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to send email: {str(e)}")
