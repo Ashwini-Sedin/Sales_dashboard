@@ -41,7 +41,7 @@ def health_check(db: Session = Depends(get_db)):
     }
 
 from app.routers import auth, dashboard, leads, notifications, users, divisions, auditlogs, notification_templates, emails, calls
-from app.routers.integrations import google_ads_router, graph
+from app.routers.integrations import google_ads_router, graph, teams
 
 # Include routers here
 app.include_router(auth.router)
@@ -56,3 +56,4 @@ app.include_router(auditlogs.router)
 app.include_router(notification_templates.router)
 app.include_router(emails.router)
 app.include_router(calls.router)
+app.include_router(teams.router)

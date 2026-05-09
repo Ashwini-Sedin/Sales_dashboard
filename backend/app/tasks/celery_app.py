@@ -1,5 +1,5 @@
 from celery import Celery
-from celery.schedules import schedule
+from celery.schedules import schedule, crontab
 from app.core.config import settings
 
 celery_app = Celery(
@@ -25,5 +25,9 @@ celery_app.conf.beat_schedule = {
         "task": "app.tasks.google_ads_tasks.sync_google_ads_leads",
         "schedule": schedule(run_every=settings.GOOGLE_ADS_SYNC_INTERVAL_MINUTES * 60),
         "options": {"queue": "default"},
+    },
+    "capture-teams-recordings": {
+        "task": "app.tasks.teams_tasks.capture_teams_recordings",
+        "schedule": crontab(minute="*/10"),
     },
 }
