@@ -4,7 +4,7 @@ from typing import Dict, Any
 from sqlalchemy.orm import Session
 from app.services.graph_client import graph_client
 from app.services.s3_service import s3_service
-from app.models.email import EmailAttachment, StorageType
+from app.models.email_attachment import EmailAttachment, StorageType
 
 class AttachmentService:
     async def download_attachment(self, mailbox: str, message_id: str, attachment_id: str) -> bytes:

@@ -1,5 +1,7 @@
 from typing import List, Optional
+import uuid
 from uuid import UUID
+from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, Query, Request, Response, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import desc
@@ -7,14 +9,15 @@ from sqlalchemy import desc
 from app.core.database import get_db
 from app.core.dependencies import get_current_active_user, require_roles
 from app.models.user import User, UserRole
-from app.models.email import EmailMessage, EmailAttachment, StorageType
+from app.models.email_message import EmailMessage
+from app.models.email_attachment import EmailAttachment, StorageType
 from app.schemas.email import EmailMessageResponse, EmailMessageDetail, EmailAttachmentResponse, EmailCompose
 from app.services.email_sync_service import process_graph_webhook
 from app.services.s3_service import s3_service
 from app.services.attachment_service import attachment_service
 from app.services.email_send_service import send_email
 from app.tasks.email_tasks import sync_lead_emails
-from app.models.activity import ActivityTimeline, ActivityEventType
+from app.models.activity_timeline import ActivityTimeline, ActivityEventType
 from app.models.lead import Lead
 
 router = APIRouter(tags=["emails"])

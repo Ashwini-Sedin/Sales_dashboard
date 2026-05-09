@@ -33,7 +33,6 @@ const LeadSummaryPanel = ({ lead }) => {
           <div>
             <div className="flex items-center gap-3 mb-2">
               <h2 className="text-2xl font-bold text-slate-900">{lead.company_name}</h2>
-              <TurnaroundBadge createdAt={lead.created_at || new Date().toISOString()} />
             </div>
             <p className="text-slate-500 flex items-center gap-2 text-sm">
               <span className="flex items-center gap-1 bg-slate-100 px-2 py-1 rounded text-slate-600">
@@ -45,9 +44,12 @@ const LeadSummaryPanel = ({ lead }) => {
           </div>
           
           <div className="w-full md:w-64">
-            <div className="flex justify-between text-xs font-medium text-slate-500 mb-2">
+            <div className="flex justify-between items-center text-xs font-medium text-slate-500 mb-2">
               <span>Pipeline Progress</span>
-              <span className="text-blue-600">{lead.status || 'Lead'}</span>
+              <div className="flex items-center gap-2">
+                <TurnaroundBadge createdAt={lead.created_at || new Date().toISOString()} />
+                <span className="text-blue-600">{lead.status || 'Lead'}</span>
+              </div>
             </div>
             <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
               <div 

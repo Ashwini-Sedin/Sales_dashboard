@@ -4,8 +4,8 @@ import { useLeadDetail } from '../../hooks/useLeadDetail';
 import LeadSummaryPanel from './LeadSummaryPanel';
 import LeadTeamPanel from './LeadTeamPanel';
 import LeadTimeline from './LeadTimeline';
-import LeadEmailPanel from './LeadEmailPanel';
-import LeadCallsPanel from './LeadCallsPanel';
+import LeadEmailPanel from '../../components/lead/LeadEmailPanel';
+import LeadCallsPanel from '../../components/lead/LeadCallsPanel';
 import LeadDocumentsPanel from './LeadDocumentsPanel';
 import { MdArrowBack } from 'react-icons/md';
 
@@ -72,7 +72,7 @@ const LeadDetail = () => {
           {activeTab === 'communications' && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <LeadEmailPanel leadId={id} lead={lead} />
-              <LeadCallsPanel />
+              <LeadCallsPanel leadId={id} />
             </div>
           )}
 

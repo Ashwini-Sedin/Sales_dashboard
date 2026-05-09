@@ -6,7 +6,7 @@ from sqlalchemy.dialects.postgresql import insert
 
 from app.models.lead import Lead
 from app.models.user import User
-from app.models.email import EmailMessage
+from app.models.email_message import EmailMessage
 from app.services.graph_client import graph_client
 from app.core.database import SessionLocal
 

@@ -6,9 +6,9 @@ from typing import Optional, List
 from fastapi import BackgroundTasks
 
 from app.models.lead import Lead, LeadStatus
-from app.models.activity import ActivityTimeline, ActivityEventType
-from app.models.pipeline import LeadPipelineStage
-from app.models.audit import AuditLog
+from app.models.activity_timeline import ActivityTimeline, ActivityEventType
+from app.models.lead_pipeline_stage import LeadPipelineStage
+from app.models.audit_log import AuditLog
 from app.schemas.lead import LeadCreate, LeadUpdate, LeadFilter
 
 def log_activity(db: Session, lead_id: UUID, actor_id: UUID, event_type: ActivityEventType, description: str, metadata: dict = None):
