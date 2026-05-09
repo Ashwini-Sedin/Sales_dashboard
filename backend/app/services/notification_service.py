@@ -142,6 +142,49 @@ class NotificationService:
         db.add(notification)
         db.commit()
         db.refresh(notification)
+
+        from app.core.socket_manager import socket_manager
+        import asyncio
+        
+        try:
+            loop = asyncio.get_event_loop()
+            if loop.is_running():
+                asyncio.create_task(socket_manager.emit_to_user_room(
+                    user_id=str(user_id),
+                    event="new_notification",
+                    data={
+                        "id": str(notification.id),
+                        "type": notification.type,
+                        "message": notification.message,
+                        "lead_id": str(notification.lead_id) if notification.lead_id else None,
+                        "created_at": notification.created_at.isoformat()
+                    }
+                ))
+            else:
+                loop.run_until_complete(socket_manager.emit_to_user_room(
+                    user_id=str(user_id),
+                    event="new_notification",
+                    data={
+                        "id": str(notification.id),
+                        "type": notification.type,
+                        "message": notification.message,
+                        "lead_id": str(notification.lead_id) if notification.lead_id else None,
+                        "created_at": notification.created_at.isoformat()
+                    }
+                ))
+        except RuntimeError:
+            asyncio.run(socket_manager.emit_to_user_room(
+                user_id=str(user_id),
+                event="new_notification",
+                data={
+                    "id": str(notification.id),
+                    "type": notification.type,
+                    "message": notification.message,
+                    "lead_id": str(notification.lead_id) if notification.lead_id else None,
+                    "created_at": notification.created_at.isoformat()
+                }
+            ))
+
         return notification
 
     def notify_welcome(self, db: Session, user_id: Any) -> None:

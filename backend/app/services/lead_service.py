@@ -143,6 +143,46 @@ def change_stage(db: Session, lead_id: UUID, stage: LeadStatus, user_id: UUID, n
     
     db.commit()
     db.refresh(db_lead)
+    
+    from app.core.socket_manager import socket_manager
+    import asyncio
+    
+    try:
+        loop = asyncio.get_event_loop()
+        if loop.is_running():
+            asyncio.create_task(socket_manager.emit_to_lead_room(
+                lead_id=str(lead_id),
+                event="lead_updated",
+                data={
+                    "lead_id": str(lead_id),
+                    "old_stage": old_stage,
+                    "new_stage": stage,
+                    "changed_by": str(user_id)
+                }
+            ))
+        else:
+            loop.run_until_complete(socket_manager.emit_to_lead_room(
+                lead_id=str(lead_id),
+                event="lead_updated",
+                data={
+                    "lead_id": str(lead_id),
+                    "old_stage": old_stage,
+                    "new_stage": stage,
+                    "changed_by": str(user_id)
+                }
+            ))
+    except RuntimeError:
+        asyncio.run(socket_manager.emit_to_lead_room(
+            lead_id=str(lead_id),
+            event="lead_updated",
+            data={
+                "lead_id": str(lead_id),
+                "old_stage": old_stage,
+                "new_stage": stage,
+                "changed_by": str(user_id)
+            }
+        ))
+        
     return db_lead
 
 def get_timeline(db: Session, lead_id: UUID, page: int = 1, limit: int = 20):

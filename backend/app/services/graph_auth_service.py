@@ -1,5 +1,9 @@
 import msal
-import redis.asyncio as redis
+import redis.asyncio as aioredis
+try:
+    from upstash_redis.asyncio import Redis as UpstashRedis
+except ImportError:
+    UpstashRedis = None
 from typing import Optional
 from app.core.config import settings
 
@@ -11,8 +15,14 @@ class GraphAuthService:
         self.authority = f"https://login.microsoftonline.com/{self.tenant_id}" if self.tenant_id else ""
         self.scope = ["https://graph.microsoft.com/.default"]
         
-        # We instantiate redis using the async Redis client
-        self.redis = redis.from_url(settings.REDIS_URL, decode_responses=True)
+        # We instantiate redis using the async Redis client or Upstash
+        if settings.UPSTASH_REDIS_REST_URL and settings.UPSTASH_REDIS_REST_TOKEN and UpstashRedis:
+            self.redis = UpstashRedis(
+                url=settings.UPSTASH_REDIS_REST_URL,
+                token=settings.UPSTASH_REDIS_REST_TOKEN
+            )
+        else:
+            self.redis = aioredis.from_url(settings.REDIS_URL, decode_responses=True)
         
         if self.client_id and self.client_secret and self.tenant_id:
             self.app = msal.ConfidentialClientApplication(
@@ -44,7 +54,7 @@ class GraphAuthService:
             # TTL = expiry minus 5 minutes (300 seconds) to ensure we always have a valid token
             ttl = max(60, expires_in - 300)
             
-            await self.redis.setex(cache_key, ttl, token)
+            await self.redis.set(cache_key, token, ex=ttl)
             return token
         else:
             error_msg = result.get("error_description", str(result))

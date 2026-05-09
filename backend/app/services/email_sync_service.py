@@ -158,7 +158,37 @@ async def process_graph_webhook(db: Session, notification_data: dict):
             # Find matching leads
             leads = db.query(Lead).filter(Lead.email.in_(emails_to_check)).all()
             for lead in leads:
-                # Enqueue sync task
+                # Save and notify
+                email = EmailMessage(
+                    lead_id=lead.id,
+                    message_id=msg["id"],
+                    subject=msg.get("subject"),
+                    sender_email=sender,
+                    sender_name=msg.get("from", {}).get("emailAddress", {}).get("name"),
+                    body_html=msg.get("body", {}).get("content"),
+                    body_preview=msg.get("bodyPreview"),
+                    received_at=datetime.fromisoformat(msg.get("receivedDateTime", "").replace("Z", "+00:00")),
+                    raw_metadata=msg
+                )
+                db.add(email)
+                db.commit()
+                db.refresh(email)
+                
+                from app.core.socket_manager import socket_manager
+                asyncio.run(socket_manager.emit_to_lead_room(
+                    lead_id=str(lead.id),
+                    event="new_email",
+                    data={
+                        "lead_id": str(lead.id),
+                        "message_id": str(email.id),
+                        "subject": email.subject,
+                        "sender_name": email.sender_name,
+                        "is_outgoing": False, # Simplified for example
+                        "received_at": email.received_at.isoformat()
+                    }
+                ))
+                
+                # Enqueue full sync task
                 sync_lead_emails.delay(str(lead.id))
                 
         except Exception as e:

@@ -16,6 +16,12 @@ const NotificationBell = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
+  // Real-time updates:
+  // useSocket() in LeadDetail.jsx emits 'new_notification' events
+  // which call queryClient.invalidateQueries(['notifications'])
+  // This causes the bell to re-render instantly without waiting
+  // for the 30-second polling interval
+
   const { data: notifications = [] } = useQuery(['notifications'], fetchNotifications, {
     refetchInterval: 30000,
   });

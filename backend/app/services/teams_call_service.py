@@ -218,4 +218,18 @@ async def store_recording(db: Session, call_record: dict, lead_id: UUID, recordi
     db.commit()
     logger.info(f"Recording stored successfully: {s3_key}")
     
+    from app.core.socket_manager import socket_manager
+    import asyncio
+    asyncio.run(socket_manager.emit_to_lead_room(
+        lead_id=str(lead_id),
+        event="new_call_recording",
+        data={
+            "lead_id": str(lead_id),
+            "call_id": str(recording.id),
+            "filename": recording.filename,
+            "duration_seconds": recording.duration_seconds,
+            "recorded_at": recording.recorded_at.isoformat()
+        }
+    ))
+    
     return recording

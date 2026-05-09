@@ -5,6 +5,8 @@ from sqlalchemy import text
 from sqlalchemy.orm import Session
 from app.core.config import settings
 from app.core.database import get_db
+import socketio
+from app.core.socket_manager import sio
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -57,3 +59,44 @@ app.include_router(notification_templates.router)
 app.include_router(emails.router)
 app.include_router(calls.router)
 app.include_router(teams.router)
+
+@sio.event
+async def connect(sid, environ, auth):
+    print(f"Socket client connected: {sid}")
+
+@sio.event
+async def disconnect(sid):
+    print(f"Socket client disconnected: {sid}")
+
+@sio.event
+async def join_lead_room(sid, data):
+    lead_id = data.get('lead_id')
+    if lead_id:
+        await sio.enter_room(sid, f"lead:{lead_id}")
+        print(f"Client {sid} joined lead room: lead:{lead_id}")
+
+@sio.event
+async def leave_lead_room(sid, data):
+    lead_id = data.get('lead_id')
+    if lead_id:
+        await sio.leave_room(sid, f"lead:{lead_id}")
+
+@sio.event
+async def join_user_room(sid, data):
+    user_id = data.get('user_id')
+    if user_id:
+        await sio.enter_room(sid, f"user:{user_id}")
+        print(f"Client {sid} joined user room: user:{user_id}")
+
+@sio.event
+async def leave_user_room(sid, data):
+    user_id = data.get('user_id')
+    if user_id:
+        await sio.leave_room(sid, f"user:{user_id}")
+
+socket_app = socketio.ASGIApp(sio, app)
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("app.main:socket_app", host="0.0.0.0", port=8000, reload=True)
+

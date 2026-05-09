@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useLeadDetail } from '../../hooks/useLeadDetail';
+import { useSocket } from '../../hooks/useSocket';
 import LeadSummaryPanel from './LeadSummaryPanel';
 import LeadTeamPanel from './LeadTeamPanel';
 import LeadTimeline from './LeadTimeline';
@@ -13,6 +14,8 @@ const LeadDetail = () => {
   const { id } = useParams();
   const { data: lead, isLoading, error } = useLeadDetail(id);
   const [activeTab, setActiveTab] = useState('overview');
+
+  useSocket(id);
 
   if (isLoading) return <div className="p-8 text-center text-slate-500">Loading lead details...</div>;
   if (error) return <div className="p-8 text-center text-red-500">Error loading lead: {error.message}</div>;
