@@ -4,6 +4,11 @@ import boto3
 from botocore.exceptions import ClientError
 from app.core.config import settings
 
+# Bucket settings required:
+# - Server-side encryption: AES-256
+# - Block all public access: enabled
+# - Lifecycle rule: delete objects after 1095 days (3 years)
+
 class S3Service:
     def __init__(self):
         self.s3_client = boto3.client(
@@ -59,5 +64,14 @@ class S3Service:
                 chunk = body.read(64 * 1024)
         except ClientError as e:
             raise Exception(f"Failed to stream file from S3: {e}")
+
+    def upload_recording(self, lead_id: str, division_id: str, file_bytes: bytes, filename: str, content_type: str) -> str:
+        from datetime import datetime
+        date_str = datetime.now().strftime('%Y-%m-%d')
+        s3_key = f"{division_id}/{lead_id}/calls/{date_str}/{filename}"
+        return self.upload_file(s3_key, file_bytes, content_type)
+
+    def get_recording_presigned_url(self, s3_key: str, expiry: int = 604800) -> str:
+        return self.get_presigned_url(s3_key, expiry_seconds=expiry)
 
 s3_service = S3Service()
