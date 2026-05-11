@@ -8,7 +8,7 @@ export const useLeadsList = (filters) => {
         queryKey: [LEADS_QUERY_KEY, filters],
         queryFn: async () => {
             const { data } = await axiosInstance.get('/api/leads', { params: filters });
-            return data;
+            return data.items || data;
         },
     });
 };

@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 from app.core.database import get_db
 from app.core.dependencies import get_current_active_user, require_roles
-from app.models.user import User
+from app.models.user import User, UserRole
 from app.models.call_recording import CallRecording
 from app.models.activity_timeline import ActivityTimeline, ActivityEventType
 from app.schemas.call_recording import CallRecordingResponse, PlaybackUrlResponse
@@ -60,7 +60,7 @@ async def delete_call_recording(
     call_id: UUID,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
-    _: None = Depends(require_roles("super_admin", "division_head"))
+    _: None = Depends(require_roles([UserRole.super_admin, UserRole.division_head]))
 ):
     stmt = select(CallRecording).where(
         CallRecording.id == call_id,

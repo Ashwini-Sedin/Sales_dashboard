@@ -4,6 +4,7 @@ from typing import Optional
 from uuid import UUID
 
 from app.core.database import get_db
+from app.models.user import UserRole
 from sqlalchemy.orm import Session
 from app.core.dependencies import get_current_active_user, require_roles
 from app.tasks.teams_tasks import capture_teams_recordings
@@ -31,7 +32,7 @@ async def test_upload_recording(
     file: UploadFile = File(...),
     db: Session = Depends(get_db),
     current_user = Depends(get_current_active_user),
-    _: None = Depends(require_roles("super_admin", "division_head"))
+    _: None = Depends(require_roles([UserRole.super_admin, UserRole.division_head]))
 ):
     file_bytes = await file.read()
     

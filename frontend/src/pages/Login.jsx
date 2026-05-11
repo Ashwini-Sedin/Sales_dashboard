@@ -1,16 +1,17 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 
 const Login = () => {
     const { register, handleSubmit, formState: { errors } } = useForm();
+    const navigate = useNavigate();
     const { login, loading, error: authError } = useAuth();
 
     const onSubmit = async (data) => {
         try {
             await login(data.email, data.password);
-            // Redirect or handle success
-            console.log('Logged in successfully');
+            navigate('/dashboard');
         } catch (err) {
             console.error('Login failed', err);
         }

@@ -15,3 +15,4 @@ class Notification(Base):
     message = Column(Text)
     is_read = Column(Boolean, default=False)
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+

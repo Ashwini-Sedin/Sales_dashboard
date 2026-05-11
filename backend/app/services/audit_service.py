@@ -5,7 +5,7 @@ from uuid import UUID
 from datetime import datetime
 from sqlalchemy.orm import Session
 from sqlalchemy import select, desc, and_
-from app.models.audit import AuditLog
+from app.models.audit_log import AuditLog
 from app.models.user import User
 
 def list_audit_logs(

@@ -8,7 +8,8 @@ from datetime import datetime
 from app.core.database import get_db
 from app.core.dependencies import get_current_active_user, require_roles
 from app.models.user import User, UserRole
-from app.models.notification import Notification, NotificationTemplate
+from app.models.notification import Notification
+from app.models.notification_template import NotificationTemplate
 from app.schemas.notification_template import (
     NotificationTemplate as NotificationTemplateSchema,
     NotificationTemplateUpdate,

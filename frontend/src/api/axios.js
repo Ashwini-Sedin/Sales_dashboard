@@ -25,6 +25,12 @@ axiosInstance.interceptors.response.use(
     (response) => response,
     async (error) => {
         const originalRequest = error.config;
+        
+        // Don't retry if the request failed was to the refresh endpoint itself
+        if (originalRequest.url === '/api/auth/refresh') {
+            return Promise.reject(error);
+        }
+
         if (error.response?.status === 401 && !originalRequest._retry) {
             originalRequest._retry = true;
             try {

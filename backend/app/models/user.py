@@ -7,13 +7,13 @@ from sqlalchemy.dialects.postgresql import UUID
 from app.core.database import Base
 
 class UserRole(str, enum.Enum):
-    super_admin = "super_admin"
-    division_head = "division_head"
-    sales_manager = "sales_manager"
-    salesperson = "salesperson"
-    presales_engineer = "presales_engineer"
-    legal = "legal"
-    viewer = "viewer"
+    super_admin = "Chief Executive Officer"
+    division_head = "Division Head"
+    sales_manager = "Sales Manager"
+    salesperson = "Business Development Executive"
+    presales_engineer = "Presales Consultant"
+    legal = "Legal Counsel"
+    viewer = "Operations Analyst"
 
 class User(Base):
     __tablename__ = "users"
@@ -23,7 +23,7 @@ class User(Base):
     hashed_password = Column(String(255))
     first_name = Column(String(100))
     last_name = Column(String(100))
-    role = Column(Enum(UserRole), nullable=False)
+    role = Column(Enum(UserRole, values_callable=lambda x: [e.value for e in x]), nullable=False)
     division_id = Column(UUID(as_uuid=True), ForeignKey("divisions.id"))
     bio = Column(Text)
     avatar_url = Column(String(500))

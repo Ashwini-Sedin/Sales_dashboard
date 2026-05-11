@@ -16,13 +16,9 @@ const NotificationBell = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
-  // Real-time updates:
-  // useSocket() in LeadDetail.jsx emits 'new_notification' events
-  // which call queryClient.invalidateQueries(['notifications'])
-  // This causes the bell to re-render instantly without waiting
-  // for the 30-second polling interval
-
-  const { data: notifications = [] } = useQuery(['notifications'], fetchNotifications, {
+  const { data: notifications = [] } = useQuery({
+    queryKey: ['notifications'],
+    queryFn: fetchNotifications,
     refetchInterval: 30000,
   });
 
@@ -41,7 +37,7 @@ const NotificationBell = () => {
   const markAllRead = async () => {
     try {
       await api.put('/api/notifications/read-all');
-      queryClient.invalidateQueries(['notifications']);
+      queryClient.invalidateQueries({ queryKey: ['notifications'] });
     } catch (err) {
       console.error('Failed to mark all as read', err);
     }
