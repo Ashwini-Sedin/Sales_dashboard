@@ -21,6 +21,9 @@ const Placeholder = ({ name }) => (
     </div>
 );
 
+const AuditLogsAdmin = () => <Placeholder name="Audit Logs" />;
+
+
 function App() {
     return (
         <BrowserRouter>
