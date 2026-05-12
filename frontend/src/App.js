@@ -12,6 +12,7 @@ import UsersAdmin from './pages/admin/UsersAdmin';
 import DivisionsAdmin from './pages/admin/DivisionsAdmin';
 import NotificationTemplatesAdmin from './pages/admin/NotificationTemplatesAdmin';
 import Reports from './pages/Reports';
+import DocumentCenter from './pages/DocumentCenter';
 
 // Placeholder components for routes
 const Placeholder = ({ name }) => (
@@ -36,7 +37,7 @@ function App() {
                         <Route path="/dashboard" element={<Dashboard />} />
                         <Route path="/leads" element={<LeadsList />} />
                         <Route path="/leads/:id" element={<LeadDetail />} />
-                        <Route path="/documents" element={<Placeholder name="Document Center" />} />
+                        <Route path="/documents" element={<DocumentCenter />} />
                         <Route path="/reports" element={<Reports />} />
                         <Route path="/communication" element={<Placeholder name="Communication Hub" />} />
 

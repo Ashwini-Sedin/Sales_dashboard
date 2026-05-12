@@ -28,3 +28,5 @@ pydantic-settings
 python-socketio[asyncio]
 sendgrid
 upstash-redis
+Pillow
+requests

@@ -21,6 +21,7 @@ class DocumentTemplateResponse(BaseModel):
 class GeneratedDocumentResponse(BaseModel):
     id: UUID
     lead_id: UUID
+    lead_company_name: Optional[str] = None
     division_id: UUID
     template_id: Optional[UUID]
     doc_type: str
@@ -56,3 +57,92 @@ class GeneratedDocumentListResponse(BaseModel):
     total: int
 
     model_config = ConfigDict(from_attributes=True)
+
+class QuickSalesInput(BaseModel):
+    proposed_solution_name: str
+    pricing_range: str
+    start_date: str
+    end_date: str
+    key_benefits: List[str]  # max 5 items should be handled by validation or frontend, but I'll add a simple validator if needed. For now just List[str]
+    client_challenges: List[str] # max 3 items
+    notes: Optional[str] = None
+
+class QuickSalesGenerateRequest(BaseModel):
+    lead_id: UUID
+    format: str  # "docx" or "pptx"
+    dynamic_inputs: QuickSalesInput
+
+class DocumentGenerationResponse(BaseModel):
+    document_id: UUID
+    task_id: str
+    status: str
+    message: str
+
+# Session 24 additions
+class Phase(BaseModel):
+    phase_name: str
+    duration: str
+    deliverables: List[str]
+
+class PricingItem(BaseModel):
+    item_name: str
+    quantity: int
+    unit_price: float
+    discount_percent: float = 0.0
+
+class CustomSection(BaseModel):
+    title: str
+    content: str
+
+class DetailedProposalInput(BaseModel):
+    client_challenges: str
+    client_background: str
+    solution_description: str
+    phases: List[Phase]
+    pricing_breakdown: List[PricingItem]
+    team_member_ids: List[UUID]
+    selected_case_study_ids: List[int]
+    custom_sections: List[CustomSection] = []
+
+class DetailedProposalGenerateRequest(BaseModel):
+    lead_id: UUID
+    format: str
+    dynamic_inputs: DetailedProposalInput
+
+class CaseStudyResponse(BaseModel):
+    id: int
+    division_id: UUID
+    title: str
+    client_name: str
+    industry: str
+    technology_tags: List[str]
+    challenge_text: str
+    solution_text: str
+    outcome_text: str
+    s3_image_key: Optional[str]
+    image_url: Optional[str] = None
+    is_active: bool
+
+    model_config = ConfigDict(from_attributes=True)
+
+class CaseStudyCreate(BaseModel):
+    division_id: UUID
+    title: str
+    client_name: str
+    industry: str
+    technology_tags: List[str] = []
+    challenge_text: str
+    solution_text: str
+    outcome_text: str
+    s3_image_key: Optional[str] = None
+
+class CaseStudyUpdate(BaseModel):
+    title: Optional[str] = None
+    client_name: Optional[str] = None
+    industry: Optional[str] = None
+    technology_tags: Optional[List[str]] = None
+    challenge_text: Optional[str] = None
+    solution_text: Optional[str] = None
+    outcome_text: Optional[str] = None
+    s3_image_key: Optional[str] = None
+    is_active: Optional[bool] = None

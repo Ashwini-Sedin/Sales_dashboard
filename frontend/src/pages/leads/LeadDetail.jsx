@@ -7,7 +7,7 @@ import LeadTeamPanel from './LeadTeamPanel';
 import LeadTimeline from './LeadTimeline';
 import LeadEmailPanel from '../../components/lead/LeadEmailPanel';
 import LeadCallsPanel from '../../components/lead/LeadCallsPanel';
-import LeadDocumentsPanel from './LeadDocumentsPanel';
+import DocumentsPanel from '../../components/documents/DocumentsPanel';
 import { MdArrowBack } from 'react-icons/md';
 
 const LeadDetail = () => {
@@ -80,7 +80,7 @@ const LeadDetail = () => {
           )}
 
           {activeTab === 'documents' && (
-            <LeadDocumentsPanel />
+            <DocumentsPanel leadId={id} lead={lead} />
           )}
         </div>
         
