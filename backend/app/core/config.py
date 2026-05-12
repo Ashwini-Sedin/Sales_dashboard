@@ -32,6 +32,10 @@ class Settings(BaseSettings):
     GOOGLE_ADS_WEBHOOK_SECRET: Optional[str] = None
     GOOGLE_ADS_SYNC_INTERVAL_MINUTES: int = 15
 
+    # Document Engine Settings
+    SHAREPOINT_SITE_ID: Optional[str] = None
+    AWS_S3_DOCUMENTS_BUCKET: str = "dealflow-documents"
+
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 
 settings = Settings()

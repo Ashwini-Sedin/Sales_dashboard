@@ -1,19 +1,32 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '../context/AuthContext';
 
 const Login = () => {
     const { register, handleSubmit, formState: { errors } } = useForm();
     const navigate = useNavigate();
-    const { login, loading, error: authError } = useAuth();
+    const { user, login } = useAuth();
+    const [loading, setLoading] = useState(false);
+    const [authError, setAuthError] = useState(null);
+
+    useEffect(() => {
+        if (user) {
+            navigate('/dashboard');
+        }
+    }, [user, navigate]);
 
     const onSubmit = async (data) => {
+        setLoading(true);
+        setAuthError(null);
         try {
             await login(data.email, data.password);
             navigate('/dashboard');
         } catch (err) {
             console.error('Login failed', err);
+            setAuthError(err.response?.data?.detail || 'Login failed');
+        } finally {
+            setLoading(false);
         }
     };
 

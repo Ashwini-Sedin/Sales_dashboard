@@ -46,6 +46,9 @@ class GraphClient:
     async def post(self, endpoint: str, data: Dict) -> Any:
         return await self._request("POST", endpoint, json=data)
         
+    async def put(self, endpoint: str, data: Any, headers: Optional[Dict] = None) -> Any:
+        return await self._request("PUT", endpoint, content=data, headers=headers)
+        
     async def delete(self, endpoint: str) -> Any:
         return await self._request("DELETE", endpoint)
         
