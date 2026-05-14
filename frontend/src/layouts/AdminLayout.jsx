@@ -6,12 +6,14 @@ import {
     EnvelopeIcon, 
     ClipboardDocumentListIcon 
 } from '@heroicons/react/24/outline';
+import { FiLayout } from 'react-icons/fi';
 
 const AdminLayout = () => {
     const navItems = [
         { name: 'Users', path: '/admin/users', icon: UsersIcon },
         { name: 'Divisions', path: '/admin/divisions', icon: QueueListIcon },
-        { name: 'Notification Templates', path: '/admin/templates', icon: EnvelopeIcon },
+        { name: 'Notification Templates', path: '/admin/notification-templates', icon: EnvelopeIcon },
+        { name: 'Document Templates', path: '/admin/templates', icon: FiLayout },
         { name: 'Audit Logs', path: '/admin/audit-logs', icon: ClipboardDocumentListIcon },
     ];
 

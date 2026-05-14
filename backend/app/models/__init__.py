@@ -16,7 +16,7 @@ from app.models.generated_document import GeneratedDocument
 from app.models.document_approval import DocumentApproval
 from app.models.case_study import CaseStudy
 from app.models.tech_library import TechLibrary
-from app.models.nda_clause import NDAClause
+from app.models.nda_clause import NdaClause
 
 # To ensure all models are imported and registered with SQLAlchemy declarative base
 __all__ = [
@@ -38,5 +38,5 @@ __all__ = [
     "DocumentApproval",
     "CaseStudy",
     "TechLibrary",
-    "NDAClause",
+    "NdaClause",
 ]

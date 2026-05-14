@@ -4,7 +4,7 @@ from sqlalchemy.dialects.postgresql import UUID
 
 from app.core.database import Base
 
-class NDAClauseType(str, enum.Enum):
+class NdaClauseType(str, enum.Enum):
     confidentiality = "confidentiality"
     exclusions = "exclusions"
     obligations = "obligations"
@@ -16,11 +16,11 @@ class NDAClauseType(str, enum.Enum):
     severability = "severability"
     waiver = "waiver"
 
-class NDAClause(Base):
+class NdaClause(Base):
     __tablename__ = "nda_clauses"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    clause_type = Column(Enum(NDAClauseType))
+    clause_type = Column(Enum(NdaClauseType))
     clause_text = Column(Text)
     is_default = Column(Boolean)
     division_id = Column(UUID(as_uuid=True), ForeignKey("divisions.id"), nullable=True)

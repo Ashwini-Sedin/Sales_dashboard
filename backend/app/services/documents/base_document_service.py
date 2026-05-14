@@ -20,7 +20,6 @@ class BaseDocumentService:
         SELECT COALESCE(MAX(version_number), 0) + 1
         FROM generated_documents
         WHERE lead_id = lead_id AND doc_type = doc_type
-        Use SQLAlchemy: select(func.coalesce(func.max(...), 0) + 1)
         """
         stmt = select(func.coalesce(func.max(GeneratedDocument.version_number), 0) + 1).where(
             GeneratedDocument.lead_id == lead_id,
@@ -46,8 +45,6 @@ class BaseDocumentService:
     ) -> GeneratedDocument:
         """
         Create and save a GeneratedDocument record to DB.
-        Set docusign_status = "not_sent" by default.
-        Commit and refresh. Return the saved record.
         """
         document = GeneratedDocument(
             lead_id=lead_id,
@@ -69,6 +66,21 @@ class BaseDocumentService:
         logger.info(f"Document record saved: {document.id} v{version_number}")
         return document
 
+    def get_sharepoint_folder_path(
+        self,
+        lead_id: str,
+        division_name: str,
+        company_name: str,
+        doc_type: str
+    ) -> str:
+        """
+        Build consistent SharePoint folder path for a document.
+        Format: DealFlow/{division_name}/{company_name}/{lead_id}/{doc_type}
+        """
+        clean_division = division_name.replace(" ", "_")
+        clean_company = company_name.replace(" ", "_")
+        return f"DealFlow/{clean_division}/{clean_company}/{lead_id}/{doc_type}"
+
     async def create_sharepoint_folder(
         self,
         lead_id: str,
@@ -78,42 +90,58 @@ class BaseDocumentService:
     ) -> str | None:
         """
         Create folder structure in SharePoint via Graph API.
-        Path: DealFlow/{division_name}/{company_name}/{lead_id}/{doc_type}
+        Checks if folder exists first.
         """
         if not settings.SHAREPOINT_SITE_ID:
             logger.warning("SharePoint not configured — skipping SharePoint upload")
             return None
 
         site_id = settings.SHAREPOINT_SITE_ID
-        base_path = "DealFlow"
-        clean_company = company_name.replace(" ", "_")
-        folder_path = f"{base_path}/{division_name}/{clean_company}/{lead_id}/{doc_type}"
+        folder_path = self.get_sharepoint_folder_path(lead_id, division_name, company_name, doc_type)
         
-        logger.info(f"Creating SharePoint folder: {folder_path}")
+        # Check if folder exists
+        # GET /v1.0/sites/{site_id}/drive/root:/{folder_path}
+        check_endpoint = f"/v1.0/sites/{site_id}/drive/root:/{folder_path}"
+        try:
+            resp = await graph_client.get(check_endpoint)
+            if resp and 'id' in resp:
+                logger.info(f"SharePoint folder already exists: {folder_path}")
+                return folder_path
+        except Exception:
+            # Assume 404 and proceed to create
+            pass
 
-        levels = [base_path, division_name, clean_company, lead_id, doc_type]
-        
-        # We need to create each level if it doesn't exist
-        # POST /v1.0/sites/{SHAREPOINT_SITE_ID}/drive/root/children
-        # body: { name: folder_name, folder: {}, @microsoft.graph.conflictBehavior: "rename" }
-        
+        logger.info(f"Creating SharePoint folder levels: {folder_path}")
+        levels = folder_path.split('/')
         current_parent = "root"
         for level in levels:
             endpoint = f"/v1.0/sites/{site_id}/drive/{current_parent}/children"
             body = {
                 "name": level,
                 "folder": {},
-                "@microsoft.graph.conflictBehavior": "rename"
+                "@microsoft.graph.conflictBehavior": "replace"
             }
-            # The rename behavior ensures it doesn't fail if exists, or we get the existing one
             resp = await graph_client.post(endpoint, body)
             if resp and 'id' in resp:
                 current_parent = f"items/{resp['id']}"
             else:
-                # Fallback or error handling
                 break
 
         return folder_path
+
+    def build_sharepoint_filename(
+        self,
+        doc_type: str,
+        version: int,
+        extension: str
+    ) -> str:
+        """
+        Build SharePoint filename with version and date.
+        Format: DealFlow_{doc_type}_v{version}_{YYYY-MM-DD}.{ext}
+        """
+        clean_type = doc_type.replace(" ", "_")
+        date_str = datetime.now().strftime("%Y-%m-%d")
+        return f"DealFlow_{clean_type}_v{version}_{date_str}.{extension}"
 
     async def upload_to_sharepoint(
         self,
@@ -123,14 +151,11 @@ class BaseDocumentService:
     ) -> str | None:
         """
         Upload file to SharePoint folder via Graph API.
-        PUT /v1.0/sites/{SHAREPOINT_SITE_ID}/drive/root:/{folder}/{filename}:/content
         """
         if not settings.SHAREPOINT_SITE_ID:
-            logger.warning("SharePoint not configured — skipping SharePoint upload")
             return None
 
         site_id = settings.SHAREPOINT_SITE_ID
-        # Using root:/{path}:/content is easier for nested folders
         endpoint = f"/v1.0/sites/{site_id}/drive/root:/{sharepoint_folder}/{filename}:/content"
         
         headers = {"Content-Type": "application/octet-stream"}
@@ -152,12 +177,8 @@ class BaseDocumentService:
     ) -> str:
         """
         Upload generated document to S3.
-        Path: {division_id}/{lead_id}/documents/{doc_type}/{filename}
         """
         s3_key = f"{division_id}/{lead_id}/documents/{doc_type}/{filename}"
-        logger.info(f"Uploading document to S3: {s3_key}")
-        
-        # s3_service.upload_file is synchronous in this project's existing code
         s3_service.upload_file(
             key=s3_key,
             content_bytes=file_bytes,
@@ -172,8 +193,7 @@ class BaseDocumentService:
         doc_type: str
     ) -> None:
         """
-        Set status = 'archived' on all previous non-archived versions
-        for this lead + doc_type combination before saving a new version.
+        Set status = 'archived' on all previous non-archived versions.
         """
         stmt = (
             update(GeneratedDocument)
@@ -184,11 +204,8 @@ class BaseDocumentService:
             )
             .values(status='archived')
         )
-        result = await db.execute(stmt)
+        await db.execute(stmt)
         await db.commit()
-        
-        count = result.rowcount if hasattr(result, 'rowcount') else 0
-        logger.info(f"Archived {count} previous versions for lead {lead_id}")
 
     def build_document_title(
         self,
@@ -198,7 +215,6 @@ class BaseDocumentService:
     ) -> str:
         """
         Build a consistent document title.
-        Format: "DealFlow_{doc_type}_{company_name}_v{version}_{YYYY-MM-DD}"
         """
         clean_company = company_name.replace(" ", "_")
         date_str = datetime.now().strftime("%Y-%m-%d")

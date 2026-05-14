@@ -42,7 +42,7 @@ def health_check(db: Session = Depends(get_db)):
         "db_connected": db_status == "ok"
     }
 
-from app.routers import auth, dashboard, leads, notifications, users, divisions, audit_logs, emails, calls, documents, tasks, case_studies
+from app.routers import auth, dashboard, leads, notifications, users, divisions, audit_logs, emails, calls, documents, tasks, case_studies, templates, tech_library, nda_clauses
 from app.routers.integrations import google_ads_router, graph, teams
 
 # Include routers here
@@ -61,6 +61,9 @@ app.include_router(teams.router)
 app.include_router(documents.router)
 app.include_router(tasks.router, prefix="/api")
 app.include_router(case_studies.router)
+app.include_router(templates.router)
+app.include_router(tech_library.router)
+app.include_router(nda_clauses.router)
 
 @sio.event
 async def connect(sid, environ, auth):

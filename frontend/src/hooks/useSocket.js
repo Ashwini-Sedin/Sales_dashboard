@@ -75,6 +75,37 @@ export function useSocket(leadId) {
       queryClient.invalidateQueries(['notifications'])
     })
 
+    s.on('document_generation_complete', (data) => {
+      toast.success('Document generation complete!', {
+        duration: 4000,
+        icon: '📄'
+      })
+      queryClient.invalidateQueries(['document-versions', leadId])
+      queryClient.invalidateQueries(['documents', leadId])
+    })
+
+    s.on('document_generation_failed', (data) => {
+      toast.error(
+        `Document generation failed: ${data.error || 'Unknown error'}`,
+        { duration: 6000 }
+      )
+    })
+
+    s.on('document_status_changed', (data) => {
+      if (data.new_status === 'approved') {
+        toast.success('Document approved!', {
+          duration: 4000,
+          icon: '✅'
+        })
+      } else if (data.rejected) {
+        toast.error('Document rejected', {
+          duration: 4000,
+          icon: '❌'
+        })
+      }
+      queryClient.invalidateQueries(['document-versions', leadId])
+    })
+
     s.on('disconnect', () => {
       console.log('Socket disconnected')
     })

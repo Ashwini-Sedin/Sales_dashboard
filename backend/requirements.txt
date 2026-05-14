@@ -30,3 +30,4 @@ sendgrid
 upstash-redis
 Pillow
 requests
+python-magic

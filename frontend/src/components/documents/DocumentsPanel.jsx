@@ -4,9 +4,11 @@ import {
   FiClipboard, FiPlus, FiInfo 
 } from 'react-icons/fi';
 import { useDocuments } from '../../hooks/useDocuments';
-import DocumentHistoryTable from './DocumentHistoryTable';
+import DocumentVersionHistory from './DocumentVersionHistory';
 import QuickSalesForm from './QuickSalesForm';
 import DetailedProposalForm from './DetailedProposalForm';
+import PresalesForm from './PresalesForm';
+import NdaForm from './NdaForm';
 
 const DocumentsPanel = ({ leadId, lead }) => {
   const { data, isLoading } = useDocuments(leadId);
@@ -35,7 +37,7 @@ const DocumentsPanel = ({ leadId, lead }) => {
       description: 'Technical scope and effort estimate',
       icon: <FiLayers />,
       color: 'bg-purple-500',
-      enabled: false
+      enabled: true
     },
     {
       id: 'nda',
@@ -43,7 +45,7 @@ const DocumentsPanel = ({ leadId, lead }) => {
       description: 'Non-disclosure agreement',
       icon: <FiShield />,
       color: 'bg-red-500',
-      enabled: false
+      enabled: true
     },
     {
       id: 'sow',
@@ -134,14 +136,7 @@ const DocumentsPanel = ({ leadId, lead }) => {
 
       {/* Section 2: Document History */}
       <div>
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-xl font-bold text-gray-900">Document History</h3>
-          <span className="text-sm text-gray-500 font-medium">
-            {data?.documents?.length || 0} versions archived
-          </span>
-        </div>
-        
-        <DocumentHistoryTable documents={data?.documents} leadId={leadId} />
+        <DocumentVersionHistory leadId={leadId} lead={lead} />
       </div>
 
       {/* Modals */}
@@ -155,6 +150,22 @@ const DocumentsPanel = ({ leadId, lead }) => {
       )}
       {activeModal === 'detailed_proposal' && (
         <DetailedProposalForm 
+          leadId={leadId} 
+          lead={lead} 
+          onClose={() => setActiveModal(null)} 
+          onSuccess={() => setActiveModal(null)}
+        />
+      )}
+      {activeModal === 'presales' && (
+        <PresalesForm 
+          leadId={leadId} 
+          lead={lead} 
+          onClose={() => setActiveModal(null)} 
+          onSuccess={() => setActiveModal(null)}
+        />
+      )}
+      {activeModal === 'nda' && (
+        <NdaForm 
           leadId={leadId} 
           lead={lead} 
           onClose={() => setActiveModal(null)} 

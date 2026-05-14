@@ -11,6 +11,7 @@ import AdminLayout from './layouts/AdminLayout';
 import UsersAdmin from './pages/admin/UsersAdmin';
 import DivisionsAdmin from './pages/admin/DivisionsAdmin';
 import NotificationTemplatesAdmin from './pages/admin/NotificationTemplatesAdmin';
+import TemplateLibraryAdmin from './pages/admin/TemplateLibraryAdmin';
 import Reports from './pages/Reports';
 import DocumentCenter from './pages/DocumentCenter';
 
@@ -49,7 +50,8 @@ function App() {
                             <Route index element={<Navigate to="users" replace />} />
                             <Route path="users" element={<UsersAdmin />} />
                             <Route path="divisions" element={<DivisionsAdmin />} />
-                            <Route path="templates" element={<NotificationTemplatesAdmin />} />
+                            <Route path="notification-templates" element={<NotificationTemplatesAdmin />} />
+                            <Route path="templates" element={<TemplateLibraryAdmin />} />
                             <Route path="audit-logs" element={<AuditLogsAdmin />} />
                         </Route>
 
