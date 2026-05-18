@@ -12,7 +12,7 @@ import NdaForm from './NdaForm';
 import SowForm from './SowForm';
 
 const DocumentsPanel = ({ leadId, lead }) => {
-  const { data, isLoading } = useDocuments(leadId);
+  const { isLoading } = useDocuments(leadId);
   const [activeModal, setActiveModal] = useState(null); // 'quick_sales' | 'detailed_proposal'
 
   const docTypes = [

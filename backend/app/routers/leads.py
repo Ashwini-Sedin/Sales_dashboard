@@ -20,7 +20,7 @@ def create_lead(
     current_user: User = Depends(get_current_active_user)
 ):
     # Non-admins can only create leads for their division
-    if current_user.role not in [UserRole.super_admin] and lead_in.division_id != current_user.division_id:
+    if current_user.role not in [UserRole.admin] and lead_in.division_id != current_user.division_id:
         raise HTTPException(status_code=403, detail="Not authorized to create leads for this division")
         
     lead = lead_service.create_lead(db, lead_in, current_user.id, background_tasks=background_tasks)
@@ -48,7 +48,7 @@ def list_leads(
     
     # Division-based access control
     user_div_id = None
-    if current_user.role not in [UserRole.super_admin]:
+    if current_user.role not in [UserRole.admin]:
         user_div_id = current_user.division_id
         
     items, total = lead_service.list_leads(db, filters, page, limit, user_div_id)
@@ -70,7 +70,7 @@ def get_lead(
         raise HTTPException(status_code=404, detail="Lead not found")
     
     # Access check
-    if current_user.role not in [UserRole.super_admin] and lead.division_id != current_user.division_id:
+    if current_user.role not in [UserRole.admin] and lead.division_id != current_user.division_id:
         raise HTTPException(status_code=403, detail="Access denied")
         
     return lead
@@ -86,7 +86,7 @@ def update_lead(
     if not lead:
         raise HTTPException(status_code=404, detail="Lead not found")
         
-    if current_user.role not in [UserRole.super_admin] and lead.division_id != current_user.division_id:
+    if current_user.role not in [UserRole.admin] and lead.division_id != current_user.division_id:
         raise HTTPException(status_code=403, detail="Access denied")
         
     return lead_service.update_lead(db, lead_id, lead_in, current_user.id)
@@ -101,7 +101,7 @@ def delete_lead(
     if not lead:
         raise HTTPException(status_code=404, detail="Lead not found")
         
-    if current_user.role not in [UserRole.super_admin] and lead.division_id != current_user.division_id:
+    if current_user.role not in [UserRole.admin] and lead.division_id != current_user.division_id:
         raise HTTPException(status_code=403, detail="Access denied")
         
     lead_service.soft_delete_lead(db, lead_id, current_user.id)
@@ -118,7 +118,7 @@ def change_lead_stage(
     if not lead:
         raise HTTPException(status_code=404, detail="Lead not found")
         
-    if current_user.role not in [UserRole.super_admin] and lead.division_id != current_user.division_id:
+    if current_user.role not in [UserRole.admin] and lead.division_id != current_user.division_id:
         raise HTTPException(status_code=403, detail="Access denied")
         
     return lead_service.change_stage(db, lead_id, stage_in.stage, current_user.id, stage_in.notes)
@@ -135,7 +135,7 @@ def get_lead_timeline(
     if not lead:
         raise HTTPException(status_code=404, detail="Lead not found")
         
-    if current_user.role not in [UserRole.super_admin] and lead.division_id != current_user.division_id:
+    if current_user.role not in [UserRole.admin] and lead.division_id != current_user.division_id:
         raise HTTPException(status_code=403, detail="Access denied")
         
     items, total = lead_service.get_timeline(db, lead_id, page, limit)

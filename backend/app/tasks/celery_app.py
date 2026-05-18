@@ -2,10 +2,16 @@ from celery import Celery
 from celery.schedules import schedule, crontab
 from app.core.config import settings
 
+# Celery requires rediss:// URL to have the ssl_cert_reqs parameter set to CERT_REQUIRED, CERT_OPTIONAL, or CERT_NONE
+redis_url = settings.REDIS_URL
+if redis_url.startswith("rediss://") and "ssl_cert_reqs" not in redis_url:
+    separator = "&" if "?" in redis_url else "?"
+    redis_url = f"{redis_url}{separator}ssl_cert_reqs=CERT_NONE"
+
 celery_app = Celery(
     "dealflow",
-    broker=settings.REDIS_URL,
-    backend=settings.REDIS_URL,
+    broker=redis_url,
+    backend=redis_url,
 )
 
 celery_app.conf.update(

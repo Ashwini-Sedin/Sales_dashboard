@@ -92,7 +92,7 @@ const CreateUserModal = ({ isOpen, onClose, onSuccess }) => {
                                     <option value="">Select a role...</option>
                                     <option value="sales_rep">Sales Rep - Manage assigned leads</option>
                                     <option value="division_head">Division Head - Oversee division operations</option>
-                                    <option value="super_admin">Super Admin - Full system access</option>
+                                    <option value="admin">Admin - Full system access</option>
                                 </select>
                                 {errors.role && <p className="mt-1 text-xs text-red-500">{errors.role.message}</p>}
                             </div>

@@ -65,6 +65,9 @@ class QuickSalesInput(BaseModel):
     end_date: str
     key_benefits: List[str]  # max 5 items should be handled by validation or frontend, but I'll add a simple validator if needed. For now just List[str]
     client_challenges: List[str] # max 3 items
+    introduction: Optional[str] = None
+    objective: Optional[str] = None
+    content_structure: Optional[str] = None
     notes: Optional[str] = None
 
 class QuickSalesGenerateRequest(BaseModel):
@@ -315,3 +318,29 @@ class ManagerApprovalRequest(BaseModel):
 
 class FinalApprovalRequest(BaseModel):
     comments: Optional[str] = None
+
+class DraftWithLlmRequest(BaseModel):
+    lead_id: UUID
+    doc_type: str
+    format: str
+    client_name: str
+    client_company: str
+    proposed_solution: str
+    price_from: str
+    price_to: str
+    start_date: str
+    delivery_date: str
+
+class GenerateWithLlmRequest(BaseModel):
+    lead_id: UUID
+    doc_type: str
+    format: str
+    client_name: str
+    client_company: str
+    proposed_solution: str
+    price_from: str
+    price_to: str
+    start_date: str
+    delivery_date: str
+    drafted_content: Optional[dict] = None
+

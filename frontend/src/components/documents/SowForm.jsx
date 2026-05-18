@@ -56,6 +56,7 @@ const SowForm = ({ leadId, lead, onClose, onSuccess }) => {
       ...prev,
       raci_matrix: { entries: newEntries }
     }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formData.deliverables]);
 
   const handleInputChange = (field, value) => {

@@ -7,7 +7,7 @@ router = APIRouter(prefix="/api/integrations/graph", tags=["graph_integration"])
 
 @router.get("/test")
 async def test_graph_auth(
-    current_user: User = Depends(require_roles([UserRole.super_admin, UserRole.division_head]))
+    current_user: User = Depends(require_roles([UserRole.admin, UserRole.division_head]))
 ):
     """
     Test endpoint to verify Microsoft Graph API authentication.

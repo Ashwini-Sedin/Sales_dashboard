@@ -9,7 +9,13 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #f9fafb;
+  background-color: #f8fafc;
+  color: #0f172a;
+}
+
+html.dark body {
+  background-color: #10151b;
+  color: #f1f5f9;
 }
 
 code {
@@ -17,20 +23,29 @@ code {
     monospace;
 }
 
-/* Custom scrollbar for navy theme */
+/* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #415A77;
+  background: #cbd5e1;
   border-radius: 10px;
 }
 
+html.dark ::webkit-scrollbar-thumb {
+  background: #2c3642;
+}
+
 ::-webkit-scrollbar-thumb:hover {
-  background: #1B263B;
+  background: #94a3b8;
+}
+
+html.dark ::-webkit-scrollbar-thumb:hover {
+  background: #475569;
 }

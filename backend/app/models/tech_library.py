@@ -16,5 +16,5 @@ class TechLibrary(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(100))
-    category = Column(Enum(TechCategory))
+    category = Column(Enum(TechCategory, name="tech_category"))
     is_active = Column(Boolean)

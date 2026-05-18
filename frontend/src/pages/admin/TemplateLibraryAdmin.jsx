@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { 
   FiLayout, FiUpload, FiTrash2, FiCheck, 
-  FiMoreVertical, FiClock, FiGrid, FiList,
-  FiFilter, FiDownload
+  FiClock, FiGrid, FiList, FiFilter
 } from 'react-icons/fi';
 import api from '../../api';
 import { toast } from 'react-hot-toast';
@@ -199,7 +198,7 @@ const TemplateLibraryAdmin = () => {
                   alt={template.template_name}
                   className="w-full h-full object-cover"
                   onLoad={(e) => {
-                    const status = e.target.getAttribute('X-Thumbnail-Status');
+                    // const status = e.target.getAttribute('X-Thumbnail-Status');
                     // Headers aren't directly on img tag, handled by API
                   }}
                 />

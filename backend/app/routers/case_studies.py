@@ -70,7 +70,7 @@ async def get_case_study(
 async def create_case_study(
     case_study_in: CaseStudyCreate,
     db: AsyncSession = Depends(get_async_db),
-    current_user = Depends(require_roles([UserRole.super_admin, UserRole.division_head]))
+    current_user = Depends(require_roles([UserRole.admin, UserRole.division_head]))
 ):
     """Save new CaseStudy with is_active = True."""
     case_study = CaseStudy(**case_study_in.model_dump(), is_active=True)
@@ -84,7 +84,7 @@ async def update_case_study(
     case_study_id: int,
     case_study_in: CaseStudyUpdate,
     db: AsyncSession = Depends(get_async_db),
-    current_user = Depends(require_roles([UserRole.super_admin, UserRole.division_head]))
+    current_user = Depends(require_roles([UserRole.admin, UserRole.division_head]))
 ):
     """Update fields provided only."""
     update_data = case_study_in.model_dump(exclude_unset=True)
@@ -116,7 +116,7 @@ async def update_case_study(
 async def delete_case_study(
     case_study_id: int,
     db: AsyncSession = Depends(get_async_db),
-    current_user = Depends(require_roles([UserRole.super_admin]))
+    current_user = Depends(require_roles([UserRole.admin]))
 ):
     """Set is_active = False (soft delete)."""
     stmt = (

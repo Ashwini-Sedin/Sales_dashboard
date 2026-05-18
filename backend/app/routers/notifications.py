@@ -41,7 +41,7 @@ class TestEmailRequest(BaseModel):
 @router.get("/templates", response_model=List[NotificationTemplateSchema])
 def list_notification_templates(
     db: Session = Depends(get_db),
-    current_user: User = Depends(require_roles([UserRole.super_admin])),
+    current_user: User = Depends(require_roles([UserRole.admin])),
 ):
     return db.query(NotificationTemplate).all()
 
@@ -51,7 +51,7 @@ def update_notification_template(
     template_id: UUID,
     template_in: NotificationTemplateUpdate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(require_roles([UserRole.super_admin])),
+    current_user: User = Depends(require_roles([UserRole.admin])),
 ):
     template = db.query(NotificationTemplate).filter(NotificationTemplate.id == template_id).first()
     if not template:

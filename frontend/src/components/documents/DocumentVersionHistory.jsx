@@ -8,7 +8,6 @@ import {
 import { format } from 'date-fns';
 import api from '../../api';
 import { useRestoreDocument } from '../../hooks/useDocuments';
-import { toast } from 'react-hot-toast';
 import { useAuth } from '../../context/AuthContext';
 
 const DocumentVersionHistory = ({ leadId, lead }) => {
@@ -232,7 +231,7 @@ const DocumentVersionHistory = ({ leadId, lead }) => {
                                     <FiExternalLink size={16} />
                                   </a>
                                 )}
-                                {doc.status === 'archived' && ['super_admin', 'division_head', 'sales_manager'].includes(user?.role) && (
+                                {doc.status === 'archived' && ['admin', 'division_head', 'sales_manager'].includes(user?.role) && (
                                   <button 
                                     onClick={() => handleRestore(doc)}
                                     title="Restore Version"

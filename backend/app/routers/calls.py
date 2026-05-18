@@ -25,7 +25,7 @@ async def get_call_recordings(
     recordings = result.scalars().all()
     
     # Division access check
-    if current_user.role not in ["super_admin", "division_head"] and recordings:
+    if current_user.role not in ["admin", "division_head"] and recordings:
         if any(r.division_id != current_user.division_id for r in recordings):
             raise HTTPException(status_code=403, detail="Not authorized to view recordings for this lead's division.")
 
@@ -48,7 +48,7 @@ async def get_playback_url(
         raise HTTPException(status_code=404, detail="Call recording not found")
         
     # Division access check
-    if current_user.role not in ["super_admin", "division_head"] and recording.division_id != current_user.division_id:
+    if current_user.role not in ["admin", "division_head"] and recording.division_id != current_user.division_id:
         raise HTTPException(status_code=403, detail="Not authorized to access this recording")
 
     url = s3_service.get_recording_presigned_url(recording.s3_key)
@@ -60,7 +60,7 @@ async def delete_call_recording(
     call_id: UUID,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
-    _: None = Depends(require_roles([UserRole.super_admin, UserRole.division_head]))
+    _: None = Depends(require_roles([UserRole.admin, UserRole.division_head]))
 ):
     stmt = select(CallRecording).where(
         CallRecording.id == call_id,

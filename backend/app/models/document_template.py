@@ -22,8 +22,8 @@ class DocumentTemplate(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     division_id = Column(UUID(as_uuid=True), ForeignKey("divisions.id"), nullable=True)
-    doc_type = Column(Enum(DocType))
-    format = Column(Enum(DocFormat))
+    doc_type = Column(Enum(DocType, name="doc_type"))
+    format = Column(Enum(DocFormat, name="doc_format"))
     template_name = Column(String(255))
     s3_key = Column(String(1000))
     thumbnail_s3_key = Column(String(1000))

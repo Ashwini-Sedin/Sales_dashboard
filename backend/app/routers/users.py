@@ -18,7 +18,7 @@ def list_users(
     role: Optional[UserRole] = None,
     is_active: Optional[bool] = None,
     db: Session = Depends(get_db),
-    current_user: User = Depends(require_roles([UserRole.super_admin, UserRole.division_head]))
+    current_user: User = Depends(require_roles([UserRole.admin, UserRole.division_head]))
 ):
     users = user_service.list_users(db, division_id=division_id, role=role, is_active=is_active)
     return users
@@ -28,7 +28,7 @@ def create_user(
     user_in: UserCreate,
     background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
-    current_user: User = Depends(require_roles([UserRole.super_admin]))
+    current_user: User = Depends(require_roles([UserRole.admin]))
 ):
     db_user = user_service.get_user_by_email(db, email=user_in.email)
     if db_user:
@@ -65,7 +65,7 @@ def update_user(
         raise HTTPException(status_code=404, detail="User not found")
     
     # Permission check: super_admin can update anyone, division_head can update users in their division
-    if current_user.role == UserRole.super_admin:
+    if current_user.role == UserRole.admin:
         pass
     elif current_user.role == UserRole.division_head:
         if db_user.division_id != current_user.division_id:
@@ -81,7 +81,7 @@ def deactivate_user(
     user_id: UUID,
     reassign_to_id: Optional[UUID] = Query(None),
     db: Session = Depends(get_db),
-    current_user: User = Depends(require_roles([UserRole.super_admin, UserRole.division_head]))
+    current_user: User = Depends(require_roles([UserRole.admin, UserRole.division_head]))
 ):
     db_user = user_service.get_user(db, user_id=user_id)
     if not db_user:

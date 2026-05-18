@@ -1,9 +1,11 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import MainLayout from './layouts/MainLayout';
 import Login from './pages/Login';
+import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import LeadsList from './pages/leads/LeadsList';
 import LeadDetail from './pages/leads/LeadDetail';
@@ -14,6 +16,7 @@ import NotificationTemplatesAdmin from './pages/admin/NotificationTemplatesAdmin
 import TemplateLibraryAdmin from './pages/admin/TemplateLibraryAdmin';
 import Reports from './pages/Reports';
 import DocumentCenter from './pages/DocumentCenter';
+import GenerateDoc from './pages/GenerateDoc';
 
 // Placeholder components for routes
 const Placeholder = ({ name }) => (
@@ -29,38 +32,42 @@ const AuditLogsAdmin = () => <Placeholder name="Audit Logs" />;
 function App() {
     return (
         <BrowserRouter>
-            <AuthProvider>
-                <Routes>
-                    <Route path="/login" element={<Login />} />
+            <ThemeProvider>
+                <AuthProvider>
+                    <Routes>
+                        <Route path="/login" element={<Login />} />
+                        <Route path="/register" element={<Register />} />
 
-                    <Route element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>
-                        <Route path="/" element={<Navigate to="/dashboard" replace />} />
-                        <Route path="/dashboard" element={<Dashboard />} />
-                        <Route path="/leads" element={<LeadsList />} />
-                        <Route path="/leads/:id" element={<LeadDetail />} />
-                        <Route path="/documents" element={<DocumentCenter />} />
-                        <Route path="/reports" element={<Reports />} />
-                        <Route path="/communication" element={<Placeholder name="Communication Hub" />} />
+                        <Route element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>
+                            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                            <Route path="/dashboard" element={<Dashboard />} />
+                            <Route path="/leads" element={<LeadsList />} />
+                            <Route path="/leads/:id" element={<LeadDetail />} />
+                            <Route path="/documents" element={<DocumentCenter />} />
+                            <Route path="/generate-doc" element={<GenerateDoc />} />
+                            <Route path="/reports" element={<Reports />} />
+                            <Route path="/communication" element={<Placeholder name="Communication Hub" />} />
 
-                        <Route path="/admin" element={
-                            <ProtectedRoute allowedRoles={['super_admin', 'division_head']}>
-                                <AdminLayout />
-                            </ProtectedRoute>
-                        }>
-                            <Route index element={<Navigate to="users" replace />} />
-                            <Route path="users" element={<UsersAdmin />} />
-                            <Route path="divisions" element={<DivisionsAdmin />} />
-                            <Route path="notification-templates" element={<NotificationTemplatesAdmin />} />
-                            <Route path="templates" element={<TemplateLibraryAdmin />} />
-                            <Route path="audit-logs" element={<AuditLogsAdmin />} />
+                            <Route path="/admin" element={
+                                <ProtectedRoute allowedRoles={['admin', 'division_head']}>
+                                    <AdminLayout />
+                                </ProtectedRoute>
+                            }>
+                                <Route index element={<Navigate to="users" replace />} />
+                                <Route path="users" element={<UsersAdmin />} />
+                                <Route path="divisions" element={<DivisionsAdmin />} />
+                                <Route path="notification-templates" element={<NotificationTemplatesAdmin />} />
+                                <Route path="templates" element={<TemplateLibraryAdmin />} />
+                                <Route path="audit-logs" element={<AuditLogsAdmin />} />
+                            </Route>
+
+                            <Route path="/settings" element={<Placeholder name="User Settings" />} />
                         </Route>
 
-                        <Route path="/settings" element={<Placeholder name="User Settings" />} />
-                    </Route>
-
-                    <Route path="*" element={<Navigate to="/dashboard" replace />} />
-                </Routes>
-            </AuthProvider>
+                        <Route path="*" element={<Navigate to="/dashboard" replace />} />
+                    </Routes>
+                </AuthProvider>
+            </ThemeProvider>
         </BrowserRouter>
     );
 }

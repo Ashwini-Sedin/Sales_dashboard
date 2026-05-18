@@ -131,6 +131,32 @@ class QuickSalesDocxService(BaseDocumentService):
             doc.add_paragraph(benefit, style='List Bullet')
         doc.add_page_break()
 
+        # Section 4b — Professional Information Note
+        if inputs.introduction or inputs.objective or inputs.content_structure:
+            heading = doc.add_heading("Professional Information Note", level=1)
+            heading.runs[0].font.color.rgb = _hex_to_rgb(primary_color)
+            
+            if inputs.introduction:
+                p = doc.add_paragraph()
+                run = p.add_run(inputs.introduction)
+                run.font.size = Pt(11)
+            
+            if inputs.objective:
+                p = doc.add_heading("Objective", level=2)
+                p.runs[0].font.color.rgb = _hex_to_rgb(secondary_color)
+                p = doc.add_paragraph()
+                run = p.add_run(inputs.objective)
+                run.font.size = Pt(11)
+                
+            if inputs.content_structure:
+                p = doc.add_heading("Content Structure", level=2)
+                p.runs[0].font.color.rgb = _hex_to_rgb(secondary_color)
+                p = doc.add_paragraph()
+                run = p.add_run(inputs.content_structure)
+                run.font.size = Pt(11)
+                
+            doc.add_page_break()
+
         # Section 5 — Pricing Summary
         heading = doc.add_heading("Pricing Summary", level=1)
         heading.runs[0].font.color.rgb = _hex_to_rgb(primary_color)

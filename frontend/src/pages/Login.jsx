@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 const Login = () => {
@@ -82,6 +82,12 @@ const Login = () => {
                         </button>
                     </div>
                 </form>
+                <p style={{ textAlign: 'center', marginTop: '20px', fontSize: '14px', color: '#5a6a85' }}>
+                    Don't have an account?{' '}
+                    <Link to="/register" style={{ color: '#1a2235', fontWeight: '700', textDecoration: 'none' }}>
+                        Create account
+                    </Link>
+                </p>
             </div>
         </div>
     );

@@ -32,7 +32,7 @@ async def test_upload_recording(
     file: UploadFile = File(...),
     db: Session = Depends(get_db),
     current_user = Depends(get_current_active_user),
-    _: None = Depends(require_roles([UserRole.super_admin, UserRole.division_head]))
+    _: None = Depends(require_roles([UserRole.admin, UserRole.division_head]))
 ):
     file_bytes = await file.read()
     

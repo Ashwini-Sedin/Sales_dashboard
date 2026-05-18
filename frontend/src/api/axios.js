@@ -26,8 +26,8 @@ axiosInstance.interceptors.response.use(
     async (error) => {
         const originalRequest = error.config;
         
-        // Don't retry if the request failed was to the refresh endpoint itself
-        if (originalRequest.url === '/api/auth/refresh') {
+        // Don't retry if the request failed was to the refresh or login endpoint
+        if (originalRequest.url === '/api/auth/refresh' || originalRequest.url === '/api/auth/login') {
             return Promise.reject(error);
         }
 

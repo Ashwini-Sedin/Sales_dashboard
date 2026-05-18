@@ -20,7 +20,7 @@ class NdaClause(Base):
     __tablename__ = "nda_clauses"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    clause_type = Column(Enum(NdaClauseType))
+    clause_type = Column(Enum(NdaClauseType, name="clause_type"))
     clause_text = Column(Text)
     is_default = Column(Boolean)
     division_id = Column(UUID(as_uuid=True), ForeignKey("divisions.id"), nullable=True)

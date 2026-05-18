@@ -52,7 +52,7 @@ const DocumentHistoryTable = ({ documents, leadId, showLead = false }) => {
 
   if (!documents || documents.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-12 text-gray-400 bg-white rounded-lg border border-dashed border-gray-300">
+      <div className="flex flex-col items-center justify-center py-12 text-gray-400 dark:text-df-text bg-white dark:bg-df-card rounded-lg border border-dashed border-gray-300 dark:border-df-border">
         <FiFile size={48} className="mb-2" />
         <p>No documents generated yet.</p>
       </div>
@@ -60,41 +60,41 @@ const DocumentHistoryTable = ({ documents, leadId, showLead = false }) => {
   }
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+    <div className="bg-white dark:bg-df-card border border-gray-200 dark:border-df-border rounded-lg shadow-sm overflow-hidden">
       <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50 sticky top-0 z-10">
+        <table className="min-w-full divide-y divide-gray-200 dark:divide-df-border">
+          <thead className="bg-gray-50 dark:bg-[#151b23] sticky top-0 z-10">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-df-text uppercase tracking-wider">Type</th>
               {showLead && (
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Lead / Company</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-df-text uppercase tracking-wider">Lead / Company</th>
               )}
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Version</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Format</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-df-text uppercase tracking-wider">Version</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-df-text uppercase tracking-wider">Format</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-df-text uppercase tracking-wider">Status</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-df-text uppercase tracking-wider">Date</th>
+              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-df-text uppercase tracking-wider">Actions</th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="bg-white dark:bg-df-card divide-y divide-gray-200 dark:divide-df-border">
             {documents.map((doc, idx) => {
               const { label, icon } = getDocTypeInfo(doc.doc_type);
               return (
-                <tr key={doc.id} className={idx % 2 === 0 ? "bg-white" : "bg-gray-50"}>
+                <tr key={doc.id} className={idx % 2 === 0 ? "bg-white dark:bg-df-card" : "bg-gray-50 dark:bg-[#12181f]"}>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center space-x-3">
                       <span className="text-lg">{icon}</span>
-                      <span className="text-sm font-medium text-gray-900">{label}</span>
+                      <span className="text-sm font-medium text-gray-900 dark:text-df-textlight">{label}</span>
                     </div>
                   </td>
                   {showLead && (
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-semibold text-gray-900">{doc.lead_company_name}</div>
-                      <div className="text-[10px] text-gray-400 font-mono">{doc.lead_id.slice(0, 8)}...</div>
+                      <div className="text-sm font-semibold text-gray-900 dark:text-df-textlight">{doc.lead_company_name}</div>
+                      <div className="text-[10px] text-gray-400 dark:text-df-text font-mono">{doc.lead_id.slice(0, 8)}...</div>
                     </td>
                   )}
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="px-2 py-0.5 rounded bg-gray-100 text-gray-700 text-xs font-mono">
+                    <span className="px-2 py-0.5 rounded bg-gray-100 dark:bg-[#151b23] text-gray-700 dark:text-df-text text-xs font-mono">
                       v{doc.version_number}
                     </span>
                   </td>
@@ -108,14 +108,14 @@ const DocumentHistoryTable = ({ documents, leadId, showLead = false }) => {
                   <td className="px-6 py-4 whitespace-nowrap">
                     {getStatusBadge(doc.status)}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-df-text">
                     {format(new Date(doc.created_at), 'dd MMM yyyy')}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <div className="flex justify-end space-x-2">
                       <button 
                         onClick={() => downloadDocument(doc.id)}
-                        className="p-1.5 text-gray-400 hover:text-blue-600 transition-colors"
+                        className="p-1.5 text-gray-400 hover:text-blue-600 dark:hover:text-df-accent transition-colors"
                         title="Download"
                       >
                         <FiDownload />

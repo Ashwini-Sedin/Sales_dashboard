@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { FiX, FiZap, FiFile, FiCheck, FiLoader } from 'react-icons/fi';
+import { FiX, FiZap, FiCheck, FiLoader } from 'react-icons/fi';
 import api from '../../api';
 import GenerationProgressModal from './GenerationProgressModal';
 

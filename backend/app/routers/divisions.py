@@ -23,7 +23,7 @@ def list_divisions(
 def create_division(
     division_in: DivisionCreate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(require_roles([UserRole.super_admin]))
+    current_user: User = Depends(require_roles([UserRole.admin]))
 ):
     division = division_service.create_division(db, division_in=division_in)
     return division
@@ -33,7 +33,7 @@ def update_division(
     id: UUID,
     division_in: DivisionUpdate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(require_roles([UserRole.super_admin]))
+    current_user: User = Depends(require_roles([UserRole.admin]))
 ):
     division = division_service.update_division(db, division_id=id, division_in=division_in)
     if not division:

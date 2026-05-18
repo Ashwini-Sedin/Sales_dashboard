@@ -100,7 +100,7 @@ const EditUserModal = ({ isOpen, user, onClose, onSuccess }) => {
                                 >
                                     <option value="sales_rep">Sales Rep</option>
                                     <option value="division_head">Division Head</option>
-                                    <option value="super_admin">Super Admin</option>
+                                    <option value="admin">Admin</option>
                                 </select>
                             </div>
 

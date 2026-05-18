@@ -36,6 +36,12 @@ class Settings(BaseSettings):
     SHAREPOINT_SITE_ID: Optional[str] = None
     AWS_S3_DOCUMENTS_BUCKET: str = "dealflow-documents"
 
-    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
+    # GateLLM Integration
+    GATELLM_API_KEY: Optional[str] = None
+    GATELLM_API_BASE: Optional[str] = None
+    GATELLM_MODEL: Optional[str] = None
 
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
+
+# Instantiate settings to load environment variables from .env
 settings = Settings()

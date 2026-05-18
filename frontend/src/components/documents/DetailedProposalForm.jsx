@@ -33,7 +33,7 @@ const DetailedProposalForm = ({ leadId, lead, onClose, onSuccess }) => {
   const [selectedTeamMemberIds, setSelectedTeamMemberIds] = useState([]);
   const [selectedCaseStudyIds, setSelectedCaseStudyIds] = useState([]);
 
-  const { register, control, handleSubmit, watch, formState: { errors, isValid } } = useForm({
+  const { register, control, handleSubmit, watch, formState: { isValid } } = useForm({
     mode: 'onChange',
     defaultValues: {
       client_background: '',

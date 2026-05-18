@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { 
-    EnvelopeIcon, 
     ArrowPathIcon,
     DevicePhoneMobileIcon,
     ComputerDesktopIcon,
@@ -32,6 +31,7 @@ const NotificationTemplatesAdmin = () => {
 
     useEffect(() => {
         fetchTemplates();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const handleSelectTemplate = (template) => {

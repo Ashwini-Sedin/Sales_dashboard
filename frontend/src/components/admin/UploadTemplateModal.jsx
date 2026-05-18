@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { useForm } from 'react-hook-form';
-import { FiX, FiUpload, FiFile, FiCheck, FiAlertCircle } from 'react-icons/fi';
+import { FiX, FiUpload, FiFile, FiCheck } from 'react-icons/fi';
 import { useQuery } from '@tanstack/react-query';
 import api from '../../api';
 import { toast } from 'react-hot-toast';

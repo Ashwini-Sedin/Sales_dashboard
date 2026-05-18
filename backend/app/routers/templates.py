@@ -36,7 +36,7 @@ async def upload_template(
     division_id: Optional[UUID] = Form(None),
     file: UploadFile = File(...),
     db: AsyncSession = Depends(get_async_db),
-    current_user: User = Depends(require_roles([UserRole.super_admin, UserRole.division_head]))
+    current_user: User = Depends(require_roles([UserRole.admin, UserRole.division_head]))
 ):
     # 1. Validate File Size
     file_bytes = await file.read()
@@ -135,7 +135,7 @@ async def get_template(
 async def activate_template(
     template_id: UUID,
     db: AsyncSession = Depends(get_async_db),
-    current_user: User = Depends(require_roles([UserRole.super_admin, UserRole.division_head]))
+    current_user: User = Depends(require_roles([UserRole.admin, UserRole.division_head]))
 ):
     stmt = select(DocumentTemplate).where(DocumentTemplate.id == template_id)
     result = await db.execute(stmt)
@@ -191,7 +191,7 @@ async def get_template_preview(
 async def delete_template(
     template_id: UUID,
     db: AsyncSession = Depends(get_async_db),
-    current_user: User = Depends(require_roles([UserRole.super_admin]))
+    current_user: User = Depends(require_roles([UserRole.admin]))
 ):
     stmt = select(DocumentTemplate).where(DocumentTemplate.id == template_id)
     result = await db.execute(stmt)

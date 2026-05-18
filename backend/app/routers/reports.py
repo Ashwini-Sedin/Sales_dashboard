@@ -19,7 +19,7 @@ def get_dashboard_stats(
     current_user: User = Depends(get_current_active_user)
 ):
     # Security: If not super_admin, can only see their own division
-    if current_user.role != UserRole.super_admin:
+    if current_user.role != UserRole.admin:
         division_id = current_user.division_id
         
     return lead_reports.get_dashboard_stats(db, division_id)
@@ -32,7 +32,7 @@ def get_turnaround_report(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user)
 ):
-    if current_user.role != UserRole.super_admin:
+    if current_user.role != UserRole.admin:
         division_id = current_user.division_id
         
     report_df = lead_reports.get_turnaround_report(db, division_id, date_from, date_to)
@@ -44,7 +44,7 @@ def get_conversion_funnel(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user)
 ):
-    if current_user.role != UserRole.super_admin:
+    if current_user.role != UserRole.admin:
         division_id = current_user.division_id
         
     return lead_reports.get_conversion_funnel(db, division_id)
@@ -55,7 +55,7 @@ def get_salesperson_performance(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user)
 ):
-    if current_user.role != UserRole.super_admin:
+    if current_user.role != UserRole.admin:
         division_id = current_user.division_id
         
     return lead_reports.get_salesperson_performance(db, division_id)
@@ -67,7 +67,7 @@ def get_monthly_trends(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user)
 ):
-    if current_user.role != UserRole.super_admin:
+    if current_user.role != UserRole.admin:
         division_id = current_user.division_id
         
     return lead_reports.get_monthly_trend(db, division_id, months)
@@ -78,7 +78,7 @@ def export_leads_excel(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user)
 ):
-    if current_user.role != UserRole.super_admin:
+    if current_user.role != UserRole.admin:
         division_id = current_user.division_id
         
     filters = {"division_id": division_id}

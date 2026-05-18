@@ -35,7 +35,7 @@ const NdaForm = ({ leadId, lead, onClose, onSuccess }) => {
     queryKey: ['signatories', user?.division_id],
     queryFn: async () => {
       const res = await api.get('/api/users', { 
-        params: { role: ['division_head', 'sales_manager', 'super_admin'] } 
+        params: { role: ['division_head', 'sales_manager', 'admin'] } 
       });
       return res.data;
     }

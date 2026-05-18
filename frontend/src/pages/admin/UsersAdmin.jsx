@@ -54,7 +54,7 @@ const UsersAdmin = () => {
 
     const getRoleBadge = (role) => {
         const styles = {
-            super_admin: 'bg-purple-100 text-purple-700 border-purple-200',
+            admin: 'bg-purple-100 text-purple-700 border-purple-200',
             division_head: 'bg-blue-100 text-blue-700 border-blue-200',
             sales_rep: 'bg-green-100 text-green-700 border-green-200',
         };

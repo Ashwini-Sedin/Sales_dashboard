@@ -16,9 +16,9 @@ const ApprovalBanner = ({ document, currentUser, onRefresh }) => {
  
   if (!isPresales && !isNda && !isSow && !isPending && !wasRejected) return null;
  
-  const canApprovePresales = ['division_head', 'super_admin'].includes(currentUser?.role);
-  const canApproveManager = ['sales_manager', 'super_admin'].includes(currentUser?.role);
-  const canApproveLegal = ['legal', 'super_admin'].includes(currentUser?.role);
+  const canApprovePresales = ['division_head', 'admin'].includes(currentUser?.role);
+  const canApproveManager = ['sales_manager', 'admin'].includes(currentUser?.role);
+  const canApproveLegal = ['legal', 'admin'].includes(currentUser?.role);
 
   return (
     <div className="mt-4 animate-in slide-in-from-top-2">

@@ -8,6 +8,7 @@ from app.core.database import Base
 
 class UserRole(str, enum.Enum):
     super_admin = "Chief Executive Officer"
+    admin = "Chief Executive Officer"  # Alias for compatibility with routers using UserRole.admin
     division_head = "Division Head"
     sales_manager = "Sales Manager"
     salesperson = "Business Development Executive"
@@ -23,7 +24,7 @@ class User(Base):
     hashed_password = Column(String(255))
     first_name = Column(String(100))
     last_name = Column(String(100))
-    role = Column(Enum(UserRole, values_callable=lambda x: [e.value for e in x]), nullable=False)
+    role = Column(Enum(UserRole, name="user_role"), nullable=False)
     division_id = Column(UUID(as_uuid=True), ForeignKey("divisions.id"))
     bio = Column(Text)
     avatar_url = Column(String(500))

@@ -1,5 +1,5 @@
-import React, { useState, useCallback } from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { MdClose, MdAttachFile, MdSend, MdDelete } from 'react-icons/md';
@@ -8,7 +8,7 @@ const MAX_FILES = 5;
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
 const EmailComposeModal = ({ leadEmail, isOpen, onClose, onSend }) => {
-  const { control, handleSubmit, register, reset, watch, setValue } = useForm({
+  const { handleSubmit, register, reset, setValue } = useForm({
     defaultValues: {
       to_email: leadEmail || '',
       subject: '',

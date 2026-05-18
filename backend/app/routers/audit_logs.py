@@ -23,7 +23,7 @@ def list_audit_logs(
     skip: int = Query(0, ge=0),
     limit: int = Query(100, ge=1, le=1000),
     db: Session = Depends(get_db),
-    current_user: User = Depends(require_roles([UserRole.super_admin]))
+    current_user: User = Depends(require_roles([UserRole.admin]))
 ):
     logs = audit_service.list_audit_logs(
         db, 
@@ -45,7 +45,7 @@ def export_audit_logs(
     start_date: Optional[datetime] = None,
     end_date: Optional[datetime] = None,
     db: Session = Depends(get_db),
-    current_user: User = Depends(require_roles([UserRole.super_admin]))
+    current_user: User = Depends(require_roles([UserRole.admin]))
 ):
     filters = {
         "user_id": user_id,

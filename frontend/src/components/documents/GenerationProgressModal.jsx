@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   FiLoader, FiCheckCircle, FiXCircle, 
-  FiDownload, FiExternalLink, FiArrowRight 
+  FiDownload, FiArrowRight 
 } from 'react-icons/fi';
 import { useTaskStatus, useDocumentDownload } from '../../hooks/useDocuments';
 import { useQueryClient } from '@tanstack/react-query';
@@ -9,7 +9,7 @@ import { useQueryClient } from '@tanstack/react-query';
 const GenerationProgressModal = ({ taskId, documentId, leadId, onClose, onComplete }) => {
   const queryClient = useQueryClient();
   const downloadDocument = useDocumentDownload();
-  const { data: task, error: taskError } = useTaskStatus(taskId);
+  const { data: task } = useTaskStatus(taskId);
   const [progress, setProgress] = useState(0);
 
   // Status mapping from backend: Queued, In Progress, Complete, Failed

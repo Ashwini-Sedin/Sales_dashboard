@@ -23,7 +23,7 @@ class ActivityTimeline(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     lead_id = Column(UUID(as_uuid=True), ForeignKey("leads.id"))
     actor_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)
-    event_type = Column(Enum(ActivityEventType))
+    event_type = Column(Enum(ActivityEventType, name="event_type"))
     description = Column(Text)
     metadata_ = Column("metadata", JSONB)
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))

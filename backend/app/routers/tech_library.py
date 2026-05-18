@@ -43,7 +43,7 @@ async def create_tech_item(
     name: str,
     category: str,
     db: AsyncSession = Depends(get_async_db),
-    current_user: User = Depends(require_roles([UserRole.super_admin]))
+    current_user: User = Depends(require_roles([UserRole.admin]))
 ):
     """
     Create a new technical library item (Super Admin only).
@@ -65,7 +65,7 @@ async def update_tech_item(
     category: Optional[str] = None,
     is_active: Optional[bool] = None,
     db: AsyncSession = Depends(get_async_db),
-    current_user: User = Depends(require_roles(UserRole.super_admin))
+    current_user: User = Depends(require_roles(UserRole.admin))
 ):
     """
     Update an existing technical library item (Super Admin only).

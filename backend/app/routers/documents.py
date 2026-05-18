@@ -28,7 +28,10 @@ from app.schemas.document import (
     LegalReviewRequest,
     SowGenerateRequest,
     ManagerApprovalRequest,
-    FinalApprovalRequest
+    FinalApprovalRequest,
+    DraftWithLlmRequest,
+    GenerateWithLlmRequest,
+    QuickSalesInput
 )
 from app.tasks.document_tasks import (
     generate_quick_sales_docx_task, 
@@ -43,6 +46,8 @@ from app.services.documents.base_document_service import BaseDocumentService
 from app.services.s3_service import s3_service
 from app.core.socket_manager import socket_manager
 from app.models.activity_timeline import ActivityTimeline, ActivityEventType
+from app.services.llm_service import generate_document_inputs
+from app.services.documents.quick_sales_docx import QuickSalesDocxService
 
 router = APIRouter(prefix="/api/documents", tags=["documents"])
 
@@ -89,6 +94,85 @@ async def get_lead_document_versions(
         "groups": groups,
         "total_documents": len(documents)
     }
+
+@router.post("/draft-with-llm")
+async def draft_document_with_llm(
+    req: DraftWithLlmRequest,
+    current_user: User = Depends(get_current_active_user)
+):
+    """
+    Call GateLLM to generate dynamic, professional note sections based on user inputs.
+    """
+    try:
+        data = await generate_document_inputs(
+            doc_type=req.doc_type,
+            client_name=req.client_name,
+            client_company=req.client_company,
+            proposed_solution=req.proposed_solution,
+            price_from=req.price_from,
+            price_to=req.price_to,
+            start_date=req.start_date,
+            delivery_date=req.delivery_date
+        )
+        return data
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"GateLLM generation failed: {str(e)}")
+
+@router.post("/generate-with-llm")
+async def generate_document_with_llm(
+    req: GenerateWithLlmRequest,
+    db: AsyncSession = Depends(get_async_db),
+    current_user: User = Depends(get_current_active_user)
+):
+    """
+    Assemble and compile the final Word note directly into Neon, S3, and SharePoint!
+    """
+    try:
+        # 1. Obtain AI-generated content (either from frontend or re-generate via GateLLM)
+        if req.drafted_content:
+            data = req.drafted_content
+        else:
+            data = await generate_document_inputs(
+                doc_type=req.doc_type,
+                client_name=req.client_name,
+                client_company=req.client_company,
+                proposed_solution=req.proposed_solution,
+                price_from=req.price_from,
+                price_to=req.price_to,
+                start_date=req.start_date,
+                delivery_date=req.delivery_date
+            )
+
+        # 2. Build QuickSalesInput structure
+        inputs = QuickSalesInput(
+            proposed_solution_name=data.get("proposed_solution_name", req.proposed_solution),
+            pricing_range=data.get("pricing_range", f"${req.price_from} - ${req.price_to}"),
+            start_date=req.start_date,
+            end_date=req.delivery_date,
+            key_benefits=data.get("key_benefits", []),
+            client_challenges=data.get("client_challenges", []),
+            introduction=data.get("introduction"),
+            objective=data.get("objective"),
+            content_structure=data.get("content_structure"),
+            notes=None
+        )
+
+        # 3. Instantiate and run compilation service synchronously
+        service = QuickSalesDocxService()
+        document = await service.generate(
+            db=db,
+            lead_id=req.lead_id,
+            user_id=current_user.id,
+            inputs=inputs
+        )
+
+        return {
+            "document_id": str(document.id),
+            "status": "success",
+            "message": "Professional note compiled successfully!"
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Compilation failed: {str(e)}")
 
 @router.post("/{document_id}/restore", response_model=RestoreDocumentResponse)
 async def restore_document(

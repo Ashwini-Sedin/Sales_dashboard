@@ -60,7 +60,7 @@ async def create_nda_clause(
     is_default: bool,
     division_id: Optional[UUID] = None,
     db: AsyncSession = Depends(get_async_db),
-    current_user: User = Depends(require_roles([UserRole.super_admin, UserRole.legal]))
+    current_user: User = Depends(require_roles([UserRole.admin, UserRole.legal]))
 ):
     clause = NdaClause(
         clause_type=clause_type,
@@ -79,7 +79,7 @@ async def update_nda_clause(
     clause_text: Optional[str] = None,
     is_default: Optional[bool] = None,
     db: AsyncSession = Depends(get_async_db),
-    current_user: User = Depends(require_roles([UserRole.super_admin, UserRole.legal]))
+    current_user: User = Depends(require_roles([UserRole.admin, UserRole.legal]))
 ):
     stmt = select(NdaClause).where(NdaClause.id == clause_id)
     result = await db.execute(stmt)
