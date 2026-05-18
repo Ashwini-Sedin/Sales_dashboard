@@ -206,3 +206,45 @@ class NotificationService:
         )
 
 notification_service = NotificationService()
+
+
+async def create_in_app_notification(
+    db,
+    user_id,
+    lead_id,
+    type: str,
+    message: str,
+) -> None:
+    """
+    Standalone async helper to create an in-app notification and emit a
+    real-time socket event. Compatible with async SQLAlchemy sessions used
+    throughout the routers and document services.
+    """
+    from app.models.notification import Notification
+    from app.core.socket_manager import socket_manager
+
+    notification = Notification(
+        user_id=user_id,
+        lead_id=lead_id,
+        type=type,
+        message=message,
+        is_read=False,
+        created_at=datetime.now(timezone.utc),
+    )
+    db.add(notification)
+    await db.flush()          # persist without committing the outer transaction
+
+    try:
+        await socket_manager.emit_to_user_room(
+            user_id=str(user_id),
+            event="new_notification",
+            data={
+                "id": str(notification.id),
+                "type": notification.type,
+                "message": notification.message,
+                "lead_id": str(notification.lead_id) if notification.lead_id else None,
+                "created_at": notification.created_at.isoformat(),
+            },
+        )
+    except Exception:
+        pass  # never let a socket error break the main transaction

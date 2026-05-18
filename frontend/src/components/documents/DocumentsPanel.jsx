@@ -9,6 +9,7 @@ import QuickSalesForm from './QuickSalesForm';
 import DetailedProposalForm from './DetailedProposalForm';
 import PresalesForm from './PresalesForm';
 import NdaForm from './NdaForm';
+import SowForm from './SowForm';
 
 const DocumentsPanel = ({ leadId, lead }) => {
   const { data, isLoading } = useDocuments(leadId);
@@ -53,7 +54,7 @@ const DocumentsPanel = ({ leadId, lead }) => {
       description: 'Full project engagement agreement',
       icon: <FiClipboard />,
       color: 'bg-green-500',
-      enabled: false
+      enabled: true
     }
   ];
 
@@ -166,6 +167,14 @@ const DocumentsPanel = ({ leadId, lead }) => {
       )}
       {activeModal === 'nda' && (
         <NdaForm 
+          leadId={leadId} 
+          lead={lead} 
+          onClose={() => setActiveModal(null)} 
+          onSuccess={() => setActiveModal(null)}
+        />
+      )}
+      {activeModal === 'sow' && (
+        <SowForm 
           leadId={leadId} 
           lead={lead} 
           onClose={() => setActiveModal(null)} 

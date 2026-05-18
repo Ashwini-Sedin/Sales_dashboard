@@ -21,7 +21,8 @@ const ApprovalActionModal = ({ document, action, onClose, onSuccess }) => {
       const endpoint = `/api/documents/${document.id}/${action}`;
       await api.put(endpoint, { comments });
       
-      toast.success(action === 'approve' ? 'Document approved successfully' : 'Document rejected');
+      const successMsg = action.includes('approve') ? 'Document approved successfully' : 'Document rejected';
+      toast.success(successMsg);
       queryClient.invalidateQueries(['document-versions', document.lead_id]);
       onSuccess();
     } catch (error) {
@@ -31,7 +32,7 @@ const ApprovalActionModal = ({ document, action, onClose, onSuccess }) => {
     }
   };
 
-  const isApprove = action === 'approve';
+  const isApprove = action.includes('approve');
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-gray-900/40 backdrop-blur-sm animate-in fade-in duration-200">

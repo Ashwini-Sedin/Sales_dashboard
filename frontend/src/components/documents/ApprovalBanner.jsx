@@ -9,13 +9,15 @@ const ApprovalBanner = ({ document, currentUser, onRefresh }) => {
   // Show only if presales or pending status
   const isPresales = document.doc_type === 'presales';
   const isNda = document.doc_type === 'nda';
+  const isSow = document.doc_type === 'sow';
   const isPending = document.status.includes('pending');
   
-  const wasRejected = (isPresales || isNda) && document.status === 'draft';
-
-  if (!isPresales && !isNda && !isPending && !wasRejected) return null;
-
+  const wasRejected = (isPresales || isNda || isSow) && document.status === 'draft';
+ 
+  if (!isPresales && !isNda && !isSow && !isPending && !wasRejected) return null;
+ 
   const canApprovePresales = ['division_head', 'super_admin'].includes(currentUser?.role);
+  const canApproveManager = ['sales_manager', 'super_admin'].includes(currentUser?.role);
   const canApproveLegal = ['legal', 'super_admin'].includes(currentUser?.role);
 
   return (
@@ -84,7 +86,91 @@ const ApprovalBanner = ({ document, currentUser, onRefresh }) => {
         </div>
       )}
 
-      {(document.status === 'approved' || (isNda && document.status === 'pending_final_approval')) && (
+      {/* SOW Manager Review */}
+      {isSow && document.status === 'pending_manager_review' && (
+        <div className="bg-amber-50 border border-amber-100 rounded-2xl p-4 flex items-center justify-between">
+          <div className="flex items-center space-x-3 text-amber-800">
+            <FiClock className="animate-pulse" size={20} />
+            <div>
+              <p className="font-bold text-sm">
+                {canApproveManager ? "⏳ This SOW requires your manager review" : "⏳ Awaiting Sales Manager review"}
+              </p>
+              <p className="text-[10px] opacity-75 font-medium uppercase tracking-wider">SOW Document v{document.version_number}</p>
+            </div>
+          </div>
+          
+          {canApproveManager && (
+            <div className="flex items-center space-x-2">
+              <button 
+                onClick={() => setAction('manager-approve')}
+                className="px-4 py-2 bg-amber-600 text-white rounded-xl text-xs font-bold hover:bg-amber-700 transition-all shadow-md shadow-amber-100"
+              >
+                Approve
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* SOW Legal Review */}
+      {isSow && document.status === 'pending_legal_review' && (
+        <div className="bg-purple-50 border border-purple-100 rounded-2xl p-4 flex items-center justify-between">
+          <div className="flex items-center space-x-3 text-purple-800">
+            <FiShield className="animate-pulse" size={20} />
+            <div>
+              <p className="font-bold text-sm">
+                {canApproveLegal ? "⚖️ This SOW requires legal review" : "⚖️ Awaiting Legal review"}
+              </p>
+              <p className="text-[10px] opacity-75 font-medium uppercase tracking-wider">SOW Document v{document.version_number}</p>
+            </div>
+          </div>
+          
+          {canApproveLegal && (
+            <div className="flex items-center space-x-2">
+              <button 
+                onClick={() => setLegalAction('legal-approve-sow')}
+                className="px-4 py-2 bg-white border border-purple-100 text-purple-600 rounded-xl text-xs font-bold hover:bg-purple-50 transition-all shadow-sm"
+              >
+                Reject
+              </button>
+              <button 
+                onClick={() => setLegalAction('legal-approve-sow')}
+                className="px-4 py-2 bg-purple-600 text-white rounded-xl text-xs font-bold hover:bg-purple-700 transition-all shadow-md shadow-purple-100"
+              >
+                Approve
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* SOW Final Approval */}
+      {isSow && document.status === 'pending_final_approval' && (
+        <div className="bg-blue-50 border border-blue-100 rounded-2xl p-4 flex items-center justify-between">
+          <div className="flex items-center space-x-3 text-blue-800">
+            <FiCheckCircle className="animate-pulse" size={20} />
+            <div>
+              <p className="font-bold text-sm">
+                {canApprovePresales ? "👑 This SOW requires your final approval" : "👑 Awaiting Division Head final approval"}
+              </p>
+              <p className="text-[10px] opacity-75 font-medium uppercase tracking-wider">SOW Document v{document.version_number}</p>
+            </div>
+          </div>
+          
+          {canApprovePresales && (
+            <div className="flex items-center space-x-2">
+              <button 
+                onClick={() => setAction('final-approve')}
+                className="px-4 py-2 bg-blue-600 text-white rounded-xl text-xs font-bold hover:bg-blue-700 transition-all shadow-md shadow-blue-100"
+              >
+                Final Approval
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {(document.status === 'approved') && (
         <div className="bg-green-50 border border-green-100 rounded-2xl p-4 flex items-center space-x-3 text-green-700">
           <FiCheckCircle size={20} />
           <div>

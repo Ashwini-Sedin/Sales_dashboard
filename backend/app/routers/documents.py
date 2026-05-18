@@ -1,3 +1,4 @@
+from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -8,6 +9,7 @@ from app.core.database import get_async_db
 from app.core.dependencies import get_current_active_user
 from app.models.generated_document import GeneratedDocument
 from app.models.document_approval import DocumentApproval
+from app.services.notification_service import create_in_app_notification
 from app.models.user import User, UserRole
 from app.models.lead import Lead
 from app.models.division import Division
@@ -23,7 +25,10 @@ from app.schemas.document import (
     PresalesGenerateRequest,
     ApprovalRequest,
     NdaGenerateRequest,
-    LegalReviewRequest
+    LegalReviewRequest,
+    SowGenerateRequest,
+    ManagerApprovalRequest,
+    FinalApprovalRequest
 )
 from app.tasks.document_tasks import (
     generate_quick_sales_docx_task, 
@@ -31,7 +36,8 @@ from app.tasks.document_tasks import (
     generate_detailed_proposal_docx_task,
     generate_detailed_proposal_pptx_task,
     generate_presales_docx_task,
-    generate_nda_docx_task
+    generate_nda_docx_task,
+    generate_sow_docx_task
 )
 from app.services.documents.base_document_service import BaseDocumentService
 from app.services.s3_service import s3_service
@@ -817,6 +823,289 @@ async def legal_reject_document(
             "rejected": True,
             "doc_type": "nda",
             "comments": body.comments
+        }
+    )
+
+    return doc
+
+@router.post("/sow/generate", response_model=DocumentGenerationResponse)
+async def generate_sow_document(
+    request: SowGenerateRequest,
+    db: AsyncSession = Depends(get_async_db),
+    current_user: User = Depends(get_current_active_user)
+):
+    """
+    Enqueue a Celery task to generate an SOW document.
+    """
+    # Validate user has access to the lead's division
+    lead_stmt = select(Lead).where(Lead.id == request.lead_id)
+    result = await db.execute(lead_stmt)
+    lead = result.scalar_one_or_none()
+    
+    if not lead:
+        raise HTTPException(status_code=404, detail="Lead not found")
+        
+    if current_user.role != UserRole.super_admin and lead.division_id != current_user.division_id:
+        raise HTTPException(status_code=403, detail="Access denied to this lead's division")
+
+    # Enqueue Celery task
+    task = generate_sow_docx_task.delay(
+        lead_id=str(request.lead_id),
+        user_id=str(current_user.id),
+        inputs=request.dynamic_inputs.model_dump()
+    )
+
+    # Create a placeholder record
+    base_service = BaseDocumentService()
+    version = await base_service.get_next_version(db, request.lead_id, 'sow')
+    
+    document = GeneratedDocument(
+        lead_id=request.lead_id,
+        division_id=lead.division_id,
+        doc_type='sow',
+        format='docx',
+        version_number=version,
+        title="Generating...",
+        status='pending_manager_review',
+        created_by=current_user.id,
+        s3_key=""
+    )
+    db.add(document)
+    await db.commit()
+    await db.refresh(document)
+
+    return {
+        "document_id": document.id,
+        "task_id": task.id,
+        "status": "pending_manager_review",
+        "message": "SOW Document generation started"
+    }
+
+@router.put("/{document_id}/manager-approve", response_model=GeneratedDocumentResponse)
+async def manager_approve_sow(
+    document_id: UUID,
+    body: ManagerApprovalRequest,
+    db: AsyncSession = Depends(get_async_db),
+    current_user: User = Depends(get_current_active_user)
+):
+    """
+    Manager approval for SOW.
+    """
+    if current_user.role not in [UserRole.sales_manager, UserRole.super_admin]:
+        raise HTTPException(status_code=403, detail="Insufficient permissions")
+
+    stmt = select(GeneratedDocument).where(GeneratedDocument.id == document_id)
+    result = await db.execute(stmt)
+    doc = result.scalar_one_or_none()
+    
+    if not doc:
+        raise HTTPException(status_code=404, detail="Document not found")
+    if doc.status != "pending_manager_review":
+        raise HTTPException(status_code=400, detail="Document is not pending manager review")
+    
+    if current_user.role != UserRole.super_admin and doc.division_id != current_user.division_id:
+        raise HTTPException(status_code=403, detail="Access denied")
+
+    doc.status = "pending_legal_review"
+    
+    approval = DocumentApproval(
+        document_id=document_id,
+        approver_id=current_user.id,
+        approval_stage="manager",
+        action="approved",
+        comments=body.comments,
+        actioned_at=datetime.utcnow()
+    )
+    db.add(approval)
+    
+    # Fetch all legal users in division
+    legal_stmt = select(User).where(
+        User.role == UserRole.legal,
+        User.division_id == doc.division_id
+    )
+    result = await db.execute(legal_stmt)
+    legal_users = result.scalars().all()
+    
+    # Fetch lead for name
+    lead_stmt = select(Lead).where(Lead.id == doc.lead_id)
+    lead_res = await db.execute(lead_stmt)
+    lead = lead_res.scalar_one()
+
+    for legal_user in legal_users:
+        await create_in_app_notification(
+            db=db,
+            user_id=legal_user.id,
+            lead_id=doc.lead_id,
+            type='doc_generated',
+            message=f"SOW v{doc.version_number} for {lead.company_name} requires legal review."
+        )
+
+    activity = ActivityTimeline(
+        lead_id=doc.lead_id,
+        actor_id=current_user.id,
+        event_type=ActivityEventType.document_generated,
+        description=f"✅ SOW v{doc.version_number} approved by Manager: {current_user.first_name} {current_user.last_name} → Pending Legal Review"
+    )
+    db.add(activity)
+    
+    await db.commit()
+    await db.refresh(doc)
+
+    await socket_manager.emit_to_lead_room(
+        lead_id=str(doc.lead_id),
+        event="document_status_changed",
+        data={
+            "document_id": str(document_id),
+            "new_status": "pending_legal_review",
+            "doc_type": "sow"
+        }
+    )
+
+    return doc
+
+@router.put("/{document_id}/legal-approve-sow", response_model=GeneratedDocumentResponse)
+async def legal_approve_sow(
+    document_id: UUID,
+    body: LegalReviewRequest,
+    db: AsyncSession = Depends(get_async_db),
+    current_user: User = Depends(get_current_active_user)
+):
+    """
+    Legal approval for SOW.
+    """
+    if current_user.role not in [UserRole.legal, UserRole.super_admin]:
+        raise HTTPException(status_code=403, detail="Insufficient permissions")
+
+    stmt = select(GeneratedDocument).where(GeneratedDocument.id == document_id)
+    result = await db.execute(stmt)
+    doc = result.scalar_one_or_none()
+    
+    if not doc:
+        raise HTTPException(status_code=404, detail="Document not found")
+    if doc.status != "pending_legal_review" or doc.doc_type != "sow":
+        raise HTTPException(status_code=400, detail="Invalid document status or type")
+    
+    if current_user.role != UserRole.super_admin and doc.division_id != current_user.division_id:
+        raise HTTPException(status_code=403, detail="Access denied")
+
+    doc.status = "pending_final_approval"
+    
+    approval = DocumentApproval(
+        document_id=document_id,
+        approver_id=current_user.id,
+        approval_stage="legal",
+        action="approved",
+        comments=body.comments,
+        actioned_at=datetime.utcnow()
+    )
+    db.add(approval)
+    
+    # Fetch division head user
+    division_stmt = select(Division).where(Division.id == doc.division_id)
+    div_res = await db.execute(division_stmt)
+    division = div_res.scalar_one()
+    
+    # Fetch lead for name
+    lead_stmt = select(Lead).where(Lead.id == doc.lead_id)
+    lead_res = await db.execute(lead_stmt)
+    lead = lead_res.scalar_one()
+
+    if division.head_user_id:
+        await create_in_app_notification(
+            db=db,
+            user_id=division.head_user_id,
+            lead_id=doc.lead_id,
+            type='doc_generated',
+            message=f"SOW v{doc.version_number} for {lead.company_name} requires your final approval."
+        )
+
+    activity = ActivityTimeline(
+        lead_id=doc.lead_id,
+        actor_id=current_user.id,
+        event_type=ActivityEventType.document_generated,
+        description=f"⚖️ SOW v{doc.version_number} approved by Legal → Pending Final Approval"
+    )
+    db.add(activity)
+    
+    await db.commit()
+    await db.refresh(doc)
+
+    await socket_manager.emit_to_lead_room(
+        lead_id=str(doc.lead_id),
+        event="document_status_changed",
+        data={
+            "document_id": str(document_id),
+            "new_status": "pending_final_approval",
+            "doc_type": "sow"
+        }
+    )
+
+    return doc
+
+@router.put("/{document_id}/final-approve", response_model=GeneratedDocumentResponse)
+async def final_approve_sow(
+    document_id: UUID,
+    body: FinalApprovalRequest,
+    db: AsyncSession = Depends(get_async_db),
+    current_user: User = Depends(get_current_active_user)
+):
+    """
+    Final approval for SOW.
+    """
+    if current_user.role not in [UserRole.division_head, UserRole.super_admin]:
+        raise HTTPException(status_code=403, detail="Insufficient permissions")
+
+    stmt = select(GeneratedDocument).where(GeneratedDocument.id == document_id)
+    result = await db.execute(stmt)
+    doc = result.scalar_one_or_none()
+    
+    if not doc:
+        raise HTTPException(status_code=404, detail="Document not found")
+    if doc.status != "pending_final_approval":
+        raise HTTPException(status_code=400, detail="Document is not pending final approval")
+    
+    if current_user.role != UserRole.super_admin and doc.division_id != current_user.division_id:
+        raise HTTPException(status_code=403, detail="Access denied")
+
+    doc.status = "approved"
+    
+    approval = DocumentApproval(
+        document_id=document_id,
+        approver_id=current_user.id,
+        approval_stage="final",
+        action="approved",
+        comments=body.comments,
+        actioned_at=datetime.utcnow()
+    )
+    db.add(approval)
+    
+    await create_in_app_notification(
+        db=db,
+        user_id=doc.created_by,
+        lead_id=doc.lead_id,
+        type='doc_generated',
+        message=f"SOW v{doc.version_number} has received final approval and is ready to send for signature."
+    )
+
+    activity = ActivityTimeline(
+        lead_id=doc.lead_id,
+        actor_id=current_user.id,
+        event_type=ActivityEventType.document_generated,
+        description=f"🎉 SOW v{doc.version_number} received final approval from Division Head — Ready for Signature"
+    )
+    db.add(activity)
+    
+    await db.commit()
+    await db.refresh(doc)
+
+    await socket_manager.emit_to_lead_room(
+        lead_id=str(doc.lead_id),
+        event="document_status_changed",
+        data={
+            "document_id": str(document_id),
+            "new_status": "approved",
+            "doc_type": "sow",
+            "ready_for_signature": True
         }
     )
 

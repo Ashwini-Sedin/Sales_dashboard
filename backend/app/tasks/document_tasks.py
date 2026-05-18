@@ -237,3 +237,43 @@ def generate_nda_docx_task(self, lead_id: str, user_id: str, inputs: dict):
         }
     ))
     raise self.retry(exc=exc, countdown=2 ** self.request.retries)
+
+@celery_app.task(bind=True, max_retries=3)
+def generate_sow_docx_task(self, lead_id: str, user_id: str, inputs: dict):
+  """
+  Celery task for async SOW DOCX generation.
+  """
+  try:
+    from app.services.documents.sow_service import SowService
+    from app.schemas.document import SowInput
+
+    async def run_gen():
+      async with AsyncSessionLocal() as db:
+        service = SowService()
+        inputs_obj = SowInput(**inputs)
+        await service.generate_docx(db, UUID(lead_id), UUID(user_id), inputs_obj)
+
+    asyncio.run(run_gen())
+    asyncio.run(socket_manager.emit_to_lead_room(
+        lead_id=lead_id,
+        event="document_generation_complete",
+        data={
+            "task_id": self.request.id,
+            "lead_id": lead_id,
+            "status": "complete"
+        }
+    ))
+    return {"status": "success", "lead_id": lead_id}
+  except Exception as exc:
+    logger.error(f"SOW DOCX generation failed: {exc}")
+    asyncio.run(socket_manager.emit_to_lead_room(
+        lead_id=lead_id,
+        event="document_generation_failed",
+        data={
+            "task_id": self.request.id,
+            "lead_id": lead_id,
+            "status": "failed",
+            "error": str(exc)
+        }
+    ))
+    raise self.retry(exc=exc, countdown=2 ** self.request.retries)

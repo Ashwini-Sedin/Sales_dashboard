@@ -263,3 +263,55 @@ class NdaClauseResponse(BaseModel):
 
 class LegalReviewRequest(BaseModel):
     comments: Optional[str] = None
+
+# Session 30 - SOW Generator
+class Deliverable(BaseModel):
+    name: str
+    description: str
+    acceptance_criteria: str
+    target_date: str          # (ISO date "YYYY-MM-DD")
+
+class Milestone(BaseModel):
+    name: str
+    description: str
+    due_date: str             # (ISO date "YYYY-MM-DD")
+    payment_linked: bool = False
+
+class RaciEntry(BaseModel):
+    deliverable: str
+    responsible: str
+    accountable: str
+    consulted: str
+    informed: str
+
+class RaciMatrix(BaseModel):
+    entries: List[RaciEntry]
+
+class PaymentMilestone(BaseModel):
+    milestone_name: str
+    amount: float
+    due_date: str             # (ISO date "YYYY-MM-DD")
+    percentage: float         # (percentage of total contract value)
+
+class SowInput(BaseModel):
+    project_name: str
+    objectives: List[str]
+    deliverables: List[Deliverable]
+    out_of_scope: List[str]
+    methodology: str          # (agile | waterfall | hybrid)
+    milestones: List[Milestone]
+    raci_matrix: RaciMatrix
+    payments: List[PaymentMilestone]
+    ip_ownership: str         # (client | company | joint)
+    change_control_threshold_days: int = 5
+    linked_presales_doc_id: Optional[UUID] = None
+
+class SowGenerateRequest(BaseModel):
+    lead_id: UUID
+    dynamic_inputs: SowInput
+
+class ManagerApprovalRequest(BaseModel):
+    comments: Optional[str] = None
+
+class FinalApprovalRequest(BaseModel):
+    comments: Optional[str] = None
