@@ -9,6 +9,7 @@ import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import LeadsList from './pages/leads/LeadsList';
 import LeadDetail from './pages/leads/LeadDetail';
+import Pipeline from './pages/Pipeline';
 import AdminLayout from './layouts/AdminLayout';
 import UsersAdmin from './pages/admin/UsersAdmin';
 import DivisionsAdmin from './pages/admin/DivisionsAdmin';
@@ -43,6 +44,7 @@ function App() {
                             <Route path="/dashboard" element={<Dashboard />} />
                             <Route path="/leads" element={<LeadsList />} />
                             <Route path="/leads/:id" element={<LeadDetail />} />
+                            <Route path="/pipeline" element={<Pipeline />} />
                             <Route path="/documents" element={<DocumentCenter />} />
                             <Route path="/generate-doc" element={<GenerateDoc />} />
                             <Route path="/reports" element={<Reports />} />

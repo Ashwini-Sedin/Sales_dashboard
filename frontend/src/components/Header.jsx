@@ -23,11 +23,11 @@ const Header = ({ toggleSidebar }) => {
             <div className="flex items-center">
                 <button 
                     onClick={toggleSidebar}
-                    className="p-2 rounded-md text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-df-card lg:hidden"
+                    className="p-2 rounded-md text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-df-card mr-2"
                 >
                     <FiMenu size={24} />
                 </button>
-                <div className="ml-4 lg:ml-0 flex flex-col">
+                <div className="flex flex-col">
                     <span className="text-sm font-semibold text-gray-900 dark:text-white">{user?.first_name} {user?.last_name}</span>
                     <div className="flex items-center space-x-2 mt-0.5">
                         <span className={`text-[10px] px-2 py-0.5 rounded-full border ${getRoleBadgeColor(user?.role)}`}>

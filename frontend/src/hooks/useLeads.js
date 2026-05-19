@@ -43,7 +43,7 @@ export const useChangeStage = () => {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: async ({ id, stage }) => {
-            const { data } = await axiosInstance.patch(`/api/leads/${id}/stage`, { stage });
+            const { data } = await axiosInstance.post(`/api/leads/${id}/stage`, { stage });
             return data;
         },
         onSuccess: () => {

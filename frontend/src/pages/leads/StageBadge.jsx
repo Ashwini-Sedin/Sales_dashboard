@@ -6,6 +6,7 @@ const stageColors = {
   'Qualified': 'bg-green-100 text-green-700 dark:bg-green-500/10 dark:text-green-400',
   'Proposal': 'bg-yellow-100 text-yellow-700 dark:bg-yellow-500/10 dark:text-yellow-400',
   'Negotiation': 'bg-pink-100 text-pink-700 dark:bg-pink-500/10 dark:text-pink-400',
+  'On Hold': 'bg-amber-100 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400',
   'Won': 'bg-[#e5faef] text-[#0ebf99] dark:bg-[#0ebf99]/10 dark:text-[#0ebf99]',
   'Closed Won': 'bg-[#e5faef] text-[#0ebf99] dark:bg-[#0ebf99]/10 dark:text-[#0ebf99]',
   'Closed Lost': 'bg-red-100 text-red-700 dark:bg-red-500/10 dark:text-red-400',

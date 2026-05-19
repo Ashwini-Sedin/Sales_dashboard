@@ -1,6 +1,18 @@
 import React, { useState } from 'react';
 import StageBadge from './StageBadge';
 
+const getFrontendStage = (status) => {
+  if (!status) return 'New';
+  const s = status.toLowerCase();
+  if (s === 'new') return 'New';
+  if (s === 'contacted') return 'Contacted';
+  if (s === 'qualified') return 'Qualified';
+  if (s === 'proposal_sent' || s === 'proposal') return 'Proposal';
+  if (s === 'negotiation') return 'Negotiation';
+  if (s === 'won' || s === 'closed_won' || s === 'closed won') return 'Closed Won';
+  if (s === 'lost' || s === 'closed_lost' || s === 'closed lost') return 'Closed Lost';
+  return 'New';
+};
 
 const LeadsTable = ({ leads, isLoading }) => {
   const [sortConfig, setSortConfig] = useState({ key: 'created_at', direction: 'desc' });
@@ -9,10 +21,28 @@ const LeadsTable = ({ leads, isLoading }) => {
   if (!leads || leads.length === 0) return <div className="p-8 text-center text-gray-500">No leads found.</div>;
 
   const sortedLeads = [...leads].sort((a, b) => {
-    if (a[sortConfig.key] < b[sortConfig.key]) {
+    let keyA = a[sortConfig.key];
+    let keyB = b[sortConfig.key];
+
+    // Fallbacks for mapped properties
+    if (sortConfig.key === 'name') {
+      keyA = `${a.first_name || ''} ${a.last_name || ''}`;
+      keyB = `${b.first_name || ''} ${b.last_name || ''}`;
+    } else if (sortConfig.key === 'company') {
+      keyA = a.company_name || '';
+      keyB = b.company_name || '';
+    } else if (sortConfig.key === 'score') {
+      keyA = a.lead_score || 0;
+      keyB = b.lead_score || 0;
+    } else if (sortConfig.key === 'stage') {
+      keyA = getFrontendStage(a.status);
+      keyB = getFrontendStage(b.status);
+    }
+
+    if (keyA < keyB) {
       return sortConfig.direction === 'asc' ? -1 : 1;
     }
-    if (a[sortConfig.key] > b[sortConfig.key]) {
+    if (keyA > keyB) {
       return sortConfig.direction === 'asc' ? 1 : -1;
     }
     return 0;
@@ -74,30 +104,30 @@ const LeadsTable = ({ leads, isLoading }) => {
             {sortedLeads.map((lead) => (
               <tr key={lead.id} className="bg-white dark:bg-[#141a21] hover:bg-gray-50 dark:hover:bg-[#1a222b] transition-colors">
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm font-bold text-gray-900 dark:text-df-textlight">{lead.name}</div>
+                  <div className="text-sm font-bold text-gray-900 dark:text-df-textlight">{lead.first_name} {lead.last_name}</div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm font-medium text-gray-500 dark:text-df-text">{lead.company}</div>
+                  <div className="text-sm font-medium text-gray-500 dark:text-df-text">{lead.company_name || 'No Company'}</div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm text-gray-500 dark:text-df-text">{lead.source || 'Manual'}</div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <StageBadge stage={lead.stage} />
+                  <StageBadge stage={getFrontendStage(lead.status)} />
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm text-gray-600 dark:text-gray-300">
                     {/* Mock owner data for visualization since it's not in DB yet */}
-                    {['Ash kannan', 'Ananya Das'].includes(lead.name) ? 'Sonal K' : 'Arjun K'}
+                    {['Ash kannan', 'Ananya Das'].includes(lead.first_name) ? 'Sonal K' : 'Arjun K'}
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center text-xs font-bold ${getScoreColor(lead.score)}`}>
-                    {lead.score || ''}
+                  <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center text-xs font-bold ${getScoreColor(lead.lead_score)}`}>
+                    {lead.lead_score || '0'}
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-500 dark:text-df-text">{lead.value || '—'}</div>
+                  <div className="text-sm text-gray-500 dark:text-df-text">{lead.estimated_value || '—'}</div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <button className="flex items-center gap-1 text-[#0ebf99] hover:text-teal-400 transition-colors">

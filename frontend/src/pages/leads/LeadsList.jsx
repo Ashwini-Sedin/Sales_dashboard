@@ -29,6 +29,7 @@ const LeadsList = () => {
   const filters = {
     search: debouncedSearch,
     status: statusFilter,
+    limit: 1000,
   };
 
   // Remove empty filters
