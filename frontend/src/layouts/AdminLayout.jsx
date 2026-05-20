@@ -1,8 +1,7 @@
 import React from 'react';
-import { NavLink, Outlet, useLocation } from 'react-router-dom';
+import { NavLink, Outlet } from 'react-router-dom';
 
 const AdminLayout = () => {
-    const location = useLocation();
     
     // The screenshot shows "Admin — Users & Divisions" as the title
     // If we're on a different sub-page, we could change the title, but for now let's keep it simple

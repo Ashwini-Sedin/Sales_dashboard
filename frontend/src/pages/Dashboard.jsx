@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import axiosInstance from '../api/axios';
+import React from 'react';
+import { useMainDashboardStats } from '../hooks/useLeads';
 
 const StatCard = ({ title, value, subtext, subtextColor, bgCircleColor }) => (
     <div className="bg-white dark:bg-df-card p-6 rounded-xl border border-gray-100 dark:border-df-border flex flex-col justify-between relative overflow-hidden group hover:border-indigo-100 dark:hover:border-df-accent/50 transition-colors">
@@ -15,28 +15,7 @@ const StatCard = ({ title, value, subtext, subtextColor, bgCircleColor }) => (
 );
 
 const Dashboard = () => {
-    const [stats, setStats] = useState({
-        totalLeads: 0,
-        pipelineValue: '$0',
-        docsAwaiting: 0,
-        avgTurnaround: 0
-    });
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        const fetchStats = async () => {
-            try {
-                const response = await axiosInstance.get('/api/dashboard/stats');
-                setStats(response.data);
-            } catch (error) {
-                console.error('Failed to fetch dashboard stats', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchStats();
-    }, []);
+    const { data: stats = {}, isLoading: loading } = useMainDashboardStats();
 
     if (loading) {
         return <div className="flex justify-center items-center h-64 animate-pulse text-gray-400">Loading Dashboard Stats...</div>;

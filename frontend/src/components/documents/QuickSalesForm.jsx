@@ -66,19 +66,19 @@ const QuickSalesForm = ({ leadId, lead, onClose, onSuccess }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 backdrop-blur-sm">
-      <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
+      <div className="bg-white dark:bg-[#141a21] rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
         {/* Header */}
-        <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-gray-50">
+        <div className="px-6 py-4 border-b border-gray-100 dark:border-df-border flex items-center justify-between bg-gray-50 dark:bg-[#10151b] dark:bg-[#10151b]">
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 rounded-full bg-yellow-100 flex items-center justify-center text-yellow-600">
               <FiZap size={20} />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-gray-900">Generate Quick Sales Document</h3>
-              <p className="text-xs text-gray-500 uppercase font-semibold">Fast Proposal Engine</p>
+              <h3 className="text-lg font-bold text-gray-900 dark:text-white">Generate Quick Sales Document</h3>
+              <p className="text-xs text-gray-500 dark:text-gray-400 uppercase font-semibold">Fast Proposal Engine</p>
             </div>
           </div>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors">
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 dark:text-gray-400 transition-colors">
             <FiX size={24} />
           </button>
         </div>
@@ -87,15 +87,15 @@ const QuickSalesForm = ({ leadId, lead, onClose, onSuccess }) => {
           <div className="p-6 space-y-6">
             {/* Format Selector */}
             <div className="flex flex-col space-y-2">
-              <label className="text-sm font-semibold text-gray-700">Select Document Format</label>
+              <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Select Document Format</label>
               <div className="flex space-x-3">
                 <button
                   type="button"
                   onClick={() => setFormat('pptx')}
                   className={`flex-1 flex items-center justify-center space-x-2 py-3 rounded-lg border-2 transition-all ${
                     format === 'pptx' 
-                      ? "bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-200" 
-                      : "bg-white border-gray-200 text-gray-500 hover:border-blue-300"
+                      ? "bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-200 dark:shadow-none" 
+                      : "bg-white dark:bg-[#141a21] border-gray-200 dark:border-[#2a3441] dark:border-[#2a3441] text-gray-500 dark:text-gray-400 hover:border-blue-300"
                   }`}
                 >
                   <span className="text-xl">📊</span>
@@ -106,8 +106,8 @@ const QuickSalesForm = ({ leadId, lead, onClose, onSuccess }) => {
                   onClick={() => setFormat('docx')}
                   className={`flex-1 flex items-center justify-center space-x-2 py-3 rounded-lg border-2 transition-all ${
                     format === 'docx' 
-                      ? "bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-200" 
-                      : "bg-white border-gray-200 text-gray-500 hover:border-blue-300"
+                      ? "bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-200 dark:shadow-none" 
+                      : "bg-white dark:bg-[#141a21] border-gray-200 dark:border-[#2a3441] dark:border-[#2a3441] text-gray-500 dark:text-gray-400 hover:border-blue-300"
                   }`}
                 >
                   <span className="text-xl">📄</span>
@@ -117,84 +117,84 @@ const QuickSalesForm = ({ leadId, lead, onClose, onSuccess }) => {
             </div>
 
             {/* Read-only Lead Context */}
-            <div className="grid grid-cols-2 gap-4 p-4 bg-gray-50 rounded-xl border border-gray-100">
+            <div className="grid grid-cols-2 gap-4 p-4 bg-gray-50 dark:bg-[#10151b] rounded-xl border border-gray-100 dark:border-df-border">
               <div>
                 <p className="text-[10px] uppercase font-bold text-gray-400">Company</p>
-                <p className="text-sm font-semibold text-gray-800">{lead?.company_name}</p>
+                <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">{lead?.company_name}</p>
               </div>
               <div>
                 <p className="text-[10px] uppercase font-bold text-gray-400">Contact</p>
-                <p className="text-sm font-semibold text-gray-800">{lead?.first_name} {lead?.last_name}</p>
+                <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">{lead?.first_name} {lead?.last_name}</p>
               </div>
               <div>
                 <p className="text-[10px] uppercase font-bold text-gray-400">Value</p>
-                <p className="text-sm font-semibold text-gray-800">
+                <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">
                   {lead?.estimated_value ? `$${lead.estimated_value.toLocaleString()}` : "TBD"}
                 </p>
               </div>
               <div>
                 <p className="text-[10px] uppercase font-bold text-gray-400">Division</p>
-                <p className="text-sm font-semibold text-gray-800">Global Sales</p>
+                <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">Global Sales</p>
               </div>
             </div>
 
             {/* Form Fields */}
             <div className="grid grid-cols-2 gap-6">
               <div className="col-span-2">
-                <label className="block text-sm font-bold text-gray-700 mb-1">Proposed Solution Name *</label>
+                <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Proposed Solution Name *</label>
                 <input
                   {...register('proposed_solution_name', { required: true })}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-[#2a3441] dark:bg-[#10151b] dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                   placeholder="e.g. Enterprise CRM Implementation"
                 />
                 {errors.proposed_solution_name && <span className="text-xs text-red-500">Required</span>}
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-gray-700 mb-1">Pricing Range *</label>
+                <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Pricing Range *</label>
                 <input
                   {...register('pricing_range', { required: true })}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-[#2a3441] dark:bg-[#10151b] dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                   placeholder="e.g. $50,000 - $75,000"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-1">Start Date *</label>
+                  <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Start Date *</label>
                   <input
                     type="date"
                     {...register('start_date', { required: true })}
-                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-[#2a3441] dark:bg-[#10151b] dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-1">End Date *</label>
+                  <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">End Date *</label>
                   <input
                     type="date"
                     {...register('end_date', { required: true })}
-                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-[#2a3441] dark:bg-[#10151b] dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                   />
                 </div>
               </div>
 
               {/* Challenges */}
               <div className="col-span-2">
-                <label className="block text-sm font-bold text-gray-700 mb-2">Key Challenges (up to 3)</label>
+                <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Key Challenges (up to 3)</label>
                 <div className="space-y-2">
                   <input
                     {...register('challenge_1', { required: true })}
-                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-[#2a3441] dark:bg-[#10151b] dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
                     placeholder="Challenge 1 (Required)"
                   />
                   <input
                     {...register('challenge_2')}
-                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-[#2a3441] dark:bg-[#10151b] dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
                     placeholder="Challenge 2 (Optional)"
                   />
                   <input
                     {...register('challenge_3')}
-                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-[#2a3441] dark:bg-[#10151b] dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
                     placeholder="Challenge 3 (Optional)"
                   />
                 </div>
@@ -202,32 +202,32 @@ const QuickSalesForm = ({ leadId, lead, onClose, onSuccess }) => {
 
               {/* Benefits */}
               <div className="col-span-2">
-                <label className="block text-sm font-bold text-gray-700 mb-2">Key Benefits (up to 5)</label>
+                <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Key Benefits (up to 5)</label>
                 <div className="grid grid-cols-1 gap-2">
                   <input
                     {...register('benefit_1', { required: true })}
-                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-[#2a3441] dark:bg-[#10151b] dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
                     placeholder="Benefit 1 (Required)"
                   />
                   <div className="grid grid-cols-2 gap-2">
                     <input
                       {...register('benefit_2')}
-                      className="px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                      className="px-4 py-2 rounded-lg border border-gray-300 dark:border-[#2a3441] dark:bg-[#10151b] dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
                       placeholder="Benefit 2"
                     />
                     <input
                       {...register('benefit_3')}
-                      className="px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                      className="px-4 py-2 rounded-lg border border-gray-300 dark:border-[#2a3441] dark:bg-[#10151b] dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
                       placeholder="Benefit 3"
                     />
                     <input
                       {...register('benefit_4')}
-                      className="px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                      className="px-4 py-2 rounded-lg border border-gray-300 dark:border-[#2a3441] dark:bg-[#10151b] dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
                       placeholder="Benefit 4"
                     />
                     <input
                       {...register('benefit_5')}
-                      className="px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                      className="px-4 py-2 rounded-lg border border-gray-300 dark:border-[#2a3441] dark:bg-[#10151b] dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
                       placeholder="Benefit 5"
                     />
                   </div>
@@ -235,11 +235,11 @@ const QuickSalesForm = ({ leadId, lead, onClose, onSuccess }) => {
               </div>
 
               <div className="col-span-2">
-                <label className="block text-sm font-bold text-gray-700 mb-1">Internal Notes</label>
+                <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Internal Notes</label>
                 <textarea
                   {...register('notes')}
                   rows={3}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-[#2a3441] dark:bg-[#10151b] dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
                   placeholder="Additional context for the generation engine..."
                 />
               </div>
@@ -247,11 +247,11 @@ const QuickSalesForm = ({ leadId, lead, onClose, onSuccess }) => {
           </div>
 
           {/* Footer */}
-          <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex items-center justify-end space-x-3">
+          <div className="px-6 py-4 bg-gray-50 dark:bg-[#10151b] border-t border-gray-100 dark:border-df-border flex items-center justify-end space-x-3">
             <button
               type="button"
               onClick={onClose}
-              className="px-6 py-2 text-gray-600 font-semibold hover:text-gray-900 transition-colors"
+              className="px-6 py-2 text-gray-600 dark:text-gray-400 font-semibold hover:text-gray-900 dark:text-white transition-colors"
             >
               Cancel
             </button>

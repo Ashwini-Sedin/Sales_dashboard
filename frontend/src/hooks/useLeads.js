@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import toast from 'react-hot-toast';
 import axiosInstance from '../api/axios';
 
 const LEADS_QUERY_KEY = 'leads';
@@ -9,6 +10,16 @@ export const useLeadsList = (filters) => {
         queryFn: async () => {
             const { data } = await axiosInstance.get('/api/leads', { params: filters });
             return data.items || data;
+        },
+    });
+};
+
+export const useMainDashboardStats = () => {
+    return useQuery({
+        queryKey: ['mainDashboardStats'],
+        queryFn: async () => {
+            const response = await axiosInstance.get('/api/dashboard/stats');
+            return response.data;
         },
     });
 };
@@ -48,6 +59,12 @@ export const useChangeStage = () => {
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [LEADS_QUERY_KEY] });
+            queryClient.invalidateQueries({ queryKey: ['mainDashboardStats'] });
+            toast.success('Stage updated successfully');
         },
+        onError: (error) => {
+            const msg = error.response?.data?.detail || 'Failed to update lead stage';
+            toast.error(msg);
+        }
     });
 };

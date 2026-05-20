@@ -121,11 +121,11 @@ const PresalesForm = ({ leadId, lead, onClose, onSuccess }) => {
       <div className="bg-white rounded-3xl shadow-2xl w-full max-w-5xl h-[85vh] flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
         
         {/* Header with Stepper */}
-        <div className="p-8 border-b border-gray-100">
+        <div className="p-8 border-b border-gray-100 dark:border-df-border">
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h2 className="text-2xl font-black text-gray-900">Presales Document Generator</h2>
-              <p className="text-gray-500 font-medium">Step {currentStep} of 6 — {steps[currentStep-1].label}</p>
+              <h2 className="text-2xl font-black text-gray-900 dark:text-white">Presales Document Generator</h2>
+              <p className="text-gray-500 dark:text-gray-400 font-medium">Step {currentStep} of 6 — {steps[currentStep-1].label}</p>
             </div>
             <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-xl transition-colors">
               <FiTrash2 className="text-gray-400" />
@@ -141,7 +141,7 @@ const PresalesForm = ({ leadId, lead, onClose, onSuccess }) => {
                     ? 'bg-blue-600 text-white ring-4 ring-blue-50 scale-110' 
                     : currentStep > step.n 
                       ? 'bg-green-500 text-white' 
-                      : 'bg-white border-2 border-gray-100 text-gray-300'
+                      : 'bg-white border-2 border-gray-100 dark:border-df-border text-gray-300'
                 }`}>
                   {currentStep > step.n ? <FiCheckCircle /> : <step.icon />}
                 </div>
@@ -161,47 +161,47 @@ const PresalesForm = ({ leadId, lead, onClose, onSuccess }) => {
             <div className="space-y-6 max-w-3xl mx-auto">
               <div className="grid grid-cols-1 gap-6">
                 <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-2">Executive Overview</label>
+                  <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Executive Overview</label>
                   <textarea 
                     value={formData.executive_overview}
                     onChange={(e) => handleInputChange('executive_overview', e.target.value)}
-                    className="w-full rounded-2xl border-gray-200 focus:ring-blue-500 focus:border-blue-500 p-4"
+                    className="w-full rounded-2xl border-gray-200 dark:border-[#2a3441] focus:ring-blue-500 focus:border-blue-500 p-4"
                     rows="4"
                     placeholder="High-level overview of the engagement..."
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-2">Client Background</label>
+                  <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Client Background</label>
                   <textarea 
                     value={formData.client_background}
                     onChange={(e) => handleInputChange('client_background', e.target.value)}
-                    className="w-full rounded-2xl border-gray-200 focus:ring-blue-500 focus:border-blue-500 p-4"
+                    className="w-full rounded-2xl border-gray-200 dark:border-[#2a3441] focus:ring-blue-500 focus:border-blue-500 p-4"
                     rows="3"
                     placeholder="Brief description of the client..."
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-2">Problem Statement</label>
+                  <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Problem Statement</label>
                   <textarea 
                     value={formData.problem_statement}
                     onChange={(e) => handleInputChange('problem_statement', e.target.value)}
-                    className="w-full rounded-2xl border-gray-200 focus:ring-blue-500 focus:border-blue-500 p-4"
+                    className="w-full rounded-2xl border-gray-200 dark:border-[#2a3441] focus:ring-blue-500 focus:border-blue-500 p-4"
                     rows="3"
                     placeholder="Key business problems to solve..."
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-2">Solution Overview</label>
+                  <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Solution Overview</label>
                   <textarea 
                     value={formData.solution_overview}
                     onChange={(e) => handleInputChange('solution_overview', e.target.value)}
-                    className="w-full rounded-2xl border-gray-200 focus:ring-blue-500 focus:border-blue-500 p-4"
+                    className="w-full rounded-2xl border-gray-200 dark:border-[#2a3441] focus:ring-blue-500 focus:border-blue-500 p-4"
                     rows="4"
                     placeholder="Proposed technical solution..."
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-3">Commercial Model</label>
+                  <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-3">Commercial Model</label>
                   <div className="grid grid-cols-3 gap-4">
                     {['fixed', 't_and_m', 'retainer'].map(mode => (
                       <button
@@ -210,7 +210,7 @@ const PresalesForm = ({ leadId, lead, onClose, onSuccess }) => {
                         className={`py-3 px-4 rounded-xl border-2 font-bold transition-all ${
                           formData.commercial_model === mode 
                             ? 'border-blue-600 bg-blue-50 text-blue-600' 
-                            : 'border-gray-100 bg-white text-gray-400 hover:border-gray-200'
+                            : 'border-gray-100 dark:border-df-border bg-white text-gray-400 hover:border-gray-200 dark:border-[#2a3441]'
                         }`}
                       >
                         {mode === 't_and_m' ? 'Time & Materials' : mode.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
@@ -225,7 +225,7 @@ const PresalesForm = ({ leadId, lead, onClose, onSuccess }) => {
           {currentStep === 2 && (
             <div className="space-y-8 max-w-4xl mx-auto">
               <div>
-                <h3 className="text-lg font-bold text-gray-900 mb-4">Scope of Work</h3>
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Scope of Work</h3>
                 <div className="space-y-3">
                   {formData.scope_items.map((item, idx) => (
                     <div key={idx} className="flex items-center space-x-3 animate-in slide-in-from-left-2">
@@ -234,9 +234,9 @@ const PresalesForm = ({ leadId, lead, onClose, onSuccess }) => {
                         value={item.item}
                         onChange={(e) => handleDynamicChange('scope_items', idx, 'item', e.target.value)}
                         placeholder="Scope item description..."
-                        className="flex-1 rounded-xl border-gray-200"
+                        className="flex-1 rounded-xl border-gray-200 dark:border-[#2a3441]"
                       />
-                      <div className="flex rounded-xl overflow-hidden border border-gray-100 bg-white shadow-sm">
+                      <div className="flex rounded-xl overflow-hidden border border-gray-100 dark:border-df-border bg-white shadow-sm">
                         <button 
                           onClick={() => handleDynamicChange('scope_items', idx, 'in_scope', true)}
                           className={`px-3 py-2 text-[10px] font-black uppercase tracking-tighter ${item.in_scope ? 'bg-green-500 text-white' : 'text-gray-400 hover:bg-gray-50'}`}
@@ -265,7 +265,7 @@ const PresalesForm = ({ leadId, lead, onClose, onSuccess }) => {
               </div>
 
               <div>
-                <h3 className="text-lg font-bold text-gray-900 mb-4">Assumptions</h3>
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Assumptions</h3>
                 <div className="space-y-3">
                   {formData.assumptions.map((ass, idx) => (
                     <div key={idx} className="flex items-center space-x-3">
@@ -278,7 +278,7 @@ const PresalesForm = ({ leadId, lead, onClose, onSuccess }) => {
                           handleInputChange('assumptions', updated);
                         }}
                         placeholder="e.g. Client will provide access to systems"
-                        className="flex-1 rounded-xl border-gray-200"
+                        className="flex-1 rounded-xl border-gray-200 dark:border-[#2a3441]"
                       />
                       <button onClick={() => removeItem('assumptions', idx)} className="p-2 text-gray-300 hover:text-red-500">
                         <FiTrash2 />
@@ -314,9 +314,9 @@ const PresalesForm = ({ leadId, lead, onClose, onSuccess }) => {
                 </div>
               </div>
 
-              <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
+              <div className="bg-white rounded-2xl border border-gray-100 dark:border-df-border overflow-hidden shadow-sm">
                 <table className="w-full">
-                  <thead className="bg-gray-50 border-b border-gray-100">
+                  <thead className="bg-gray-50 dark:bg-[#10151b] border-b border-gray-100 dark:border-df-border">
                     <tr className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
                       <th className="px-6 py-4 text-left">Phase</th>
                       <th className="px-6 py-4 text-left">Role</th>
@@ -400,7 +400,7 @@ const PresalesForm = ({ leadId, lead, onClose, onSuccess }) => {
 
               <div className="space-y-4">
                 {formData.risks.map((risk, idx) => (
-                  <div key={idx} className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4">
+                  <div key={idx} className="bg-white p-6 rounded-2xl border border-gray-100 dark:border-df-border shadow-sm space-y-4">
                     <div className="flex items-start justify-between">
                       <div className="flex-1 grid grid-cols-2 gap-4">
                         <div>
@@ -410,7 +410,7 @@ const PresalesForm = ({ leadId, lead, onClose, onSuccess }) => {
                             value={risk.risk}
                             onChange={(e) => handleDynamicChange('risks', idx, 'risk', e.target.value)}
                             placeholder="e.g. Delayed client feedback"
-                            className="w-full rounded-xl border-gray-200"
+                            className="w-full rounded-xl border-gray-200 dark:border-[#2a3441]"
                           />
                         </div>
                         <div className="grid grid-cols-2 gap-3">
@@ -419,7 +419,7 @@ const PresalesForm = ({ leadId, lead, onClose, onSuccess }) => {
                             <select 
                               value={risk.impact}
                               onChange={(e) => handleDynamicChange('risks', idx, 'impact', e.target.value)}
-                              className="w-full rounded-xl border-gray-200"
+                              className="w-full rounded-xl border-gray-200 dark:border-[#2a3441]"
                             >
                               <option value="High">High</option>
                               <option value="Medium">Medium</option>
@@ -431,7 +431,7 @@ const PresalesForm = ({ leadId, lead, onClose, onSuccess }) => {
                             <select 
                               value={risk.probability}
                               onChange={(e) => handleDynamicChange('risks', idx, 'probability', e.target.value)}
-                              className="w-full rounded-xl border-gray-200"
+                              className="w-full rounded-xl border-gray-200 dark:border-[#2a3441]"
                             >
                               <option value="High">High</option>
                               <option value="Medium">Medium</option>
@@ -451,7 +451,7 @@ const PresalesForm = ({ leadId, lead, onClose, onSuccess }) => {
                         onChange={(e) => handleDynamicChange('risks', idx, 'mitigation', e.target.value)}
                         rows="2"
                         placeholder="How will we address this risk?"
-                        className="w-full rounded-xl border-gray-200"
+                        className="w-full rounded-xl border-gray-200 dark:border-[#2a3441]"
                       />
                     </div>
                   </div>
@@ -482,7 +482,7 @@ const PresalesForm = ({ leadId, lead, onClose, onSuccess }) => {
                           className={`px-6 py-2.5 rounded-full border-2 font-bold transition-all duration-200 ${
                             formData.technology_ids.includes(tech.id)
                               ? 'bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-100 scale-105'
-                              : 'bg-white border-gray-100 text-gray-500 hover:border-gray-300'
+                              : 'bg-white border-gray-100 dark:border-df-border text-gray-500 dark:text-gray-400 hover:border-gray-300 dark:border-[#2a3441] dark:bg-[#10151b] dark:text-white'
                           }`}
                         >
                           {tech.name}
@@ -500,11 +500,11 @@ const PresalesForm = ({ leadId, lead, onClose, onSuccess }) => {
 
           {currentStep === 6 && (
             <div className="max-w-4xl mx-auto space-y-12 pb-12">
-              <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm relative overflow-hidden">
+              <div className="bg-white p-8 rounded-3xl border border-gray-100 dark:border-df-border shadow-sm relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50/50 rounded-bl-[100px] -z-0"></div>
                 <div className="relative z-10">
                   <div className="flex items-center justify-between mb-6">
-                    <h3 className="text-xl font-black text-gray-900">Project Overview</h3>
+                    <h3 className="text-xl font-black text-gray-900 dark:text-white">Project Overview</h3>
                     <button onClick={() => setCurrentStep(1)} className="text-blue-600 text-sm font-bold">Edit</button>
                   </div>
                   <div className="grid grid-cols-2 gap-8">
@@ -516,7 +516,7 @@ const PresalesForm = ({ leadId, lead, onClose, onSuccess }) => {
                     </div>
                     <div>
                       <p className="text-[10px] font-black text-gray-400 uppercase tracking-wider mb-1">Executive Summary</p>
-                      <p className="text-sm text-gray-600 leading-relaxed italic line-clamp-3">
+                      <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed italic line-clamp-3">
                         "{formData.executive_overview}"
                       </p>
                     </div>
@@ -525,9 +525,9 @@ const PresalesForm = ({ leadId, lead, onClose, onSuccess }) => {
               </div>
 
               <div className="grid grid-cols-2 gap-8">
-                <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm">
+                <div className="bg-white p-8 rounded-3xl border border-gray-100 dark:border-df-border shadow-sm">
                   <div className="flex items-center justify-between mb-6">
-                    <h3 className="text-lg font-bold text-gray-900">Scope & Assumptions</h3>
+                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">Scope & Assumptions</h3>
                     <button onClick={() => setCurrentStep(2)} className="text-blue-600 text-sm font-bold">Edit</button>
                   </div>
                   <div className="flex space-x-4 mb-4">
@@ -540,32 +540,32 @@ const PresalesForm = ({ leadId, lead, onClose, onSuccess }) => {
                       <p className="text-[10px] font-bold text-red-500 uppercase">Out Scope</p>
                     </div>
                   </div>
-                  <p className="text-sm text-gray-500 font-medium">
+                  <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">
                     {formData.assumptions.filter(a => a.trim()).length} Key assumptions defined
                   </p>
                 </div>
 
-                <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm">
+                <div className="bg-white p-8 rounded-3xl border border-gray-100 dark:border-df-border shadow-sm">
                   <div className="flex items-center justify-between mb-6">
-                    <h3 className="text-lg font-bold text-gray-900">Effort & Commercials</h3>
+                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">Effort & Commercials</h3>
                     <button onClick={() => setCurrentStep(3)} className="text-blue-600 text-sm font-bold">Edit</button>
                   </div>
                   <div className="space-y-4">
                     <div className="flex justify-between items-center border-b border-gray-50 pb-2">
-                      <span className="text-sm text-gray-500 font-medium">Total Resource Days</span>
-                      <span className="font-bold text-gray-900">{totalDays}</span>
+                      <span className="text-sm text-gray-500 dark:text-gray-400 font-medium">Total Resource Days</span>
+                      <span className="font-bold text-gray-900 dark:text-white">{totalDays}</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-500 font-medium">Total Estimate</span>
+                      <span className="text-sm text-gray-500 dark:text-gray-400 font-medium">Total Estimate</span>
                       <span className="text-xl font-black text-blue-600">${totalCost.toLocaleString()}</span>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm">
+              <div className="bg-white p-8 rounded-3xl border border-gray-100 dark:border-df-border shadow-sm">
                 <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-lg font-bold text-gray-900">Risks & Technologies</h3>
+                  <h3 className="text-lg font-bold text-gray-900 dark:text-white">Risks & Technologies</h3>
                   <div className="flex space-x-4">
                     <button onClick={() => setCurrentStep(4)} className="text-blue-600 text-sm font-bold">Risks</button>
                     <button onClick={() => setCurrentStep(5)} className="text-blue-600 text-sm font-bold">Tech</button>
@@ -575,7 +575,7 @@ const PresalesForm = ({ leadId, lead, onClose, onSuccess }) => {
                   {formData.technology_ids.map(tid => {
                     const tech = techLibrary?.find(t => t.id === tid);
                     return tech ? (
-                      <span key={tid} className="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-xs font-bold">
+                      <span key={tid} className="px-3 py-1 bg-gray-100 text-gray-600 dark:text-gray-400 rounded-full text-xs font-bold">
                         {tech.name}
                       </span>
                     ) : null;
@@ -599,12 +599,12 @@ const PresalesForm = ({ leadId, lead, onClose, onSuccess }) => {
         </div>
 
         {/* Footer Navigation */}
-        <div className="p-8 border-t border-gray-100 bg-white flex items-center justify-between">
+        <div className="p-8 border-t border-gray-100 dark:border-df-border bg-white flex items-center justify-between">
           <button 
             disabled={currentStep === 1}
             onClick={() => setCurrentStep(prev => prev - 1)}
             className={`flex items-center space-x-2 px-6 py-3 rounded-2xl font-bold transition-all ${
-              currentStep === 1 ? 'text-gray-200 cursor-not-allowed' : 'text-gray-500 hover:bg-gray-50'
+              currentStep === 1 ? 'text-gray-200 cursor-not-allowed' : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50'
             }`}
           >
             <FiChevronLeft /> <span>Back</span>
@@ -613,7 +613,7 @@ const PresalesForm = ({ leadId, lead, onClose, onSuccess }) => {
           <div className="flex items-center space-x-4">
             <button 
               onClick={onClose}
-              className="px-6 py-3 text-gray-400 font-bold hover:text-gray-600"
+              className="px-6 py-3 text-gray-400 font-bold hover:text-gray-600 dark:text-gray-400"
             >
               Cancel
             </button>

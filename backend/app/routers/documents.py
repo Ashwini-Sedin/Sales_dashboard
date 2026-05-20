@@ -66,7 +66,7 @@ async def get_lead_document_versions(
     lead = result_lead.scalar_one_or_none()
     if not lead:
         raise HTTPException(status_code=404, detail="Lead not found")
-    if current_user.role != UserRole.super_admin and lead.division_id != current_user.division_id:
+    if current_user.role not in [UserRole.super_admin, UserRole.admin, UserRole.legal, UserRole.viewer] and lead.division_id != current_user.division_id:
         raise HTTPException(status_code=403, detail="Access denied")
 
     stmt = select(GeneratedDocument).where(GeneratedDocument.lead_id == lead_id).order_by(GeneratedDocument.created_at.desc())
@@ -310,13 +310,13 @@ async def list_documents(
             raise HTTPException(status_code=404, detail="Lead not found")
             
         # Division access check
-        if current_user.role != UserRole.super_admin and lead.division_id != current_user.division_id:
+        if current_user.role not in [UserRole.super_admin, UserRole.admin, UserRole.legal, UserRole.viewer] and lead.division_id != current_user.division_id:
             raise HTTPException(status_code=403, detail="Access denied")
             
         stmt = stmt.where(GeneratedDocument.lead_id == lead_id)
     else:
-        # Global view: filter by division if not super_admin
-        if current_user.role != UserRole.super_admin:
+        # Global view: filter by division if not super_admin, admin, legal, or viewer
+        if current_user.role not in [UserRole.super_admin, UserRole.admin, UserRole.legal, UserRole.viewer]:
             stmt = stmt.where(GeneratedDocument.division_id == current_user.division_id)
 
     if doc_type:
@@ -354,7 +354,7 @@ async def get_document(
         raise HTTPException(status_code=404, detail="Document not found")
         
     # Division access check
-    if current_user.role != UserRole.super_admin and document.division_id != current_user.division_id:
+    if current_user.role not in [UserRole.super_admin, UserRole.admin, UserRole.legal, UserRole.viewer] and document.division_id != current_user.division_id:
         raise HTTPException(status_code=403, detail="Access denied")
         
     return document
@@ -376,7 +376,7 @@ async def download_document(
         raise HTTPException(status_code=404, detail="Document not found")
         
     # Division access check
-    if current_user.role != UserRole.super_admin and document.division_id != current_user.division_id:
+    if current_user.role not in [UserRole.super_admin, UserRole.admin, UserRole.legal, UserRole.viewer] and document.division_id != current_user.division_id:
         raise HTTPException(status_code=403, detail="Access denied")
         
     # Generate S3 presigned URL
@@ -405,7 +405,7 @@ async def get_document_approvals(
     if not document:
         raise HTTPException(status_code=404, detail="Document not found")
         
-    if current_user.role != UserRole.super_admin and document.division_id != current_user.division_id:
+    if current_user.role not in [UserRole.super_admin, UserRole.admin, UserRole.legal, UserRole.viewer] and document.division_id != current_user.division_id:
         raise HTTPException(status_code=403, detail="Access denied")
 
     stmt = select(DocumentApproval).where(DocumentApproval.document_id == document_id)
@@ -797,7 +797,7 @@ async def legal_approve_document(
     if doc.status != "pending_legal_review":
         raise HTTPException(status_code=400, detail="Document is not pending legal review")
     
-    if current_user.role != UserRole.super_admin and doc.division_id != current_user.division_id:
+    if current_user.role not in [UserRole.super_admin, UserRole.admin, UserRole.legal] and doc.division_id != current_user.division_id:
         raise HTTPException(status_code=403, detail="Access denied")
 
     doc.status = "approved"

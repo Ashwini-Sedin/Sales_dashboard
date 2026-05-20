@@ -24,7 +24,7 @@ class User(Base):
     hashed_password = Column(String(255))
     first_name = Column(String(100))
     last_name = Column(String(100))
-    role = Column(Enum(UserRole, name="user_role", values_callable=lambda x: [e.value for e in x]), nullable=False)
+    role = Column(Enum(UserRole, name="user_role", values_callable=lambda obj: [e.value for e in obj]), nullable=False)
     division_id = Column(UUID(as_uuid=True), ForeignKey("divisions.id"))
     bio = Column(Text)
     avatar_url = Column(String(500))

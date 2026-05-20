@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import toast from 'react-hot-toast';
 import axiosInstance from '../api/axios';
 
 export const useLeadDetail = (leadId) => {
@@ -62,7 +63,13 @@ export const useUpdateLeadStage = () => {
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['lead', variables.leadId] });
       queryClient.invalidateQueries({ queryKey: ['leadTimeline', variables.leadId] });
+      queryClient.invalidateQueries({ queryKey: ['mainDashboardStats'] });
+      toast.success('Stage updated successfully');
     },
+    onError: (error) => {
+      const msg = error.response?.data?.detail || 'Failed to update lead stage';
+      toast.error(msg);
+    }
   });
 };
 

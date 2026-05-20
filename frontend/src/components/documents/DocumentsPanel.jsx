@@ -71,7 +71,7 @@ const DocumentsPanel = ({ leadId, lead }) => {
       {/* Section 1: Generate New Document */}
       <div>
         <div className="flex items-center justify-between mb-6">
-          <h3 className="text-xl font-bold text-gray-900">Generate New Document</h3>
+          <h3 className="text-xl font-bold text-gray-900 dark:text-white">Generate New Document</h3>
           <span className="text-xs bg-blue-50 text-blue-600 px-3 py-1 rounded-full font-bold uppercase tracking-wider">
             AI Engine Powered
           </span>
@@ -84,8 +84,8 @@ const DocumentsPanel = ({ leadId, lead }) => {
               onClick={() => type.enabled && setActiveModal(type.id)}
               className={`group relative p-5 rounded-2xl border-2 transition-all duration-300 ${
                 type.enabled 
-                  ? "bg-white border-gray-100 hover:border-blue-500 hover:shadow-xl hover:shadow-blue-50 cursor-pointer" 
-                  : "bg-gray-50 border-gray-200 opacity-60 cursor-not-allowed"
+                  ? "bg-white dark:bg-[#141a21] border-gray-100 dark:border-df-border hover:border-blue-500 hover:shadow-xl hover:shadow-blue-50/10 cursor-pointer" 
+                  : "bg-gray-50 dark:bg-[#10151b] border-gray-200 dark:border-[#2a3441] opacity-60 cursor-not-allowed"
               }`}
             >
               <div className="flex items-start justify-between mb-4">
@@ -99,19 +99,19 @@ const DocumentsPanel = ({ leadId, lead }) => {
                 )}
               </div>
 
-              <h4 className={`text-lg font-bold mb-1 ${type.enabled ? "text-gray-900" : "text-gray-500"}`}>
+              <h4 className={`text-lg font-bold mb-1 ${type.enabled ? "text-gray-900 dark:text-white" : "text-gray-500 dark:text-gray-400"}`}>
                 {type.title}
               </h4>
-              <p className="text-sm text-gray-500 mb-6 leading-relaxed">
+              <p className="text-sm text-gray-500 dark:text-gray-400 mb-6 leading-relaxed">
                 {type.description}
               </p>
 
               <div className="flex items-center justify-between mt-auto">
                 <div className="flex space-x-1">
-                  <span className="w-6 h-6 rounded bg-gray-100 flex items-center justify-center text-[10px] font-bold text-gray-400">
+                  <span className="w-6 h-6 rounded bg-gray-100 dark:bg-[#10151b] flex items-center justify-center text-[10px] font-bold text-gray-400">
                     PPTX
                   </span>
-                  <span className="w-6 h-6 rounded bg-gray-100 flex items-center justify-center text-[10px] font-bold text-gray-400">
+                  <span className="w-6 h-6 rounded bg-gray-100 dark:bg-[#10151b] flex items-center justify-center text-[10px] font-bold text-gray-400">
                     DOCX
                   </span>
                 </div>

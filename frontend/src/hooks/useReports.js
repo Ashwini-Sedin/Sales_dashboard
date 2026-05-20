@@ -1,6 +1,20 @@
 import { useQuery } from '@tanstack/react-query';
 import axiosInstance from '../api/axios';
 
+export const useAnalytics = (divisionId = null, months = 6) => {
+    return useQuery({
+        queryKey: ['reports', 'analytics', divisionId, months],
+        queryFn: async () => {
+            const params = { months };
+            if (divisionId) params.division_id = divisionId;
+            const response = await axiosInstance.get('/api/reports/analytics', { params });
+            return response.data;
+        },
+        staleTime: 1000 * 60 * 5, // cache 5 min
+        refetchOnWindowFocus: false,
+    });
+};
+
 export const useDashboardStats = (divisionId = null) => {
     return useQuery({
         queryKey: ['reports', 'dashboard', divisionId],
@@ -62,11 +76,10 @@ export const exportToExcel = async (divisionId = null) => {
         params,
         responseType: 'blob',
     });
-    
     const url = window.URL.createObjectURL(new Blob([response.data]));
     const link = document.createElement('a');
     link.href = url;
-    link.setAttribute('download', `DealFlow_Report_${new Date().toISOString().split('T')[0]}.xlsx`);
+    link.setAttribute('download', `DealFlow_Analytics_${new Date().toISOString().split('T')[0]}.xlsx`);
     document.body.appendChild(link);
     link.click();
     link.remove();
