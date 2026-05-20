@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome to DealFlow</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f7fafd; color: #222; }
+        .container { max-width: 600px; margin: 40px auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px #e3e7ed; padding: 32px; }
+        .header { color: #0d1b2a; font-size: 24px; font-weight: bold; margin-bottom: 16px; }
+        .info { margin: 24px 0; }
+        .btn { display: inline-block; background: #00c6d7; color: #fff; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: bold; }
+        .footer { margin-top: 32px; color: #888; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">Welcome to DealFlow!</div>
+        <p>Hello {{ first_name }},</p>
+        <p>Your account has been created on the DealFlow platform. You can now log in using your email <strong>{{ email }}</strong>.</p>
+        <div class="info">
+            <p>DealFlow helps you manage leads, sync communication, and generate documents with ease.</p>
+        </div>
+        <a href="{{ login_url }}" class="btn">Log In Now</a>
+        <p>If you have any questions, please contact your division head or system administrator.</p>
+        <div class="footer">
+            &copy; {{ year }} DealFlow. All rights reserved.
+        </div>
+    </div>
+</body>
+</html>
