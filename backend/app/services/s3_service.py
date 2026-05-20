@@ -24,6 +24,11 @@ class S3Service:
         """
         Uploads a file to S3 and returns the key.
         """
+        if not self.bucket_name:
+            # Fallback for local development when S3 is not configured
+            print(f"WARNING: S3 bucket not configured. Mocking upload for {key}")
+            return key
+
         try:
             self.s3_client.upload_fileobj(
                 io.BytesIO(content_bytes),
@@ -39,6 +44,10 @@ class S3Service:
         """
         Generates a pre-signed URL for an S3 object.
         """
+        if not self.bucket_name:
+            print(f"WARNING: S3 bucket not configured. Mocking presigned URL for {s3_key}")
+            return f"https://mock-s3-bucket.local/{s3_key}"
+
         try:
             url = self.s3_client.generate_presigned_url(
                 "get_object",
@@ -53,6 +62,11 @@ class S3Service:
         """
         Streams a file from S3 asynchronously.
         """
+        if not self.bucket_name:
+            print(f"WARNING: S3 bucket not configured. Mocking stream for {s3_key}")
+            yield b"Mock file content - S3 not configured."
+            return
+
         try:
             # We use standard boto3 get_object and yield chunks.
             # In production, aiobotocore is preferred, but for this setup we can stream using a generator.

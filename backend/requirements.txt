@@ -31,3 +31,5 @@ upstash-redis
 Pillow
 requests
 python-magic
+asyncpg
+openai

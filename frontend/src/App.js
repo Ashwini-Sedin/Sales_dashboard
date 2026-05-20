@@ -18,6 +18,9 @@ import TemplateLibraryAdmin from './pages/admin/TemplateLibraryAdmin';
 import Reports from './pages/Reports';
 import DocumentCenter from './pages/DocumentCenter';
 import GenerateDoc from './pages/GenerateDoc';
+import ESignature from './pages/ESignature';
+
+import Notifications from './pages/admin/Notifications';
 
 // Placeholder components for routes
 const Placeholder = ({ name }) => (
@@ -44,14 +47,16 @@ function App() {
                             <Route path="/dashboard" element={<Dashboard />} />
                             <Route path="/leads" element={<LeadsList />} />
                             <Route path="/leads/:id" element={<LeadDetail />} />
+                            <Route path="/lead-view" element={<Navigate to="/leads/dd84aa1e-0427-4543-9902-189aeeb01538" replace />} />
                             <Route path="/pipeline" element={<Pipeline />} />
                             <Route path="/documents" element={<DocumentCenter />} />
                             <Route path="/generate-doc" element={<GenerateDoc />} />
+                            <Route path="/e-signature" element={<ESignature />} />
                             <Route path="/reports" element={<Reports />} />
                             <Route path="/communication" element={<Placeholder name="Communication Hub" />} />
 
                             <Route path="/admin" element={
-                                <ProtectedRoute allowedRoles={['admin', 'division_head']}>
+                                <ProtectedRoute allowedRoles={['admin', 'division_head', 'Chief Executive Officer', 'Division Head']}>
                                     <AdminLayout />
                                 </ProtectedRoute>
                             }>
@@ -62,6 +67,12 @@ function App() {
                                 <Route path="templates" element={<TemplateLibraryAdmin />} />
                                 <Route path="audit-logs" element={<AuditLogsAdmin />} />
                             </Route>
+
+                            <Route path="/admin/notifications" element={
+                                <ProtectedRoute allowedRoles={['admin', 'division_head', 'Chief Executive Officer', 'Division Head']}>
+                                    <Notifications />
+                                </ProtectedRoute>
+                            } />
 
                             <Route path="/settings" element={<Placeholder name="User Settings" />} />
                         </Route>

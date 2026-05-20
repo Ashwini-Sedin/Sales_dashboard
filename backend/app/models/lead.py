@@ -53,6 +53,7 @@ class Lead(Base):
     lead_score = Column(Integer, default=0)
     estimated_value = Column(Numeric(18, 2))
     notes = Column(Text)
+    team = Column(JSONB)
     campaign_name = Column(String(255))
     name_used_for_outreach = Column(String(255))
     is_deleted = Column(Boolean, default=False)

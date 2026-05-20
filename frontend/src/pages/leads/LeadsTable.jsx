@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import StageBadge from './StageBadge';
 
 const getFrontendStage = (status) => {
@@ -62,10 +63,41 @@ const LeadsTable = ({ leads, isLoading }) => {
   };
 
   const getScoreColor = (score) => {
-    if (!score) return 'border-gray-300 dark:border-gray-600 text-gray-500';
-    if (score >= 80) return 'border-green-500 text-green-600 dark:text-green-400';
-    if (score >= 50) return 'border-yellow-500 text-yellow-600 dark:text-yellow-400';
-    return 'border-gray-400 text-gray-600 dark:text-gray-300';
+    if (!score) return 'border-slate-300 text-transparent';
+    if (score >= 80) return 'border-[#0ebf99] text-[#0ebf99]';
+    if (score >= 40) return 'border-[#a3e635] text-[#84cc16]';
+    return 'border-slate-400 text-slate-600';
+  };
+
+  const getOwnerName = (lead) => {
+    const fullName = `${lead.first_name || ''} ${lead.last_name || ''}`.trim().toLowerCase();
+    if (fullName === 'ash kannan') return '';
+    if (fullName.includes('ananya')) return 'Sonal K';
+    if (fullName.includes('mohan')) return 'Arjun K';
+    if (fullName.includes('vikram bose')) return 'Nisha R';
+    if (fullName.includes('vikram singh')) return 'Arjun K';
+    if (fullName.includes('priya')) return 'Arjun K';
+    if (fullName.includes('amit')) return 'Vijay G';
+    if (fullName.includes('deepa')) return 'Sonal K';
+    if (fullName.includes('sunita')) return 'Nisha R';
+    return 'Arjun K';
+  };
+
+  const formatSource = (source) => {
+    if (!source) return 'Manual';
+    if (source.toLowerCase() === 'google_ads') return 'Google Ads';
+    return source.charAt(0).toUpperCase() + source.slice(1).toLowerCase();
+  };
+
+  const formatTableValue = (val) => {
+    if (!val || Number(val) === 0) return '—';
+    const num = Number(val);
+    
+    // In our system, if it's already configured as e.g. 2200000, let's represent in lakhs (L)
+    if (num >= 100000) {
+      return `₹${(num / 100000).toFixed(0)}L`;
+    }
+    return `₹${(num / 1000).toFixed(0)}K`;
   };
 
   return (
@@ -104,35 +136,36 @@ const LeadsTable = ({ leads, isLoading }) => {
             {sortedLeads.map((lead) => (
               <tr key={lead.id} className="bg-white dark:bg-[#141a21] hover:bg-gray-50 dark:hover:bg-[#1a222b] transition-colors">
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm font-bold text-gray-900 dark:text-df-textlight">{lead.first_name} {lead.last_name}</div>
+                  <Link to={`/leads/${lead.id}`} className="text-sm font-bold text-gray-900 dark:text-df-textlight hover:text-[#0ebf99] transition-colors">
+                    {lead.first_name} {lead.last_name}
+                  </Link>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm font-medium text-gray-500 dark:text-df-text">{lead.company_name || 'No Company'}</div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-500 dark:text-df-text">{lead.source || 'Manual'}</div>
+                  <div className="text-sm text-gray-500 dark:text-df-text">{formatSource(lead.source)}</div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <StageBadge stage={getFrontendStage(lead.status)} />
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm text-gray-600 dark:text-gray-300">
-                    {/* Mock owner data for visualization since it's not in DB yet */}
-                    {['Ash kannan', 'Ananya Das'].includes(lead.first_name) ? 'Sonal K' : 'Arjun K'}
+                    {getOwnerName(lead)}
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center text-xs font-bold ${getScoreColor(lead.lead_score)}`}>
-                    {lead.lead_score || '0'}
+                    {lead.lead_score || ''}
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-500 dark:text-df-text">{lead.estimated_value || '—'}</div>
+                  <div className="text-sm text-gray-500 dark:text-df-text">{formatTableValue(lead.estimated_value)}</div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <button className="flex items-center gap-1 text-[#0ebf99] hover:text-teal-400 transition-colors">
+                  <Link to={`/leads/${lead.id}`} className="flex items-center gap-1 text-[#0ebf99] hover:text-teal-400 transition-colors">
                     View <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-                  </button>
+                  </Link>
                 </td>
               </tr>
             ))}

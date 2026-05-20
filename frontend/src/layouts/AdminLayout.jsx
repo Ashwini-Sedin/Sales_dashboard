@@ -1,54 +1,61 @@
 import React from 'react';
-import { NavLink, Outlet } from 'react-router-dom';
-import { 
-    UsersIcon, 
-    QueueListIcon, 
-    EnvelopeIcon, 
-    ClipboardDocumentListIcon 
-} from '@heroicons/react/24/outline';
-import { FiLayout } from 'react-icons/fi';
+import { NavLink, Outlet, useLocation } from 'react-router-dom';
 
 const AdminLayout = () => {
-    const navItems = [
-        { name: 'Users', path: '/admin/users', icon: UsersIcon },
-        { name: 'Divisions', path: '/admin/divisions', icon: QueueListIcon },
-        { name: 'Notification Templates', path: '/admin/notification-templates', icon: EnvelopeIcon },
-        { name: 'Document Templates', path: '/admin/templates', icon: FiLayout },
-        { name: 'Audit Logs', path: '/admin/audit-logs', icon: ClipboardDocumentListIcon },
-    ];
-
+    const location = useLocation();
+    
+    // The screenshot shows "Admin — Users & Divisions" as the title
+    // If we're on a different sub-page, we could change the title, but for now let's keep it simple
+    
     return (
-        <div className="flex flex-col lg:flex-row gap-8">
-            {/* Secondary Admin Sidebar */}
-            <aside className="w-full lg:w-64 flex-shrink-0">
-                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden sticky top-6">
-                    <div className="px-6 py-5 border-b border-gray-50">
-                        <h2 className="text-sm font-semibold text-gray-900 uppercase tracking-wider">
-                            Admin Control
-                        </h2>
-                    </div>
-                    <nav className="p-2 space-y-1">
-                        {navItems.map((item) => (
-                            <NavLink
-                                key={item.name}
-                                to={item.path}
-                                className={({ isActive }) => `
-                                    flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200
-                                    ${isActive 
-                                        ? 'bg-indigo-50 text-indigo-700' 
-                                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'}
-                                `}
-                            >
-                                <item.icon className="w-5 h-5 mr-3 flex-shrink-0" />
-                                {item.name}
-                            </NavLink>
-                        ))}
-                    </nav>
-                </div>
-            </aside>
+        <div className="p-2 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+                Admin — Users & Divisions
+            </h1>
+            
+            {/* Tabs */}
+            <div className="flex border-b border-gray-200 dark:border-df-border mb-8 gap-8">
+                <NavLink
+                    to="/admin/users"
+                    className={({ isActive }) => `
+                        pb-3 px-1 text-sm font-bold transition-colors relative
+                        ${isActive 
+                            ? 'text-[#0ebf99]' 
+                            : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'}
+                    `}
+                >
+                    {({ isActive }) => (
+                        <>
+                            Users & Roles
+                            {isActive && (
+                                <span className="absolute bottom-0 left-0 w-full h-0.5 bg-[#0ebf99] rounded-t-full" />
+                            )}
+                        </>
+                    )}
+                </NavLink>
+                <NavLink
+                    to="/admin/divisions"
+                    className={({ isActive }) => `
+                        pb-3 px-1 text-sm font-bold transition-colors relative
+                        ${isActive 
+                            ? 'text-[#0ebf99]' 
+                            : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'}
+                    `}
+                >
+                    {({ isActive }) => (
+                        <>
+                            Divisions
+                            {isActive && (
+                                <span className="absolute bottom-0 left-0 w-full h-0.5 bg-[#0ebf99] rounded-t-full" />
+                            )}
+                        </>
+                    )}
+                </NavLink>
+                {/* We can add other admin tabs here if needed in the future */}
+            </div>
 
             {/* Admin Content */}
-            <div className="flex-1 min-w-0">
+            <div className="min-w-0">
                 <Outlet />
             </div>
         </div>

@@ -1,118 +1,170 @@
 import React, { useState } from 'react';
-import { 
-  FiFileText, FiSearch, FiFilter, 
-  FiTrendingUp, FiCheckCircle, FiClock, FiArchive 
-} from 'react-icons/fi';
-import { useDocuments } from '../hooks/useDocuments';
-import DocumentHistoryTable from '../components/documents/DocumentHistoryTable';
+import { useNavigate } from 'react-router-dom';
+
+const MOCK_DOCUMENTS = [
+  { id: 1, title: 'Quick Sales — TechNova Pvt Ltd', type: 'PPTX', version: 'v1', by: 'Arjun Kumar', status: 'New' },
+  { id: 2, title: 'NDA — TechNova Pvt Ltd', type: 'PDF', version: 'v1', by: 'Arjun Kumar', status: 'New' },
+  { id: 3, title: 'Detailed Proposal — TechNova Pvt Ltd', type: 'DOCX', version: 'v1', by: 'Arjun Kumar', status: 'New' },
+  { id: 4, title: 'Quick Sales — TechNova Pvt Ltd', type: 'PPTX', version: 'v1', by: 'Arjun Kumar', status: 'New' },
+  { id: 5, title: 'Detailed Proposal — TechNova Pvt Ltd', type: 'DOCX', version: 'v1', by: 'Arjun Kumar', status: 'New' },
+  { id: 6, title: 'Quick Sales Deck — TechNova Pvt Ltd', type: 'PPTX', version: 'v2', by: 'Arjun Kumar', status: 'Proposal' },
+  { id: 7, title: 'Detailed Proposal — Cloud Migration', type: 'DOCX', version: 'v1', by: 'Arjun Kumar', status: 'New' },
+  { id: 8, title: 'NDA — TechNova Pvt Ltd (Mutual)', type: 'PDF', version: 'v1', by: 'Deepak Malhotra', status: 'Won' },
+  { id: 9, title: 'Presales Assessment — TechNova', type: 'DOCX', version: 'v1', by: 'Suresh Rao', status: 'Won' },
+  { id: 10, title: 'SOW — Cloud Migration Programme', type: 'DOCX', version: 'v1', by: 'Suresh Rao', status: 'Contacted' },
+];
 
 const DocumentCenter = () => {
-  // Passing null leadId to useDocuments will fetch all documents now
-  const { data, isLoading } = useDocuments(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [filterType, setFilterType] = useState('all');
+  const navigate = useNavigate();
+  const [activeTypeFilter, setActiveTypeFilter] = useState('All Types');
 
-  const stats = [
-    { label: 'Total Documents', value: data?.total || 0, icon: <FiFileText />, color: 'bg-blue-500' },
-    { label: 'Approved', value: data?.documents?.filter(d => d.status === 'approved').length || 0, icon: <FiCheckCircle />, color: 'bg-green-500' },
-    { label: 'In Progress', value: data?.documents?.filter(d => ['draft', 'pending_approval'].includes(d.status)).length || 0, icon: <FiClock />, color: 'bg-yellow-500' },
-    { label: 'Archived', value: data?.documents?.filter(d => d.status === 'archived').length || 0, icon: <FiArchive />, color: 'bg-gray-500' }
-  ];
+  const handleGenerateDoc = () => {
+    navigate('/generate-doc');
+  };
 
-  const filteredDocs = data?.documents?.filter(doc => {
-    const matchesSearch = doc.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                         doc.lead_company_name?.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesType = filterType === 'all' || doc.doc_type === filterType;
-    return matchesSearch && matchesType;
+  const filteredDocs = MOCK_DOCUMENTS.filter((doc) => {
+    if (activeTypeFilter === 'All Types') return true;
+    return doc.type === activeTypeFilter;
   });
 
-  if (isLoading) {
+  const getTypeStyle = (type) => {
+    if (type === 'PPTX') return 'text-amber-500 font-bold';
+    if (type === 'PDF') return 'text-rose-500 font-bold';
+    if (type === 'DOCX') return 'text-sky-500 font-bold';
+    return 'text-slate-500';
+  };
+
+  const getStatusBadge = (status) => {
+    if (status === 'New') {
+      return (
+        <span className="px-3 py-1 text-xs font-semibold rounded-full bg-[#e5faef] text-[#0ebf99]">
+          New
+        </span>
+      );
+    }
+    if (status === 'Proposal') {
+      return (
+        <span className="px-3 py-1 text-xs font-semibold rounded-full bg-[#fef3c7] text-[#d97706]">
+          Proposal
+        </span>
+      );
+    }
+    if (status === 'Won') {
+      return (
+        <span className="px-3 py-1 text-xs font-semibold rounded-full bg-[#e5faef] text-[#0ebf99]">
+          Won
+        </span>
+      );
+    }
+    if (status === 'Contacted') {
+      return (
+        <span className="px-3 py-1 text-xs font-semibold rounded-full bg-[#f3e8ff] text-[#8b5cf6]">
+          Contacted
+        </span>
+      );
+    }
     return (
-      <div className="flex items-center justify-center py-20">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      </div>
+      <span className="px-3 py-1 text-xs font-semibold rounded-full bg-slate-100 text-slate-600">
+        {status}
+      </span>
     );
-  }
+  };
 
   return (
-    <div className="p-6 md:p-8 max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-extrabold text-gray-900 dark:text-df-textlight tracking-tight">Document Center</h1>
-          <p className="text-gray-500 dark:text-df-text mt-1">Manage and track all generated sales intelligence assets.</p>
-        </div>
-        <div className="flex items-center space-x-3">
-          <button className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg font-bold shadow-lg shadow-blue-100 hover:bg-blue-700 transition-all active:scale-95">
-            <FiTrendingUp />
-            <span>View Analytics</span>
-          </button>
-        </div>
+    <div className="container mx-auto px-4 py-8 max-w-7xl">
+      {/* Header section */}
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-2xl font-bold text-slate-800">All Documents</h1>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {stats.map((stat, idx) => (
-          <div key={idx} className="bg-white dark:bg-df-card p-6 rounded-2xl border border-gray-100 dark:border-df-border hover:border-blue-100 dark:hover:border-df-accent/50 transition-colors">
-            <div className="flex items-center justify-between mb-4">
-              <div className={`p-3 rounded-xl text-white ${stat.color} shadow-lg shadow-opacity-20`}>
-                {stat.icon}
-              </div>
-              <span className="text-xs font-bold text-green-500 bg-green-50 dark:bg-green-500/10 px-2 py-1 rounded-full">+12%</span>
-            </div>
-            <p className="text-sm font-medium text-gray-500 dark:text-df-text">{stat.label}</p>
-            <p className="text-2xl font-bold text-gray-900 dark:text-df-textlight mt-1">{stat.value}</p>
-          </div>
-        ))}
+      {/* Filter and Action Bar */}
+      <div className="flex justify-between items-center mb-6">
+        <div className="flex gap-2">
+          {['All Types', 'PPTX', 'DOCX', 'PDF'].map((type) => {
+            const isSelected = activeTypeFilter === type;
+            return (
+              <button
+                key={type}
+                onClick={() => setActiveTypeFilter(type)}
+                className={`px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-colors border ${
+                  isSelected
+                    ? 'border-[#0ebf99] text-[#0ebf99] bg-[#0ebf99]/5'
+                    : 'border-slate-200 text-slate-500 hover:border-slate-300'
+                }`}
+              >
+                {type}
+              </button>
+            );
+          })}
+        </div>
+
+        <button
+          onClick={handleGenerateDoc}
+          className="bg-[#0ebf99] hover:bg-[#0ca887] text-white px-5 py-2.5 rounded-lg flex items-center gap-2 font-semibold transition-all shadow-sm text-sm"
+        >
+          Generate Document
+        </button>
       </div>
 
-      {/* Filters & Search */}
-      <div className="bg-white dark:bg-df-card p-4 rounded-2xl border border-gray-100 dark:border-df-border flex flex-col md:flex-row items-center justify-between gap-4">
-        <div className="relative w-full md:w-96">
-          <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-df-text" />
-          <input 
-            type="text"
-            placeholder="Search by title or company..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 rounded-xl border border-gray-200 dark:border-df-border bg-transparent focus:ring-2 focus:ring-df-accent focus:border-df-accent outline-none transition-all text-gray-900 dark:text-df-textlight"
-          />
+      {/* Document History Table */}
+      <div className="bg-white rounded-xl border border-slate-100 overflow-hidden shadow-sm">
+        <div className="overflow-x-auto">
+          <table className="min-w-full text-left">
+            <thead className="bg-[#f8fafc] border-b border-slate-100">
+              <tr>
+                <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">
+                  Document
+                </th>
+                <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">
+                  Type
+                </th>
+                <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">
+                  Version
+                </th>
+                <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">
+                  By
+                </th>
+                <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">
+                  Status
+                </th>
+                <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {filteredDocs.map((doc) => (
+                <tr key={doc.id} className="hover:bg-slate-50/50 transition-colors">
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm font-bold text-slate-800">{doc.title}</div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className={`text-xs ${getTypeStyle(doc.type)}`}>
+                      {doc.type}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400 font-medium">
+                    {doc.version}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500 font-medium">
+                    {doc.by}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {getStatusBadge(doc.status)}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <button
+                      onClick={handleGenerateDoc}
+                      className="flex items-center gap-1 text-[#0ebf99] hover:text-teal-400 transition-colors text-xs"
+                    >
+                      View <span className="text-[10px]">↗</span>
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
-        
-        <div className="flex items-center space-x-3 w-full md:w-auto">
-          <div className="flex items-center space-x-2 bg-gray-50 dark:bg-[#151b23] p-1 rounded-xl border border-gray-100 dark:border-df-border">
-            <button 
-              onClick={() => setFilterType('all')}
-              className={`px-4 py-1.5 rounded-lg text-sm font-bold transition-all ${filterType === 'all' ? 'bg-white dark:bg-df-card text-blue-600 dark:text-df-accent shadow-sm' : 'text-gray-500 dark:text-df-text hover:text-gray-700 dark:hover:text-white'}`}
-            >
-              All
-            </button>
-            <button 
-              onClick={() => setFilterType('quick_sales')}
-              className={`px-4 py-1.5 rounded-lg text-sm font-bold transition-all ${filterType === 'quick_sales' ? 'bg-white dark:bg-df-card text-blue-600 dark:text-df-accent shadow-sm' : 'text-gray-500 dark:text-df-text hover:text-gray-700 dark:hover:text-white'}`}
-            >
-              Sales
-            </button>
-            <button 
-              onClick={() => setFilterType('detailed_proposal')}
-              className={`px-4 py-1.5 rounded-lg text-sm font-bold transition-all ${filterType === 'detailed_proposal' ? 'bg-white dark:bg-df-card text-blue-600 dark:text-df-accent shadow-sm' : 'text-gray-500 dark:text-df-text hover:text-gray-700 dark:hover:text-white'}`}
-            >
-              Proposals
-            </button>
-          </div>
-          <button className="p-2.5 rounded-xl border border-gray-200 dark:border-df-border text-gray-500 dark:text-df-text hover:bg-gray-50 dark:hover:bg-df-cardhover transition-colors">
-            <FiFilter />
-          </button>
-        </div>
-      </div>
-
-      {/* Document Table */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between px-2">
-          <h2 className="text-xl font-bold text-gray-900 dark:text-df-textlight">Recent Documents</h2>
-          <button className="text-sm font-bold text-blue-600 dark:text-df-blue hover:underline">Export Report</button>
-        </div>
-        <DocumentHistoryTable documents={filteredDocs} showLead={true} />
       </div>
     </div>
   );

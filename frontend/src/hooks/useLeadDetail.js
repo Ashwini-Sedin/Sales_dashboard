@@ -50,3 +50,33 @@ export const useUpdateLeadTeam = () => {
     },
   });
 };
+
+export const useUpdateLeadStage = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: async ({ leadId, stage }) => {
+      const response = await axiosInstance.post(`/api/leads/${leadId}/stage`, { stage });
+      return response.data;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['lead', variables.leadId] });
+      queryClient.invalidateQueries({ queryKey: ['leadTimeline', variables.leadId] });
+    },
+  });
+};
+
+export const useUpdateLead = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: async ({ leadId, data }) => {
+      const response = await axiosInstance.put(`/api/leads/${leadId}`, data);
+      return response.data;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['lead', variables.leadId] });
+      queryClient.invalidateQueries({ queryKey: ['leadTimeline', variables.leadId] });
+    },
+  });
+};

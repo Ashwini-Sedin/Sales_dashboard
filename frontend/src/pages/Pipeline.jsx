@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { useLeadsList, useChangeStage } from '../hooks/useLeads';
 import CreateLeadModal from './leads/CreateLeadModal';
-import { FiSearch, FiPlus, FiDollarSign, FiAward, FiClock, FiUser, FiBriefcase } from 'react-icons/fi';
+import { FiSearch, FiDollarSign, FiAward, FiClock, FiUser, FiBriefcase } from 'react-icons/fi';
 
 const STAGES = ['New', 'Contacted', 'Qualified', 'Proposal', 'Negotiation', 'On Hold', 'Closed Won', 'Closed Lost'];
 

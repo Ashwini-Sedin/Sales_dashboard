@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import axios from 'axios';
+import api from '../../api';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 
 const CreateDivisionModal = ({ isOpen, division, onClose, onSuccess }) => {
@@ -31,7 +31,7 @@ const CreateDivisionModal = ({ isOpen, division, onClose, onSuccess }) => {
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const response = await axios.get('/api/users');
+                const response = await api.get('/api/users');
                 setUsers(response.data);
             } catch (error) {
                 console.error('Error fetching users:', error);
@@ -44,9 +44,9 @@ const CreateDivisionModal = ({ isOpen, division, onClose, onSuccess }) => {
         try {
             setLoading(true);
             if (division) {
-                await axios.put(`/api/divisions/${division.id}`, data);
+                await api.put(`/api/divisions/${division.id}`, data);
             } else {
-                await axios.post('/api/divisions', data);
+                await api.post('/api/divisions', data);
             }
             onSuccess();
             onClose();

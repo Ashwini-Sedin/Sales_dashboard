@@ -1,11 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { 
-    PlusIcon, 
-    PencilSquareIcon, 
-    NoSymbolIcon, 
-    CheckCircleIcon 
-} from '@heroicons/react/24/outline';
+import api from '../../api';
+import { PlusIcon } from '@heroicons/react/24/solid';
+import { formatDistanceToNow } from 'date-fns';
 import CreateUserModal from '../../components/admin/CreateUserModal';
 import EditUserModal from '../../components/admin/EditUserModal';
 
@@ -15,11 +11,12 @@ const UsersAdmin = () => {
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
+    const [searchQuery, setSearchQuery] = useState('');
 
     const fetchUsers = async () => {
         try {
             setLoading(true);
-            const response = await axios.get('/api/users');
+            const response = await api.get('/api/users');
             setUsers(response.data);
         } catch (error) {
             console.error('Error fetching users:', error);
@@ -37,121 +34,146 @@ const UsersAdmin = () => {
         setIsEditModalOpen(true);
     };
 
-    const handleDeactivate = async (userId) => {
-        if (window.confirm('Are you sure you want to deactivate this user?')) {
-            try {
-                await axios.post(`/api/users/${userId}/deactivate`);
-                fetchUsers();
-            } catch (error) {
-                console.error('Error deactivating user:', error);
-            }
-        }
-    };
-
     const getInitials = (firstName, lastName) => {
         return `${firstName?.[0] || ''}${lastName?.[0] || ''}`.toUpperCase();
     };
 
+    // Use a hash function to pick consistent colors for users
+    const getAvatarColor = (firstName) => {
+        const colors = [
+            'bg-[#0ebf99]', 'bg-purple-500', 'bg-blue-500', 'bg-rose-500', 
+            'bg-amber-500', 'bg-teal-500', 'bg-indigo-500'
+        ];
+        const charCode = (firstName || 'A').charCodeAt(0);
+        return colors[charCode % colors.length];
+    };
+
     const getRoleBadge = (role) => {
+        // Map realistic roles to colors matching the aesthetic
         const styles = {
-            admin: 'bg-purple-100 text-purple-700 border-purple-200',
-            division_head: 'bg-blue-100 text-blue-700 border-blue-200',
-            sales_rep: 'bg-green-100 text-green-700 border-green-200',
+            'Chief Executive Officer': 'bg-[#e5faef] dark:bg-[#10151b] text-[#0ebf99] border-[#0ebf99]/30',
+            'Division Head': 'bg-blue-50 dark:bg-[#10151b] text-blue-500 border-blue-500/30',
+            'Sales Manager': 'bg-purple-50 dark:bg-[#10151b] text-purple-500 border-purple-500/30',
+            'Business Development Executive': 'bg-amber-50 dark:bg-[#10151b] text-amber-600 border-amber-500/30',
         };
+        // Default style if role doesn't match predefined ones
+        const defaultStyle = 'bg-gray-50 dark:bg-[#10151b] text-gray-600 dark:text-gray-400 border-gray-200 dark:border-gray-700';
+        
         return (
-            <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold border ${styles[role] || 'bg-gray-100 text-gray-700 border-gray-200'}`}>
-                {role.replace('_', ' ').toUpperCase()}
+            <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${styles[role] || defaultStyle}`}>
+                {role}
             </span>
         );
     };
 
+    const formatLastActive = (dateString) => {
+        if (!dateString) return 'Never';
+        try {
+            return formatDistanceToNow(new Date(dateString), { addSuffix: true })
+                .replace('about ', '')
+                .replace(' hours', ' hrs')
+                .replace(' minutes', ' min');
+        } catch {
+            return 'Unknown';
+        }
+    };
+
+    const filteredUsers = users.filter(u => 
+        u.first_name?.toLowerCase().includes(searchQuery.toLowerCase()) || 
+        u.last_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        u.email?.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-center">
-                <div>
-                    <h1 className="text-2xl font-bold text-gray-900">User Management</h1>
-                    <p className="text-gray-500 mt-1">Manage system access, roles, and divisions.</p>
+            {/* Top Toolbar */}
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+                <div className="flex flex-col sm:flex-row gap-4">
+                    <input 
+                        type="text" 
+                        placeholder="Search users..." 
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="px-4 py-2 border border-gray-200 dark:border-df-border rounded-xl bg-white dark:bg-[#141a21] text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0ebf99] w-full sm:w-64"
+                    />
+                    <select className="px-4 py-2 border border-gray-200 dark:border-df-border rounded-xl bg-white dark:bg-[#141a21] text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0ebf99]">
+                        <option>All Roles</option>
+                        <option>Chief Executive Officer</option>
+                        <option>Division Head</option>
+                        <option>Business Development Executive</option>
+                        <option>Sales Manager</option>
+                    </select>
                 </div>
                 <button
                     onClick={() => setIsCreateModalOpen(true)}
-                    className="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-colors shadow-sm text-sm font-semibold"
+                    className="inline-flex items-center px-4 py-2 bg-[#0ebf99] text-white rounded-xl hover:bg-opacity-90 transition-colors shadow-sm text-sm font-bold gap-2 whitespace-nowrap"
                 >
-                    <PlusIcon className="w-5 h-5 mr-2" />
+                    <PlusIcon className="w-4 h-4" strokeWidth={2.5} />
                     Invite User
                 </button>
             </div>
 
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+            {/* Main Table Card */}
+            <div className="bg-white dark:bg-[#141a21] rounded-2xl border border-gray-100 dark:border-df-border overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
-                        <thead className="bg-gray-50 border-b border-gray-100">
+                        <thead className="border-b border-gray-100 dark:border-df-border">
                             <tr>
-                                <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">User</th>
-                                <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Role</th>
-                                <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Division</th>
-                                <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
-                                <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">Actions</th>
+                                <th className="px-6 py-5 text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest whitespace-nowrap">User</th>
+                                <th className="px-6 py-5 text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest whitespace-nowrap">Role</th>
+                                <th className="px-6 py-5 text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest whitespace-nowrap">Division</th>
+                                <th className="px-6 py-5 text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest whitespace-nowrap">Leads</th>
+                                <th className="px-6 py-5 text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest whitespace-nowrap">Last Active</th>
+                                <th className="px-6 py-5 text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest whitespace-nowrap">Status</th>
+                                <th className="px-6 py-5 text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest whitespace-nowrap">Actions</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-50">
+                        <tbody className="divide-y divide-gray-100 dark:divide-df-border">
                             {loading ? (
                                 <tr>
-                                    <td colSpan="5" className="px-6 py-12 text-center text-gray-400">Loading users...</td>
+                                    <td colSpan="7" className="px-6 py-12 text-center text-sm text-gray-400 dark:text-gray-500">Loading users...</td>
                                 </tr>
-                            ) : users.length === 0 ? (
+                            ) : filteredUsers.length === 0 ? (
                                 <tr>
-                                    <td colSpan="5" className="px-6 py-12 text-center text-gray-400">No users found.</td>
+                                    <td colSpan="7" className="px-6 py-12 text-center text-sm text-gray-400 dark:text-gray-500">No users found.</td>
                                 </tr>
                             ) : (
-                                users.map((user) => (
-                                    <tr key={user.id} className="hover:bg-gray-50 transition-colors">
+                                filteredUsers.map((user) => (
+                                    <tr key={user.id} className="hover:bg-gray-50/50 dark:hover:bg-[#10151b] transition-colors">
                                         <td className="px-6 py-4">
                                             <div className="flex items-center">
-                                                <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold text-sm mr-3">
+                                                <div className={`w-9 h-9 rounded-full ${getAvatarColor(user.first_name)} flex items-center justify-center text-white font-bold text-xs mr-4 shrink-0 shadow-sm`}>
                                                     {getInitials(user.first_name, user.last_name)}
                                                 </div>
-                                                <div>
-                                                    <div className="text-sm font-bold text-gray-900">{user.first_name} {user.last_name}</div>
-                                                    <div className="text-xs text-gray-500">{user.email}</div>
-                                                </div>
+                                                <span className="text-sm font-bold text-gray-900 dark:text-white whitespace-nowrap">
+                                                    {user.first_name} {user.last_name}
+                                                </span>
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4">
+                                        <td className="px-6 py-4 whitespace-nowrap">
                                             {getRoleBadge(user.role)}
                                         </td>
-                                        <td className="px-6 py-4 text-sm text-gray-600">
-                                            {user.division_name || 'Global'}
+                                        <td className="px-6 py-4 text-sm font-medium text-gray-500 dark:text-gray-300">
+                                            {user.division_name || 'All'}
+                                        </td>
+                                        <td className="px-6 py-4 text-sm font-medium text-gray-600 dark:text-gray-300">
+                                            {user.lead_count || 0}
+                                        </td>
+                                        <td className="px-6 py-4 text-sm font-medium text-[#0ebf99]">
+                                            {formatLastActive(user.updated_at)}
                                         </td>
                                         <td className="px-6 py-4">
-                                            {user.is_active ? (
-                                                <span className="flex items-center text-xs font-medium text-green-600">
-                                                    <CheckCircleIcon className="w-4 h-4 mr-1" />
-                                                    Active
-                                                </span>
-                                            ) : (
-                                                <span className="flex items-center text-xs font-medium text-gray-400">
-                                                    <NoSymbolIcon className="w-4 h-4 mr-1" />
-                                                    Inactive
-                                                </span>
-                                            )}
+                                            <span className={`text-sm font-bold ${user.is_active ? 'text-[#0ebf99]' : 'text-gray-400'}`}>
+                                                {user.is_active ? 'Active' : 'Inactive'}
+                                            </span>
                                         </td>
-                                        <td className="px-6 py-4 text-right space-x-2">
+                                        <td className="px-6 py-4">
                                             <button 
                                                 onClick={() => handleEdit(user)}
-                                                className="p-1.5 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
-                                                title="Edit User"
+                                                className="text-sm font-bold text-[#0ebf99] hover:text-[#0b9c7d] transition-colors"
                                             >
-                                                <PencilSquareIcon className="w-5 h-5" />
+                                                Edit
                                             </button>
-                                            {user.is_active && (
-                                                <button 
-                                                    onClick={() => handleDeactivate(user.id)}
-                                                    className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                                                    title="Deactivate"
-                                                >
-                                                    <NoSymbolIcon className="w-5 h-5" />
-                                                </button>
-                                            )}
                                         </td>
                                     </tr>
                                 ))

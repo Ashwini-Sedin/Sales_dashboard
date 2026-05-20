@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import { 
     FiGrid, 
@@ -11,13 +11,31 @@ import {
     FiEdit3,
     FiBarChart2,
     FiSettings,
-    FiChevronLeft,
-    FiChevronRight,
 } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
+import api from '../api';
 
 const Sidebar = ({ isOpen, toggleSidebar, isCollapsed, toggleCollapse }) => {
     const { user } = useAuth();
+    const [unreadCount, setUnreadCount] = useState(0);
+
+    useEffect(() => {
+        const fetchUnreadCount = async () => {
+            try {
+                const response = await api.get('/api/notifications');
+                const count = response.data.filter(n => !n.is_read).length;
+                setUnreadCount(count);
+            } catch (error) {
+                console.error('Error fetching unread notifications:', error);
+            }
+        };
+        
+        fetchUnreadCount();
+        
+        // Poll every 15 seconds to keep it updated
+        const interval = setInterval(fetchUnreadCount, 15000);
+        return () => clearInterval(interval);
+    }, []);
 
     const menuGroups = [
         {
@@ -56,9 +74,10 @@ const Sidebar = ({ isOpen, toggleSidebar, isCollapsed, toggleCollapse }) => {
         },
         {
             title: 'ADMIN',
-            roles: ['admin', 'division_head'],
+            roles: ['admin', 'division_head', 'Chief Executive Officer', 'Division Head'],
             items: [
-                { name: 'Users & Divisions', icon: FiSettings, path: '/admin' }
+                { name: 'Users & Divisions', icon: FiSettings, path: '/admin' },
+                { name: 'Notifications', icon: FiMail, path: '/admin/notifications', badge: unreadCount }
             ]
         }
     ];
@@ -121,7 +140,12 @@ const Sidebar = ({ isOpen, toggleSidebar, isCollapsed, toggleCollapse }) => {
                                         }
                                     >
                                         <item.icon className={`${isCollapsed ? 'm-0' : 'mr-4'} h-5 w-5`} />
-                                        {!isCollapsed && <span>{item.name}</span>}
+                                        {!isCollapsed && <span className="flex-1">{item.name}</span>}
+                                        {!isCollapsed && item.badge && (
+                                            <span className="bg-[#0ebf99] text-white text-[10px] font-bold px-2 py-0.5 rounded-full ml-auto">
+                                                {item.badge}
+                                            </span>
+                                        )}
                                     </NavLink>
                                 ))}
                             </div>

@@ -21,6 +21,21 @@ class LeadBase(BaseModel):
     estimated_value: Optional[Decimal] = None
     notes: Optional[str] = None
     team: Optional[List[dict]] = None
+    linkedin_id: Optional[str] = None
+    hq_address: Optional[str] = None
+    prospect_address: Optional[str] = None
+    website: Optional[str] = None
+    employees: Optional[int] = None
+    industry: Optional[str] = None
+    revenue_usd: Optional[Decimal] = None
+    country: Optional[str] = None
+    time_zone: Optional[str] = None
+    company_info: Optional[str] = None
+    current_requirement: Optional[str] = None
+    job_url: Optional[str] = None
+    other_key_contacts: Optional[List[dict]] = None
+    campaign_name: Optional[str] = None
+    name_used_for_outreach: Optional[str] = None
 
 class LeadCreate(LeadBase):
     pass
@@ -40,6 +55,21 @@ class LeadUpdate(BaseModel):
     notes: Optional[str] = None
     team: Optional[List[dict]] = None
     is_deleted: Optional[bool] = None
+    linkedin_id: Optional[str] = None
+    hq_address: Optional[str] = None
+    prospect_address: Optional[str] = None
+    website: Optional[str] = None
+    employees: Optional[int] = None
+    industry: Optional[str] = None
+    revenue_usd: Optional[Decimal] = None
+    country: Optional[str] = None
+    time_zone: Optional[str] = None
+    company_info: Optional[str] = None
+    current_requirement: Optional[str] = None
+    job_url: Optional[str] = None
+    other_key_contacts: Optional[List[dict]] = None
+    campaign_name: Optional[str] = None
+    name_used_for_outreach: Optional[str] = None
 
 class LeadResponse(LeadBase):
     id: UUID

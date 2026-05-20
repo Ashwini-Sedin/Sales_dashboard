@@ -30,13 +30,6 @@ const Dashboard = () => {
                 setStats(response.data);
             } catch (error) {
                 console.error('Failed to fetch dashboard stats', error);
-                // Fallback mock data for demonstration matching screenshot
-                setStats({
-                    totalLeads: 12,
-                    pipelineValue: '₹2.4Cr',
-                    docsAwaiting: 3,
-                    avgTurnaround: 18
-                });
             } finally {
                 setLoading(false);
             }
@@ -72,30 +65,30 @@ const Dashboard = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <StatCard 
                     title="Total Leads" 
-                    value={stats.totalLeads} 
-                    subtext="↑ +12 this week"
+                    value={stats.totalLeads || 0} 
+                    subtext="↑ Active leads in DB"
                     subtextColor="text-df-accent"
                     bgCircleColor="bg-df-accent"
                 />
                 <StatCard 
                     title="Pipeline Value" 
-                    value={stats.pipelineValue} 
+                    value={stats.pipelineValue || '$0'} 
                     subtext="↑ Active deals"
                     subtextColor="text-df-accent"
                     bgCircleColor="bg-df-purple"
                 />
                 <StatCard 
-                    title="Won This Month" 
-                    value={stats.docsAwaiting} 
-                    subtext="64% win rate"
+                    title="Docs Awaiting" 
+                    value={stats.docsAwaiting || 0} 
+                    subtext="Needs attention"
                     subtextColor="text-df-accent"
                     bgCircleColor="bg-df-yellow"
                 />
                 <StatCard 
                     title="Avg. Turnaround" 
-                    value={`${stats.avgTurnaround}d`} 
-                    subtext="↑ 2d vs last month"
-                    subtextColor="text-red-500"
+                    value={`${stats.avgTurnaround || 0}d`} 
+                    subtext="Overall efficiency"
+                    subtextColor="text-gray-500"
                     bgCircleColor="bg-df-pink"
                 />
             </div>
@@ -105,17 +98,10 @@ const Dashboard = () => {
                 <div className="lg:col-span-2 bg-white dark:bg-df-card p-6 rounded-xl border border-gray-100 dark:border-df-border">
                     <div className="flex justify-between items-center mb-6">
                         <h3 className="font-bold text-gray-900 dark:text-df-textlight">Pipeline by Stage</h3>
-                        <span className="text-xs text-gray-500 dark:text-df-text">Cloud Division</span>
+                        <span className="text-xs text-gray-500 dark:text-df-text">All Divisions</span>
                     </div>
                     <div className="space-y-4">
-                        {[
-                            { label: 'New', count: 1, color: 'bg-df-accent', width: '20%' },
-                            { label: 'Contacted', count: 2, color: 'bg-df-purple', width: '40%' },
-                            { label: 'Qualified', count: 4, color: 'bg-green-500', width: '80%' },
-                            { label: 'Proposal', count: 1, color: 'bg-df-yellow', width: '20%' },
-                            { label: 'Negotiation', count: 1, color: 'bg-df-pink', width: '20%' },
-                            { label: 'Won', count: 3, color: 'bg-df-accent', width: '60%' },
-                        ].map((stage) => (
+                        {(stats.pipelineByStage || []).map((stage) => (
                             <div key={stage.label} className="flex items-center text-sm">
                                 <span className="w-24 text-gray-600 dark:text-df-text">{stage.label}</span>
                                 <div className="flex-1 ml-4 mr-4 bg-gray-100 dark:bg-[#10151b] h-2 rounded-full overflow-hidden">
@@ -124,19 +110,16 @@ const Dashboard = () => {
                                 <span className="text-gray-900 dark:text-df-textlight w-4 text-right">{stage.count}</span>
                             </div>
                         ))}
+                        {(!stats.pipelineByStage || stats.pipelineByStage.length === 0) && (
+                            <div className="text-gray-500 text-sm py-4">No pipeline data available.</div>
+                        )}
                     </div>
                 </div>
 
                 <div className="bg-white dark:bg-df-card p-6 rounded-xl border border-gray-100 dark:border-df-border">
                     <h3 className="font-bold text-gray-900 dark:text-df-textlight mb-6">Leads by Source</h3>
                     <div className="space-y-4">
-                        {[
-                            { label: 'Google Ads', count: 62, dot: 'text-df-accent' },
-                            { label: 'Manual', count: 34, dot: 'text-df-purple' },
-                            { label: 'Referral', count: 23, dot: 'text-green-500' },
-                            { label: 'Event', count: 16, dot: 'text-df-yellow' },
-                            { label: 'Other', count: 12, dot: 'text-gray-500' },
-                        ].map(source => (
+                        {(stats.leadsBySource || []).map(source => (
                             <div key={source.label} className="flex justify-between items-center text-sm">
                                 <div className="flex items-center">
                                     <span className={`mr-2 ${source.dot}`}>●</span>
@@ -145,12 +128,15 @@ const Dashboard = () => {
                                 <span className="font-semibold text-gray-900 dark:text-df-textlight">{source.count}</span>
                             </div>
                         ))}
+                        {(!stats.leadsBySource || stats.leadsBySource.length === 0) && (
+                            <div className="text-gray-500 text-sm py-4">No source data available.</div>
+                        )}
                     </div>
 
                     <div className="mt-10 pt-6 border-t border-gray-100 dark:border-df-border">
                         <h3 className="font-bold text-gray-900 dark:text-df-textlight mb-2">Docs Signed</h3>
                         <div className="flex items-baseline">
-                            <span className="text-4xl font-bold text-df-accent">24</span>
+                            <span className="text-4xl font-bold text-df-accent">{stats.docsSigned || 0}</span>
                             <span className="ml-2 text-sm text-gray-500 dark:text-df-text">this quarter</span>
                         </div>
                     </div>
@@ -162,8 +148,24 @@ const Dashboard = () => {
                     <h3 className="font-bold text-gray-900 dark:text-df-textlight">Recent Activity</h3>
                     <span className="text-xs text-gray-500 dark:text-df-text">auto-refresh every 30s</span>
                 </div>
-                <div className="text-center py-8 text-gray-500 dark:text-df-text">
-                    Loading recent activities...
+                <div className="space-y-4">
+                    {(stats.recentActivity && stats.recentActivity.length > 0) ? (
+                        stats.recentActivity.map(activity => (
+                            <div key={activity.id} className="flex items-start gap-4 p-3 hover:bg-gray-50 dark:hover:bg-[#10151b] rounded-lg transition-colors border border-transparent dark:hover:border-df-border">
+                                <div className="w-8 h-8 rounded-full bg-indigo-50 dark:bg-df-card text-indigo-500 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <span className="text-xs font-bold">{activity.event_type[0].toUpperCase()}</span>
+                                </div>
+                                <div className="flex-1">
+                                    <p className="text-sm text-gray-900 dark:text-df-textlight">{activity.description}</p>
+                                    <p className="text-xs text-gray-500 mt-1">{new Date(activity.created_at).toLocaleString()}</p>
+                                </div>
+                            </div>
+                        ))
+                    ) : (
+                        <div className="text-center py-8 text-gray-500 dark:text-df-text">
+                            No recent activities found in the timeline.
+                        </div>
+                    )}
                 </div>
             </div>
         </div>
