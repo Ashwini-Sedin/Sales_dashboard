@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FiSearch, FiPlus, FiCheck, FiX } from 'react-icons/fi';
+import { FiSearch, FiCheck, FiX } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
 import api from '../api';
 
@@ -41,9 +41,7 @@ const ESignature = () => {
                             className="pl-10 pr-4 py-2 border border-gray-200 dark:border-df-border bg-gray-50 dark:bg-[#10151b] rounded-lg w-64 focus:outline-none text-sm"
                         />
                     </div>
-                    <button className="bg-[#0ebf99] hover:bg-opacity-90 text-white px-4 py-2 rounded-lg flex items-center gap-2 font-semibold text-sm">
-                        <FiPlus /> New Lead
-                    </button>
+
                     {/* The dark mode and bell are usually in Header.jsx, but since the screenshot has them on the same line as "E-Signature", we'll just let the global Header handle it, or we add them here. For an exact match, I'll rely on the existing layout. Wait, the existing layout puts Header at the top. I'll just skip adding dark/bell here to avoid duplication if it's in MainLayout. */}
                 </div>
             </div>
