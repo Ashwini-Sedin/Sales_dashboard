@@ -19,6 +19,18 @@ const LeadDetail = () => {
   const { data: lead, isLoading, error } = useLeadDetail(id);
   const [activeTab, setActiveTab] = useState('360_overview');
   
+  // Edit state for Contact Details
+  const [isEditingContact, setIsEditingContact] = useState(false);
+  const [contactData, setContactData] = useState({ email: '', phone: '', job_title: '', linkedin_id: '' });
+  
+  // Edit state for Company
+  const [isEditingCompany, setIsEditingCompany] = useState(false);
+  const [companyData, setCompanyData] = useState({ company_name: '', industry: '', employees: '', website: '', hq_address: '', country: '' });
+  
+  // Edit state for Deal Info
+  const [isEditingDeal, setIsEditingDeal] = useState(false);
+  const [dealData, setDealData] = useState({ status: '', source: '', estimated_value: '', campaign_name: '' });
+  
   // Inline edit state for Team Assigned card
   const [isAddingTeam, setIsAddingTeam] = useState(false);
   const [newMemberEmail, setNewMemberEmail] = useState('');
@@ -29,7 +41,6 @@ const LeadDetail = () => {
   const [noteContent, setNoteContent] = useState('');
   
   const updateTeamMutation = useUpdateLeadTeam();
-  // Let's call the hook inside the component
   const updateLead = useUpdateLead();
 
   useSocket(id);
@@ -39,6 +50,65 @@ const LeadDetail = () => {
   if (!lead) return <div className="p-8 text-center text-slate-500">Lead not found</div>;
 
   const currentNotes = lead.notes || '';
+
+  // Contact Details Handlers
+  const handleStartEditingContact = () => {
+    setContactData({
+      email: lead.email || '',
+      phone: lead.phone || '',
+      job_title: lead.job_title || '',
+      linkedin_id: lead.linkedin_id || ''
+    });
+    setIsEditingContact(true);
+  };
+
+  const handleSaveContact = () => {
+    updateLead.mutate({ leadId: lead.id, data: contactData }, {
+      onSuccess: () => {
+        setIsEditingContact(false);
+      }
+    });
+  };
+
+  // Company Details Handlers
+  const handleStartEditingCompany = () => {
+    setCompanyData({
+      company_name: lead.company_name || '',
+      industry: lead.industry || '',
+      employees: lead.employees || '',
+      website: lead.website || '',
+      hq_address: lead.hq_address || '',
+      country: lead.country || ''
+    });
+    setIsEditingCompany(true);
+  };
+
+  const handleSaveCompany = () => {
+    updateLead.mutate({ leadId: lead.id, data: companyData }, {
+      onSuccess: () => {
+        setIsEditingCompany(false);
+      }
+    });
+  };
+
+  // Deal Info Handlers
+  const handleStartEditingDeal = () => {
+    setDealData({
+      status: lead.status || '',
+      source: lead.source || '',
+      estimated_value: lead.estimated_value || '',
+      campaign_name: lead.campaign_name || ''
+    });
+    setIsEditingDeal(true);
+  };
+
+  const handleSaveDeal = () => {
+    updateLead.mutate({ leadId: lead.id, data: dealData }, {
+      onSuccess: () => {
+        setIsEditingDeal(false);
+      }
+    });
+  };
 
   const getCompanySize = (employees) => {
     if (!employees) return '—';
@@ -163,110 +233,347 @@ const LeadDetail = () => {
             
             {/* CARD 1: CONTACT DETAILS */}
             <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col hover:shadow-md transition-shadow">
-              <div className="flex items-center gap-2 mb-4">
-                <MdIcons.MdOutlinePersonOutline className="w-5 h-5 text-[#0ebf99]" />
-                <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Contact Details</h3>
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <MdIcons.MdOutlinePersonOutline className="w-5 h-5 text-[#0ebf99]" />
+                  <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Contact Details</h3>
+                </div>
+                {!isEditingContact && (
+                  <button 
+                    onClick={handleStartEditingContact}
+                    className="text-xs font-bold text-[#0ebf99] hover:text-[#0ca382] transition-colors"
+                  >
+                    Edit
+                  </button>
+                )}
               </div>
-              <div className="flex-1 space-y-4 text-sm">
-                <div className="flex justify-between py-2">
-                  <span className="text-slate-400 font-medium">Email</span>
-                  {lead.email ? (
-                    <a href={`mailto:${lead.email}`} className="text-[#0ebf99] hover:underline font-semibold">{lead.email}</a>
-                  ) : (
-                    <span className="text-slate-600 font-semibold">—</span>
-                  )}
+
+              {isEditingContact ? (
+                <div className="flex-1 space-y-3 text-sm">
+                  <div>
+                    <label className="text-xs font-semibold text-slate-600 block mb-1">Email</label>
+                    <input
+                      type="email"
+                      value={contactData.email}
+                      onChange={(e) => setContactData({...contactData, email: e.target.value})}
+                      className="w-full px-3 py-2 border border-slate-200 rounded focus:outline-none focus:ring-1 focus:ring-[#0ebf99] focus:border-[#0ebf99] text-xs"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold text-slate-600 block mb-1">Phone</label>
+                    <input
+                      type="tel"
+                      value={contactData.phone}
+                      onChange={(e) => setContactData({...contactData, phone: e.target.value})}
+                      className="w-full px-3 py-2 border border-slate-200 rounded focus:outline-none focus:ring-1 focus:ring-[#0ebf99] focus:border-[#0ebf99] text-xs"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold text-slate-600 block mb-1">Job Title</label>
+                    <input
+                      type="text"
+                      value={contactData.job_title}
+                      onChange={(e) => setContactData({...contactData, job_title: e.target.value})}
+                      className="w-full px-3 py-2 border border-slate-200 rounded focus:outline-none focus:ring-1 focus:ring-[#0ebf99] focus:border-[#0ebf99] text-xs"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold text-slate-600 block mb-1">LinkedIn URL</label>
+                    <input
+                      type="url"
+                      value={contactData.linkedin_id}
+                      onChange={(e) => setContactData({...contactData, linkedin_id: e.target.value})}
+                      className="w-full px-3 py-2 border border-slate-200 rounded focus:outline-none focus:ring-1 focus:ring-[#0ebf99] focus:border-[#0ebf99] text-xs"
+                      placeholder="https://linkedin.com/in/..."
+                    />
+                  </div>
+                  <div className="flex justify-end gap-2 pt-2">
+                    <button
+                      onClick={() => setIsEditingContact(false)}
+                      className="text-xs font-bold text-slate-500 hover:bg-slate-100 py-1.5 px-3 rounded transition-colors"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleSaveContact}
+                      disabled={updateLead.isPending}
+                      className="bg-[#0ebf99] hover:bg-[#0ca382] text-white text-xs font-bold py-1.5 px-3 rounded transition-colors"
+                    >
+                      {updateLead.isPending ? 'Saving...' : 'Save'}
+                    </button>
+                  </div>
                 </div>
-                <div className="flex justify-between py-2">
-                  <span className="text-slate-400 font-medium">Phone</span>
-                  <span className="text-slate-800 font-semibold">{lead.phone || '—'}</span>
+              ) : (
+                <div className="flex-1 space-y-4 text-sm">
+                  <div className="flex justify-between py-2">
+                    <span className="text-slate-400 font-medium">Email</span>
+                    {lead.email ? (
+                      <a href={`mailto:${lead.email}`} className="text-[#0ebf99] hover:underline font-semibold">{lead.email}</a>
+                    ) : (
+                      <span className="text-slate-600 font-semibold">—</span>
+                    )}
+                  </div>
+                  <div className="flex justify-between py-2">
+                    <span className="text-slate-400 font-medium">Phone</span>
+                    <span className="text-slate-800 font-semibold">{lead.phone || '—'}</span>
+                  </div>
+                  <div className="flex justify-between py-2">
+                    <span className="text-slate-400 font-medium">Title</span>
+                    <span className="text-slate-800 font-semibold">{lead.job_title || '—'}</span>
+                  </div>
+                  <div className="flex justify-between py-2">
+                    <span className="text-slate-400 font-medium">LinkedIn</span>
+                    {lead.linkedin_id ? (
+                      <a href={lead.linkedin_id} target="_blank" rel="noopener noreferrer" className="text-[#0ebf99] hover:underline font-semibold">View Profile</a>
+                    ) : (
+                      <span className="text-slate-600 font-semibold">—</span>
+                    )}
+                  </div>
                 </div>
-                <div className="flex justify-between py-2">
-                  <span className="text-slate-400 font-medium">Title</span>
-                  <span className="text-slate-800 font-semibold">{lead.job_title || '—'}</span>
-                </div>
-                <div className="flex justify-between py-2">
-                  <span className="text-slate-400 font-medium">LinkedIn</span>
-                  {lead.linkedin_id ? (
-                    <a href={lead.linkedin_id} target="_blank" rel="noopener noreferrer" className="text-[#0ebf99] hover:underline font-semibold">View Profile</a>
-                  ) : (
-                    <span className="text-slate-600 font-semibold">—</span>
-                  )}
-                </div>
-              </div>
+              )}
             </div>
 
             {/* CARD 2: COMPANY */}
             <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col hover:shadow-md transition-shadow">
-              <div className="flex items-center gap-2 mb-4">
-                <MdIcons.MdOutlineBusiness className="w-5 h-5 text-[#0ebf99]" />
-                <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Company</h3>
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <MdIcons.MdOutlineBusiness className="w-5 h-5 text-[#0ebf99]" />
+                  <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Company</h3>
+                </div>
+                {!isEditingCompany && (
+                  <button 
+                    onClick={handleStartEditingCompany}
+                    className="text-xs font-bold text-[#0ebf99] hover:text-[#0ca382] transition-colors"
+                  >
+                    Edit
+                  </button>
+                )}
               </div>
-              <div className="flex-1 space-y-4 text-sm">
-                <div className="flex justify-between py-2">
-                  <span className="text-slate-400 font-medium">Company</span>
-                  <span className="text-slate-800 font-semibold">{lead.company_name || '—'}</span>
+
+              {isEditingCompany ? (
+                <div className="flex-1 space-y-3 text-sm">
+                  <div>
+                    <label className="text-xs font-semibold text-slate-600 block mb-1">Company Name</label>
+                    <input
+                      type="text"
+                      value={companyData.company_name}
+                      onChange={(e) => setCompanyData({...companyData, company_name: e.target.value})}
+                      className="w-full px-3 py-2 border border-slate-200 rounded focus:outline-none focus:ring-1 focus:ring-[#0ebf99] focus:border-[#0ebf99] text-xs"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold text-slate-600 block mb-1">Industry</label>
+                    <input
+                      type="text"
+                      value={companyData.industry}
+                      onChange={(e) => setCompanyData({...companyData, industry: e.target.value})}
+                      className="w-full px-3 py-2 border border-slate-200 rounded focus:outline-none focus:ring-1 focus:ring-[#0ebf99] focus:border-[#0ebf99] text-xs"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold text-slate-600 block mb-1">Employees</label>
+                    <input
+                      type="number"
+                      value={companyData.employees}
+                      onChange={(e) => setCompanyData({...companyData, employees: e.target.value})}
+                      className="w-full px-3 py-2 border border-slate-200 rounded focus:outline-none focus:ring-1 focus:ring-[#0ebf99] focus:border-[#0ebf99] text-xs"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold text-slate-600 block mb-1">Website</label>
+                    <input
+                      type="url"
+                      value={companyData.website}
+                      onChange={(e) => setCompanyData({...companyData, website: e.target.value})}
+                      className="w-full px-3 py-2 border border-slate-200 rounded focus:outline-none focus:ring-1 focus:ring-[#0ebf99] focus:border-[#0ebf99] text-xs"
+                      placeholder="https://example.com"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold text-slate-600 block mb-1">HQ Address</label>
+                    <input
+                      type="text"
+                      value={companyData.hq_address}
+                      onChange={(e) => setCompanyData({...companyData, hq_address: e.target.value})}
+                      className="w-full px-3 py-2 border border-slate-200 rounded focus:outline-none focus:ring-1 focus:ring-[#0ebf99] focus:border-[#0ebf99] text-xs"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold text-slate-600 block mb-1">Country</label>
+                    <input
+                      type="text"
+                      value={companyData.country}
+                      onChange={(e) => setCompanyData({...companyData, country: e.target.value})}
+                      className="w-full px-3 py-2 border border-slate-200 rounded focus:outline-none focus:ring-1 focus:ring-[#0ebf99] focus:border-[#0ebf99] text-xs"
+                    />
+                  </div>
+                  <div className="flex justify-end gap-2 pt-2">
+                    <button
+                      onClick={() => setIsEditingCompany(false)}
+                      className="text-xs font-bold text-slate-500 hover:bg-slate-100 py-1.5 px-3 rounded transition-colors"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleSaveCompany}
+                      disabled={updateLead.isPending}
+                      className="bg-[#0ebf99] hover:bg-[#0ca382] text-white text-xs font-bold py-1.5 px-3 rounded transition-colors"
+                    >
+                      {updateLead.isPending ? 'Saving...' : 'Save'}
+                    </button>
+                  </div>
                 </div>
-                <div className="flex justify-between py-2">
-                  <span className="text-slate-400 font-medium">Industry</span>
-                  <span className="text-slate-800 font-semibold">{lead.industry || '—'}</span>
+              ) : (
+                <div className="flex-1 space-y-4 text-sm">
+                  <div className="flex justify-between py-2">
+                    <span className="text-slate-400 font-medium">Company</span>
+                    <span className="text-slate-800 font-semibold">{lead.company_name || '—'}</span>
+                  </div>
+                  <div className="flex justify-between py-2">
+                    <span className="text-slate-400 font-medium">Industry</span>
+                    <span className="text-slate-800 font-semibold">{lead.industry || '—'}</span>
+                  </div>
+                  <div className="flex justify-between py-2">
+                    <span className="text-slate-400 font-medium">Size</span>
+                    <span className="text-slate-800 font-semibold">{getCompanySize(lead.employees)}</span>
+                  </div>
+                  <div className="flex justify-between py-2">
+                    <span className="text-slate-400 font-medium">Website</span>
+                    {lead.website ? (
+                      <a href={lead.website} target="_blank" rel="noopener noreferrer" className="text-[#0ebf99] hover:underline font-semibold">
+                        {lead.website.replace('https://', '').replace('http://', '').split('/')[0]}
+                      </a>
+                    ) : (
+                      <span className="text-slate-600 font-semibold">—</span>
+                    )}
+                  </div>
+                  <div className="flex justify-between py-2">
+                    <span className="text-slate-400 font-medium">HQ</span>
+                    <span className="text-slate-800 font-semibold truncate max-w-[200px]" title={lead.hq_address}>{lead.hq_address || '—'}</span>
+                  </div>
+                  <div className="flex justify-between py-2">
+                    <span className="text-slate-400 font-medium">Country</span>
+                    <span className="text-slate-800 font-semibold">{lead.country || '—'}</span>
+                  </div>
                 </div>
-                <div className="flex justify-between py-2">
-                  <span className="text-slate-400 font-medium">Size</span>
-                  <span className="text-slate-800 font-semibold">{getCompanySize(lead.employees)}</span>
-                </div>
-                <div className="flex justify-between py-2">
-                  <span className="text-slate-400 font-medium">Website</span>
-                  {lead.website ? (
-                    <a href={lead.website} target="_blank" rel="noopener noreferrer" className="text-[#0ebf99] hover:underline font-semibold">
-                      {lead.website.replace('https://', '').replace('http://', '').split('/')[0]}
-                    </a>
-                  ) : (
-                    <span className="text-slate-600 font-semibold">—</span>
-                  )}
-                </div>
-                <div className="flex justify-between py-2">
-                  <span className="text-slate-400 font-medium">HQ</span>
-                  <span className="text-slate-800 font-semibold truncate max-w-[200px]" title={lead.hq_address}>{lead.hq_address || '—'}</span>
-                </div>
-                <div className="flex justify-between py-2">
-                  <span className="text-slate-400 font-medium">Country</span>
-                  <span className="text-slate-800 font-semibold">{lead.country || '—'}</span>
-                </div>
-              </div>
+              )}
             </div>
 
             {/* CARD 3: DEAL INFO */}
             <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col hover:shadow-md transition-shadow">
-              <div className="flex items-center gap-2 mb-4">
-                <MdIcons.MdOutlineMonetizationOn className="w-5 h-5 text-[#0ebf99]" />
-                <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Deal Info</h3>
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <MdIcons.MdOutlineMonetizationOn className="w-5 h-5 text-[#0ebf99]" />
+                  <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Deal Info</h3>
+                </div>
+                {!isEditingDeal && (
+                  <button 
+                    onClick={handleStartEditingDeal}
+                    className="text-xs font-bold text-[#0ebf99] hover:text-[#0ca382] transition-colors"
+                  >
+                    Edit
+                  </button>
+                )}
               </div>
-              <div className="flex-1 space-y-4 text-sm">
-                <div className="flex justify-between py-2">
-                  <span className="text-slate-400 font-medium">Stage</span>
-                  <span className="text-[#0ebf99] font-bold">{statusLabel}</span>
+
+              {isEditingDeal ? (
+                <div className="flex-1 space-y-3 text-sm">
+                  <div>
+                    <label className="text-xs font-semibold text-slate-600 block mb-1">Stage</label>
+                    <select
+                      value={dealData.status}
+                      onChange={(e) => setDealData({...dealData, status: e.target.value})}
+                      className="w-full px-3 py-2 border border-slate-200 rounded focus:outline-none focus:ring-1 focus:ring-[#0ebf99] focus:border-[#0ebf99] text-xs bg-white"
+                    >
+                      <option value="">Select Stage</option>
+                      <option value="new">New</option>
+                      <option value="contacted">Contacted</option>
+                      <option value="qualified">Qualified</option>
+                      <option value="proposal_sent">Proposal Sent</option>
+                      <option value="negotiation">Negotiation</option>
+                      <option value="won">Won</option>
+                      <option value="lost">Lost</option>
+                      <option value="on_hold">On Hold</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold text-slate-600 block mb-1">Source</label>
+                    <select
+                      value={dealData.source}
+                      onChange={(e) => setDealData({...dealData, source: e.target.value})}
+                      className="w-full px-3 py-2 border border-slate-200 rounded focus:outline-none focus:ring-1 focus:ring-[#0ebf99] focus:border-[#0ebf99] text-xs bg-white"
+                    >
+                      <option value="">Select Source</option>
+                      <option value="manual">Manual</option>
+                      <option value="google_ads">Google Ads</option>
+                      <option value="referral">Referral</option>
+                      <option value="event">Event</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold text-slate-600 block mb-1">Estimated Value</label>
+                    <input
+                      type="number"
+                      value={dealData.estimated_value}
+                      onChange={(e) => setDealData({...dealData, estimated_value: e.target.value})}
+                      className="w-full px-3 py-2 border border-slate-200 rounded focus:outline-none focus:ring-1 focus:ring-[#0ebf99] focus:border-[#0ebf99] text-xs"
+                      placeholder="Enter value in USD"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold text-slate-600 block mb-1">Campaign Name</label>
+                    <input
+                      type="text"
+                      value={dealData.campaign_name}
+                      onChange={(e) => setDealData({...dealData, campaign_name: e.target.value})}
+                      className="w-full px-3 py-2 border border-slate-200 rounded focus:outline-none focus:ring-1 focus:ring-[#0ebf99] focus:border-[#0ebf99] text-xs"
+                    />
+                  </div>
+                  <div className="flex justify-end gap-2 pt-2">
+                    <button
+                      onClick={() => setIsEditingDeal(false)}
+                      className="text-xs font-bold text-slate-500 hover:bg-slate-100 py-1.5 px-3 rounded transition-colors"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleSaveDeal}
+                      disabled={updateLead.isPending}
+                      className="bg-[#0ebf99] hover:bg-[#0ca382] text-white text-xs font-bold py-1.5 px-3 rounded transition-colors"
+                    >
+                      {updateLead.isPending ? 'Saving...' : 'Save'}
+                    </button>
+                  </div>
                 </div>
-                <div className="flex justify-between py-2">
-                  <span className="text-slate-400 font-medium">Source</span>
-                  <span className="text-slate-800 font-semibold">{sourceLabel}</span>
+              ) : (
+                <div className="flex-1 space-y-4 text-sm">
+                  <div className="flex justify-between py-2">
+                    <span className="text-slate-400 font-medium">Stage</span>
+                    <span className="text-[#0ebf99] font-bold">{statusLabel}</span>
+                  </div>
+                  <div className="flex justify-between py-2">
+                    <span className="text-slate-400 font-medium">Source</span>
+                    <span className="text-slate-800 font-semibold">{sourceLabel}</span>
+                  </div>
+                  <div className="flex justify-between py-2">
+                    <span className="text-slate-400 font-medium">Value</span>
+                    <span className="text-slate-800 font-bold">{formatCurrency(lead.estimated_value)}</span>
+                  </div>
+                  <div className="flex justify-between py-2">
+                    <span className="text-slate-400 font-medium">Budget</span>
+                    <span className="text-slate-800 font-semibold">—</span>
+                  </div>
+                  <div className="flex justify-between py-2">
+                    <span className="text-slate-400 font-medium">Campaign</span>
+                    <span className="text-slate-800 font-semibold">{lead.campaign_name || '—'}</span>
+                  </div>
+                  <div className="flex justify-between py-2">
+                    <span className="text-slate-400 font-medium">Owner</span>
+                    <span className="text-slate-800 font-semibold">—</span>
+                  </div>
                 </div>
-                <div className="flex justify-between py-2">
-                  <span className="text-slate-400 font-medium">Value</span>
-                  <span className="text-slate-800 font-bold">{formatCurrency(lead.estimated_value)}</span>
-                </div>
-                <div className="flex justify-between py-2">
-                  <span className="text-slate-400 font-medium">Budget</span>
-                  <span className="text-slate-800 font-semibold">—</span>
-                </div>
-                <div className="flex justify-between py-2">
-                  <span className="text-slate-400 font-medium">Campaign</span>
-                  <span className="text-slate-800 font-semibold">{lead.campaign_name || '—'}</span>
-                </div>
-                <div className="flex justify-between py-2">
-                  <span className="text-slate-400 font-medium">Owner</span>
-                  <span className="text-slate-800 font-semibold">—</span>
-                </div>
-              </div>
+              )}
             </div>
 
             {/* CARD 4: LEAD SCORE */}

@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import axiosInstance from '../api/axios';
 
@@ -11,6 +11,23 @@ export const useLeadsList = (filters) => {
             const { data } = await axiosInstance.get('/api/leads', { params: filters });
             return data.items || data;
         },
+    });
+};
+
+export const useInfiniteLeadsList = (filters) => {
+    return useInfiniteQuery({
+        queryKey: [LEADS_QUERY_KEY, 'infinite', filters],
+        queryFn: async ({ pageParam = 1 }) => {
+            const { data } = await axiosInstance.get('/api/leads', {
+                params: { ...filters, page: pageParam, limit: 50 }
+            });
+            return data;
+        },
+        getNextPageParam: (lastPage) => {
+            const totalPages = Math.ceil(lastPage.total / lastPage.size);
+            return lastPage.page < totalPages ? lastPage.page + 1 : undefined;
+        },
+        initialPageParam: 1,
     });
 };
 

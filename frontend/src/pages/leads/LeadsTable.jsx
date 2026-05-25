@@ -15,7 +15,7 @@ const getFrontendStage = (status) => {
   return 'New';
 };
 
-const LeadsTable = ({ leads, isLoading }) => {
+const LeadsTable = ({ leads, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage }) => {
   const [sortConfig, setSortConfig] = useState({ key: 'created_at', direction: 'desc' });
 
   if (isLoading) return <div className="p-8 text-center text-gray-500">Loading leads...</div>;
@@ -100,34 +100,44 @@ const LeadsTable = ({ leads, isLoading }) => {
     return `₹${(num / 1000).toFixed(0)}K`;
   };
 
+  const handleScroll = (e) => {
+    const { scrollTop, scrollHeight, clientHeight } = e.target;
+    // Trigger when within 100px of the bottom
+    if (scrollHeight - scrollTop - clientHeight < 100) {
+      if (hasNextPage && !isFetchingNextPage) {
+        fetchNextPage();
+      }
+    }
+  };
+
   return (
-    <div className="bg-white dark:bg-[#141a21] rounded-lg overflow-hidden border border-gray-200 dark:border-df-border">
-      <div className="overflow-x-auto">
-        <table className="min-w-full text-left">
-          <thead className="bg-gray-50 dark:bg-[#10151b] border-b border-gray-200 dark:border-df-border">
+    <div className="bg-white dark:bg-[#141a21] rounded-lg border border-gray-200 dark:border-df-border h-full flex flex-col overflow-hidden">
+      <div className="overflow-auto flex-1" onScroll={handleScroll}>
+        <table className="min-w-full text-left table-auto">
+          <thead className="bg-gray-50 dark:bg-[#10151b] border-b border-gray-200 dark:border-df-border sticky top-0 z-10">
             <tr>
-              <th onClick={() => requestSort('name')} className="cursor-pointer px-6 py-4 text-xs font-bold text-gray-500 dark:text-df-text uppercase tracking-wider">
+              <th onClick={() => requestSort('name')} className="cursor-pointer px-6 py-4 text-xs font-bold text-gray-500 dark:text-df-text uppercase tracking-wider bg-gray-50 dark:bg-[#10151b]">
                 Name {getSortIcon('name')}
               </th>
-              <th onClick={() => requestSort('company')} className="cursor-pointer px-6 py-4 text-xs font-bold text-gray-500 dark:text-df-text uppercase tracking-wider">
+              <th onClick={() => requestSort('company')} className="cursor-pointer px-6 py-4 text-xs font-bold text-gray-500 dark:text-df-text uppercase tracking-wider bg-gray-50 dark:bg-[#10151b]">
                 Company {getSortIcon('company')}
               </th>
-              <th onClick={() => requestSort('source')} className="cursor-pointer px-6 py-4 text-xs font-bold text-gray-500 dark:text-df-text uppercase tracking-wider">
+              <th onClick={() => requestSort('source')} className="cursor-pointer px-6 py-4 text-xs font-bold text-gray-500 dark:text-df-text uppercase tracking-wider bg-gray-50 dark:bg-[#10151b]">
                 Source {getSortIcon('source')}
               </th>
-              <th onClick={() => requestSort('stage')} className="cursor-pointer px-6 py-4 text-xs font-bold text-gray-500 dark:text-df-text uppercase tracking-wider">
+              <th onClick={() => requestSort('stage')} className="cursor-pointer px-6 py-4 text-xs font-bold text-gray-500 dark:text-df-text uppercase tracking-wider bg-gray-50 dark:bg-[#10151b]">
                 Stage {getSortIcon('stage')}
               </th>
-              <th className="px-6 py-4 text-xs font-bold text-gray-500 dark:text-df-text uppercase tracking-wider">
+              <th className="px-6 py-4 text-xs font-bold text-gray-500 dark:text-df-text uppercase tracking-wider bg-gray-50 dark:bg-[#10151b]">
                 Owner
               </th>
-              <th onClick={() => requestSort('score')} className="cursor-pointer px-6 py-4 text-xs font-bold text-gray-500 dark:text-df-text uppercase tracking-wider">
+              <th onClick={() => requestSort('score')} className="cursor-pointer px-6 py-4 text-xs font-bold text-gray-500 dark:text-df-text uppercase tracking-wider bg-gray-50 dark:bg-[#10151b]">
                 Score {getSortIcon('score')}
               </th>
-              <th className="px-6 py-4 text-xs font-bold text-gray-500 dark:text-df-text uppercase tracking-wider">
+              <th className="px-6 py-4 text-xs font-bold text-gray-500 dark:text-df-text uppercase tracking-wider bg-gray-50 dark:bg-[#10151b]">
                 Value
               </th>
-              <th className="px-6 py-4 text-xs font-bold text-gray-500 dark:text-df-text uppercase tracking-wider">
+              <th className="px-6 py-4 text-xs font-bold text-gray-500 dark:text-df-text uppercase tracking-wider bg-gray-50 dark:bg-[#10151b]">
                 Action
               </th>
             </tr>
@@ -169,6 +179,23 @@ const LeadsTable = ({ leads, isLoading }) => {
                 </td>
               </tr>
             ))}
+            {isFetchingNextPage && (
+              <tr>
+                <td colSpan={8} className="px-6 py-4 text-center">
+                  <div className="flex items-center justify-center gap-2 text-[#0ebf99] py-2">
+                    <div className="w-5 h-5 border-2 border-[#0ebf99] border-t-transparent rounded-full animate-spin"></div>
+                    <span className="text-sm font-medium text-gray-500 dark:text-df-text">Loading more leads...</span>
+                  </div>
+                </td>
+              </tr>
+            )}
+            {!hasNextPage && sortedLeads.length > 0 && (
+              <tr>
+                <td colSpan={8} className="px-6 py-4 text-center text-xs text-gray-400 dark:text-gray-500 font-medium bg-gray-50/30 dark:bg-[#10151b]/30">
+                  Showing all {sortedLeads.length} leads
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>

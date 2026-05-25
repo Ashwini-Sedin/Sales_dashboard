@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useLeadsList, useChangeStage } from '../../hooks/useLeads';
+import { useInfiniteLeadsList, useChangeStage } from '../../hooks/useLeads';
 import LeadsTable from './LeadsTable';
 import LeadsKanban from './LeadsKanban';
 import CreateLeadModal from './CreateLeadModal';
@@ -29,7 +29,6 @@ const LeadsList = () => {
   const filters = {
     search: debouncedSearch,
     status: statusFilter,
-    limit: 1000,
   };
 
   // Remove empty filters
@@ -37,7 +36,15 @@ const LeadsList = () => {
     if (!filters[key]) delete filters[key];
   });
 
-  const { data: leads, isLoading } = useLeadsList(filters);
+  const { 
+    data, 
+    isLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage
+  } = useInfiniteLeadsList(filters);
+
+  const leads = data?.pages.flatMap(page => page.items) || [];
   const changeStageMutation = useChangeStage();
 
   const handleStageChange = ({ id, stage }) => {
@@ -113,9 +120,22 @@ const LeadsList = () => {
 
       <div className="flex-1 overflow-hidden">
         {view === 'table' ? (
-          <LeadsTable leads={leads} isLoading={isLoading} />
+          <LeadsTable 
+            leads={leads} 
+            isLoading={isLoading} 
+            fetchNextPage={fetchNextPage}
+            hasNextPage={hasNextPage}
+            isFetchingNextPage={isFetchingNextPage}
+          />
         ) : (
-          <LeadsKanban leads={leads} isLoading={isLoading} onChangeStage={handleStageChange} />
+          <LeadsKanban 
+            leads={leads} 
+            isLoading={isLoading} 
+            onChangeStage={handleStageChange} 
+            fetchNextPage={fetchNextPage}
+            hasNextPage={hasNextPage}
+            isFetchingNextPage={isFetchingNextPage}
+          />
         )}
       </div>
 

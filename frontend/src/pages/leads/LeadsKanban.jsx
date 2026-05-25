@@ -39,7 +39,7 @@ const calculateDaysInStage = (updatedAt) => {
   return Math.floor(diffTime / (1000 * 60 * 60 * 24));
 };
 
-const LeadsKanban = ({ leads, isLoading, onChangeStage }) => {
+const LeadsKanban = ({ leads, isLoading, onChangeStage, fetchNextPage, hasNextPage, isFetchingNextPage }) => {
   const columns = useMemo(() => {
     const cols = STAGES.reduce((acc, stage) => {
       acc[stage] = [];
@@ -72,14 +72,23 @@ const LeadsKanban = ({ leads, isLoading, onChangeStage }) => {
 
   if (isLoading) return <div className="p-8 text-center text-gray-500">Loading Kanban...</div>;
 
+  const handleScroll = (e) => {
+    const { scrollTop, scrollHeight, clientHeight } = e.target;
+    if (scrollHeight - scrollTop - clientHeight < 50) {
+      if (hasNextPage && !isFetchingNextPage) {
+        fetchNextPage();
+      }
+    }
+  };
+
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <div className="flex gap-4 overflow-x-auto pb-4 h-full items-start">
         {STAGES.map((stage) => (
-          <div key={stage} className="bg-gray-100 dark:bg-df-sidebar rounded-lg w-80 flex-shrink-0 flex flex-col">
+          <div key={stage} className="bg-gray-100 dark:bg-df-sidebar rounded-lg w-80 flex-shrink-0 flex flex-col max-h-full overflow-hidden border border-gray-200 dark:border-df-border">
             <div className="p-3 border-b border-gray-200 dark:border-df-border flex justify-between items-center bg-gray-50 dark:bg-[#10151b] rounded-t-lg">
               <h3 className="font-semibold text-gray-700 dark:text-df-textlight">{stage}</h3>
-              <span className="bg-gray-200 dark:bg-df-border text-gray-600 dark:text-df-text text-xs px-2 py-1 rounded-full">
+              <span className="bg-gray-200 dark:bg-df-border text-gray-600 dark:text-df-text text-xs px-2 py-1 rounded-full font-bold">
                 {columns[stage].length}
               </span>
             </div>
@@ -89,11 +98,12 @@ const LeadsKanban = ({ leads, isLoading, onChangeStage }) => {
                 <div
                   ref={provided.innerRef}
                   {...provided.droppableProps}
-                  className={`p-3 min-h-[500px] flex-1 ${snapshot.isDraggingOver ? 'bg-blue-50/20' : ''}`}
+                  onScroll={handleScroll}
+                  className={`p-3 flex-1 overflow-y-auto min-h-[150px] transition-colors ${snapshot.isDraggingOver ? 'bg-blue-50/10' : ''}`}
                 >
                   {columns[stage].map((lead, index) => {
                     const daysInStage = calculateDaysInStage(lead.updated_at || lead.created_at);
-                    const daysColor = daysInStage > 14 ? 'text-red-600 bg-red-50' : daysInStage > 7 ? 'text-amber-600 bg-amber-50' : 'text-gray-500 bg-gray-50';
+                    const daysColor = daysInStage > 14 ? 'text-red-600 bg-red-55/20 border-red-200/50' : daysInStage > 7 ? 'text-amber-600 bg-amber-55/20 border-amber-200/50' : 'text-gray-500 bg-gray-50 dark:bg-df-sidebar dark:text-df-text';
 
                     return (
                       <Draggable key={lead.id.toString()} draggableId={lead.id.toString()} index={index}>
@@ -102,20 +112,20 @@ const LeadsKanban = ({ leads, isLoading, onChangeStage }) => {
                             ref={provided.innerRef}
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
-                            className={`bg-white dark:bg-[#141a21] p-4 rounded shadow-sm mb-3 border border-gray-200 dark:border-df-border hover:shadow-md transition-shadow ${snapshot.isDragging ? 'shadow-lg ring-2 ring-blue-500' : ''}`}
+                            className={`bg-white dark:bg-[#141a21] p-4 rounded-lg shadow-sm mb-3 border border-gray-200 dark:border-df-border hover:shadow-md transition-shadow ${snapshot.isDragging ? 'shadow-lg ring-2 ring-blue-500/50' : ''}`}
                           >
                             <div className="flex justify-between items-start mb-2">
-                              <h4 className="font-medium text-gray-900 dark:text-df-textlight">{lead.first_name} {lead.last_name}</h4>
+                              <h4 className="font-bold text-gray-900 dark:text-df-textlight">{lead.first_name} {lead.last_name}</h4>
                               {(lead.lead_score || 0) > 0 && (
-                                <span className="bg-green-100 text-green-800 text-xs px-1.5 py-0.5 rounded font-medium">
+                                <span className="bg-green-100 dark:bg-green-950/40 text-green-800 dark:text-green-400 text-xs px-1.5 py-0.5 rounded font-bold">
                                   {lead.lead_score}
                                 </span>
                               )}
                             </div>
-                            <div className="text-sm text-gray-600 dark:text-df-text mb-3">{lead.company_name || 'No Company'}</div>
+                            <div className="text-sm font-medium text-gray-500 dark:text-df-text mb-3">{lead.company_name || 'No Company'}</div>
                             <div className="flex justify-between items-center mt-2">
                               <StageBadge stage={getFrontendStage(lead.status)} />
-                              <div className={`text-xs px-2 py-1 rounded font-medium ${daysColor}`}>
+                              <div className={`text-xs px-2 py-0.5 rounded border font-medium ${daysColor}`}>
                                 {daysInStage} {daysInStage === 1 ? 'day' : 'days'}
                               </div>
                             </div>
@@ -125,6 +135,12 @@ const LeadsKanban = ({ leads, isLoading, onChangeStage }) => {
                     );
                   })}
                   {provided.placeholder}
+                  {isFetchingNextPage && (
+                    <div className="flex items-center justify-center gap-1.5 py-3 text-[#0ebf99]">
+                      <div className="w-4 h-4 border-2 border-[#0ebf99] border-t-transparent rounded-full animate-spin"></div>
+                      <span className="text-xs font-semibold">Loading...</span>
+                    </div>
+                  )}
                 </div>
               )}
             </Droppable>
