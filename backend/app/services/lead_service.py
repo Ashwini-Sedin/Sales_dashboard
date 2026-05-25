@@ -52,7 +52,7 @@ def list_leads(db: Session, filters: LeadFilter, page: int = 1, limit: int = 20,
     if filters.division_id:
         query = query.filter(Lead.division_id == filters.division_id)
     if filters.status:
-        query = query.filter(Lead.status == filters.status)
+        query = query.filter(Lead.status.in_(filters.status))
     if filters.source:
         query = query.filter(Lead.source == filters.source)
     if filters.owner_id:

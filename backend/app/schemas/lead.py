@@ -92,7 +92,7 @@ class PipelineStageUpdate(BaseModel):
 
 class LeadFilter(BaseModel):
     division_id: Optional[UUID] = None
-    status: Optional[LeadStatus] = None
+    status: Optional[List[LeadStatus]] = None
     source: Optional[LeadSource] = None
     owner_id: Optional[UUID] = None
     date_from: Optional[datetime] = None

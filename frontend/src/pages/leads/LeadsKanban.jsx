@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import StageBadge from './StageBadge';
 
@@ -115,7 +116,11 @@ const LeadsKanban = ({ leads, isLoading, onChangeStage, fetchNextPage, hasNextPa
                             className={`bg-white dark:bg-[#141a21] p-4 rounded-lg shadow-sm mb-3 border border-gray-200 dark:border-df-border hover:shadow-md transition-shadow ${snapshot.isDragging ? 'shadow-lg ring-2 ring-blue-500/50' : ''}`}
                           >
                             <div className="flex justify-between items-start mb-2">
-                              <h4 className="font-bold text-gray-900 dark:text-df-textlight">{lead.first_name} {lead.last_name}</h4>
+                              <h4 className="font-bold text-gray-900 dark:text-df-textlight">
+                                <Link to={`/leads/${lead.id}`} className="hover:text-[#0ebf99] transition-colors">
+                                  {lead.first_name} {lead.last_name}
+                                </Link>
+                              </h4>
                               {(lead.lead_score || 0) > 0 && (
                                 <span className="bg-green-100 dark:bg-green-950/40 text-green-800 dark:text-green-400 text-xs px-1.5 py-0.5 rounded font-bold">
                                   {lead.lead_score}

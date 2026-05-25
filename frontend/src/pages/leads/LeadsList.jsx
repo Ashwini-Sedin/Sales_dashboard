@@ -17,24 +17,39 @@ function useDebounce(value, delay) {
   return debouncedValue;
 }
 
+// Map frontend stage labels to backend status enum values
+const getBackendStatus = (stage) => {
+  const map = {
+    'New': 'new',
+    'Contacted': 'contacted',
+    'Qualified': 'qualified',
+    'Proposal': 'proposal_sent',
+    'Negotiation': 'negotiation',
+    'Won': 'won',
+  };
+  return map[stage] || stage.toLowerCase();
+};
+
+const STAGE_OPTIONS = ['New', 'Contacted', 'Qualified', 'Proposal', 'Negotiation', 'Won'];
+
 const LeadsList = () => {
   const [view, setView] = useState('table'); // 'table' or 'kanban'
   const [isModalOpen, setIsModalOpen] = useState(false);
   
-  // Filters state
+  // Filters state — now supports multi-select
   const [searchTerm, setSearchTerm] = useState('');
   const debouncedSearch = useDebounce(searchTerm, 300);
-  const [statusFilter, setStatusFilter] = useState('');
+  const [selectedStatuses, setSelectedStatuses] = useState([]); // array of frontend stage names
 
-  const filters = {
-    search: debouncedSearch,
-    status: statusFilter,
-  };
-
-  // Remove empty filters
-  Object.keys(filters).forEach(key => {
-    if (!filters[key]) delete filters[key];
-  });
+  // Build filters for the API
+  const filters = {};
+  if (debouncedSearch) {
+    filters.q = debouncedSearch;
+  }
+  // Map selected frontend stages to backend enum values
+  if (selectedStatuses.length > 0) {
+    filters.status = selectedStatuses.map(getBackendStatus);
+  }
 
   const { 
     data, 
@@ -49,6 +64,21 @@ const LeadsList = () => {
 
   const handleStageChange = ({ id, stage }) => {
     changeStageMutation.mutate({ id, stage });
+  };
+
+  // Toggle a status in the multi-select array
+  const handleToggleStatus = (stage) => {
+    if (stage === '') {
+      // "All Stages" clicked → clear all selections
+      setSelectedStatuses([]);
+      return;
+    }
+    setSelectedStatuses((prev) => {
+      if (prev.includes(stage)) {
+        return prev.filter((s) => s !== stage);
+      }
+      return [...prev, stage];
+    });
   };
 
   return (
@@ -79,19 +109,31 @@ const LeadsList = () => {
 
       <div className="mb-6 flex flex-wrap gap-4 items-center justify-between">
         <div className="flex flex-1 gap-2 items-center overflow-x-auto pb-1 scrollbar-hide">
-          {['', 'New', 'Contacted', 'Qualified', 'Proposal', 'Negotiation', 'Won'].map((stage) => {
-             const isSelected = statusFilter === stage;
+          {/* "All Stages" button */}
+          <button
+            onClick={() => handleToggleStatus('')}
+            className={`px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-colors ${
+              selectedStatuses.length === 0
+              ? 'border border-df-accent text-df-accent bg-df-accent/5' 
+              : 'border border-gray-200 dark:border-df-border text-gray-600 dark:text-df-text hover:border-gray-300 dark:hover:border-df-text'
+            }`}
+          >
+            All Stages
+          </button>
+          {/* Individual stage buttons */}
+          {STAGE_OPTIONS.map((stage) => {
+             const isSelected = selectedStatuses.includes(stage);
              return (
                <button
                  key={stage}
-                 onClick={() => setStatusFilter(stage)}
+                 onClick={() => handleToggleStatus(stage)}
                  className={`px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-colors ${
                    isSelected 
                    ? 'border border-df-accent text-df-accent bg-df-accent/5' 
                    : 'border border-gray-200 dark:border-df-border text-gray-600 dark:text-df-text hover:border-gray-300 dark:hover:border-df-text'
                  }`}
                >
-                 {stage || 'All Stages'}
+                 {stage}
                </button>
              );
           })}

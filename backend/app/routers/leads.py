@@ -31,7 +31,7 @@ def create_lead(
 @router.get("/", response_model=LeadListResponse)
 def list_leads(
     division_id: Optional[UUID] = None,
-    status: Optional[str] = None,
+    status: Optional[List[str]] = Query(None),
     source: Optional[str] = None,
     owner_id: Optional[UUID] = None,
     q: Optional[str] = None,
@@ -40,9 +40,22 @@ def list_leads(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user)
 ):
+    # Convert status strings to LeadStatus enums if provided
+    from app.models.lead import LeadStatus as LeadStatusEnum
+    status_enums = None
+    if status:
+        status_enums = []
+        for s in status:
+            try:
+                status_enums.append(LeadStatusEnum(s))
+            except ValueError:
+                pass
+        if not status_enums:
+            status_enums = None
+
     filters = LeadFilter(
         division_id=division_id,
-        status=status,
+        status=status_enums,
         source=source,
         owner_id=owner_id,
         q=q
