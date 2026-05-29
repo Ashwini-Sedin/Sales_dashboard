@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { useLeadsList, useChangeStage } from '../hooks/useLeads';
 import CreateLeadModal from './leads/CreateLeadModal';
@@ -268,9 +269,9 @@ const Pipeline = () => {
                                     <div className="flex justify-between items-start gap-2 mb-2">
                                       <div className="flex items-center gap-2 min-w-0">
                                         <FiBriefcase className="text-indigo-500/85 dark:text-indigo-400/85 w-4 h-4 flex-shrink-0" />
-                                        <h4 className="font-bold text-gray-900 dark:text-white text-sm hover:text-[#0ebf99] cursor-pointer transition-colors truncate" title={lead.company_name}>
+                                        <Link to={`/leads/${lead.id}`} className="font-bold text-gray-900 dark:text-white text-sm hover:text-[#0ebf99] cursor-pointer transition-colors truncate" title={lead.company_name}>
                                           {lead.company_name || 'No Company'}
-                                        </h4>
+                                        </Link>
                                       </div>
                                       
                                       <span className="text-[10px] px-2 py-0.5 rounded-full font-semibold bg-indigo-50/60 text-indigo-600 dark:bg-indigo-950/40 dark:text-indigo-400 border border-indigo-100/30 dark:border-indigo-950/30 whitespace-nowrap flex-shrink-0">

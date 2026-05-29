@@ -41,7 +41,7 @@ const Sidebar = ({ isOpen, toggleSidebar, isCollapsed, toggleCollapse }) => {
         {
             title: 'LEAD DETAIL',
             items: [
-                { name: '360° Lead View', icon: FiUser, path: '/lead-view' }
+                { name: '360° Lead View', icon: FiUser, path: '/leads' }
             ]
         },
         {
@@ -130,14 +130,22 @@ const Sidebar = ({ isOpen, toggleSidebar, isCollapsed, toggleCollapse }) => {
                                     <NavLink
                                         key={item.name}
                                         to={item.path}
+                                        end={item.name === 'Leads'}
                                         title={isCollapsed ? item.name : undefined}
-                                        className={({ isActive }) => 
-                                            `flex items-center ${isCollapsed ? 'justify-center px-0 py-3' : 'px-6 py-2.5'} text-sm font-medium transition-all duration-200 group ${
-                                                isActive 
+                                        className={({ isActive }) => {
+                                            const is360Active = item.name === '360° Lead View' && window.location.pathname.startsWith('/leads/');
+                                            const isLeadsActive = item.name === 'Leads' && window.location.pathname === '/leads';
+                                            const active = (item.name === '360° Lead View' || item.name === 'Leads') ? (is360Active || isLeadsActive) : isActive;
+                                            
+                                            // Ensure only ONE of them is active based on the specific condition
+                                            const finalActive = (item.name === '360° Lead View') ? is360Active : (item.name === 'Leads' ? isLeadsActive : isActive);
+
+                                            return `flex items-center ${isCollapsed ? 'justify-center px-0 py-3' : 'px-6 py-2.5'} text-sm font-medium transition-all duration-200 group ${
+                                                finalActive
                                                 ? 'bg-[#e5faef] dark:bg-df-cardhover text-[#0ebf99] dark:text-df-accent border-y border-r border-[#0ebf99]/30 border-l-2 border-l-[#0ebf99] dark:border-transparent dark:border-l-df-accent' 
                                                 : 'text-[#64748b] dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-df-card hover:text-gray-900 dark:hover:text-white border border-transparent border-l-2'
-                                            }`
-                                        }
+                                            }`;
+                                        }}
                                     >
                                         <item.icon className={`${isCollapsed ? 'm-0' : 'mr-4'} h-5 w-5`} />
                                         {!isCollapsed && <span className="flex-1">{item.name}</span>}
