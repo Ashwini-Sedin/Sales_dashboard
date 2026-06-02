@@ -44,9 +44,9 @@ const LeadSummaryPanel = ({ lead, setActiveTab }) => {
   const firstLetter = lead.first_name ? lead.first_name.charAt(0).toUpperCase() : 'A';
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-6 p-6 md:p-8">
+    <div className="bg-white dark:bg-df-sidebar rounded-xl shadow-sm border border-slate-200 dark:border-df-border overflow-hidden mb-6 p-6 md:p-8">
       {/* Upper header section */}
-      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 pb-6 border-b border-slate-100">
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 pb-6 border-b border-slate-100 dark:border-df-border">
         
         {/* Left Side: Avatar and Info */}
         <div className="flex items-center gap-5">
@@ -54,26 +54,26 @@ const LeadSummaryPanel = ({ lead, setActiveTab }) => {
             {firstLetter}
           </div>
           <div>
-            <h2 className="text-2xl font-bold text-slate-900 flex items-center gap-3">
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-df-textlight flex items-center gap-3">
               {lead.first_name} {lead.last_name}
             </h2>
-            <p className="text-slate-500 text-sm font-medium mt-1">
-              {lead.job_title || 'Developer'} <span className="text-slate-300 mx-1.5">·</span> {lead.company_name || 'Sedin'} <span className="text-slate-300 mx-1.5">·</span> {lead.industry || 'IT Services'}
+            <p className="text-slate-500 dark:text-df-text text-sm font-medium mt-1">
+              {lead.job_title || 'Developer'} <span className="text-slate-300 dark:text-df-text/30 mx-1.5">·</span> {lead.company_name || 'Sedin'} <span className="text-slate-300 dark:text-df-text/30 mx-1.5">·</span> {lead.industry || 'IT Services'}
             </p>
             
             {/* Badges row */}
             <div className="flex flex-wrap items-center gap-2 mt-3">
-              <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-[#e5faef] text-[#0ebf99]">
+              <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-[#e5faef] dark:bg-[#0ebf99]/10 text-[#0ebf99] dark:text-df-accent">
                 {statusLabel}
               </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-slate-50 border border-slate-200 text-slate-600">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-slate-50 dark:bg-df-card border border-slate-200 dark:border-df-border text-slate-600 dark:text-df-text">
                 {getSourceIcon(lead.source)}
                 {sourceLabel}
               </span>
-              <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-slate-50 border border-slate-200 text-slate-600">
+              <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-slate-50 dark:bg-df-card border border-slate-200 dark:border-df-border text-slate-600 dark:text-df-text">
                 Score: {lead.lead_score ? lead.lead_score : '—'}
               </span>
-              <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-slate-50 border border-slate-200 text-slate-600">
+              <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-slate-50 dark:bg-df-card border border-slate-200 dark:border-df-border text-slate-600 dark:text-df-text">
                 Value: {lead.estimated_value && Number(lead.estimated_value) > 0 ? formatCurrency(lead.estimated_value) : '—'}
               </span>
             </div>
@@ -84,16 +84,16 @@ const LeadSummaryPanel = ({ lead, setActiveTab }) => {
         <div className="flex flex-wrap items-center gap-3 w-full lg:w-auto">
           <button 
             onClick={() => setActiveTab && setActiveTab('emails_calls')}
-            className="flex-1 lg:flex-none inline-flex items-center justify-center gap-2 px-4 py-2 border border-slate-200 hover:border-slate-300 bg-white hover:bg-slate-50 rounded-lg text-sm font-semibold text-slate-700 transition-colors shadow-sm"
+            className="flex-1 lg:flex-none inline-flex items-center justify-center gap-2 px-4 py-2 border border-slate-200 dark:border-df-border hover:border-slate-300 dark:hover:border-df-accent/50 bg-white dark:bg-df-card hover:bg-slate-50 dark:hover:bg-df-cardhover rounded-lg text-sm font-semibold text-slate-700 dark:text-df-textlight transition-colors shadow-sm"
           >
-            <MdIcons.MdOutlineEmail className="w-4 h-4 text-slate-500" />
+            <MdIcons.MdOutlineEmail className="w-4 h-4 text-slate-500 dark:text-df-text" />
             Email
           </button>
           <button 
             onClick={() => setActiveTab && setActiveTab('emails_calls')}
-            className="flex-1 lg:flex-none inline-flex items-center justify-center gap-2 px-4 py-2 border border-slate-200 hover:border-slate-300 bg-white hover:bg-slate-50 rounded-lg text-sm font-semibold text-slate-700 transition-colors shadow-sm"
+            className="flex-1 lg:flex-none inline-flex items-center justify-center gap-2 px-4 py-2 border border-slate-200 dark:border-df-border hover:border-slate-300 dark:hover:border-df-accent/50 bg-white dark:bg-df-card hover:bg-slate-50 dark:hover:bg-df-cardhover rounded-lg text-sm font-semibold text-slate-700 dark:text-df-textlight transition-colors shadow-sm"
           >
-            <MdIcons.MdOutlineCall className="w-4 h-4 text-slate-500" />
+            <MdIcons.MdOutlineCall className="w-4 h-4 text-slate-500 dark:text-df-text" />
             Call
           </button>
           <button 
@@ -109,17 +109,17 @@ const LeadSummaryPanel = ({ lead, setActiveTab }) => {
 
       {/* Stage Progression Bar */}
       <div className="pt-6">
-        <div className="w-full bg-white border border-slate-200 rounded-lg flex overflow-hidden shadow-sm">
+        <div className="w-full bg-white dark:bg-df-card border border-slate-200 dark:border-df-border rounded-lg flex overflow-hidden shadow-sm">
           {STAGES.map((stage, idx) => {
             const isActive = idx <= currentStageIndex;
             return (
               <div
                 key={stage.key}
                 onClick={() => handleStageClick(stage.key)}
-                className={`flex-1 py-3 px-2 text-center text-sm font-semibold border-r border-slate-100 last:border-r-0 cursor-pointer transition-all duration-200 ${
+                className={`flex-1 py-3 px-2 text-center text-sm font-semibold border-r border-slate-100 dark:border-df-border last:border-r-0 cursor-pointer transition-all duration-200 ${
                   isActive 
-                    ? "text-[#0ebf99] bg-[#e5faef]/30 hover:bg-[#e5faef]/50" 
-                    : "text-slate-400 hover:text-slate-600 hover:bg-slate-50"
+                    ? "text-[#0ebf99] bg-[#e5faef]/30 dark:bg-df-accent/10 hover:bg-[#e5faef]/50 dark:hover:bg-df-accent/20" 
+                    : "text-slate-400 dark:text-gray-500 hover:text-slate-600 dark:hover:text-df-text hover:bg-slate-50 dark:hover:bg-df-sidebar"
                 }`}
               >
                 {stage.label}

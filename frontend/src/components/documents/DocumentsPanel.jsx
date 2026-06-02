@@ -71,8 +71,8 @@ const DocumentsPanel = ({ leadId, lead }) => {
       {/* Section 1: Generate New Document */}
       <div>
         <div className="flex items-center justify-between mb-6">
-          <h3 className="text-xl font-bold text-gray-900 dark:text-white">Generate New Document</h3>
-          <span className="text-xs bg-blue-50 text-blue-600 px-3 py-1 rounded-full font-bold uppercase tracking-wider">
+          <h3 className="text-xl font-bold text-gray-900 dark:text-df-textlight">Generate New Document</h3>
+          <span className="text-xs bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 px-3 py-1 rounded-full font-bold uppercase tracking-wider">
             AI Engine Powered
           </span>
         </div>
@@ -99,7 +99,7 @@ const DocumentsPanel = ({ leadId, lead }) => {
                 )}
               </div>
 
-              <h4 className={`text-lg font-bold mb-1 ${type.enabled ? "text-gray-900 dark:text-white" : "text-gray-500 dark:text-gray-400"}`}>
+              <h4 className={`text-lg font-bold mb-1 ${type.enabled ? "text-gray-900 dark:text-df-textlight" : "text-gray-500 dark:text-gray-500"}`}>
                 {type.title}
               </h4>
               <p className="text-sm text-gray-500 dark:text-gray-400 mb-6 leading-relaxed">
@@ -123,8 +123,8 @@ const DocumentsPanel = ({ leadId, lead }) => {
                   </button>
                 ) : (
                   <div className="group/tooltip relative">
-                    <FiInfo className="text-gray-400" />
-                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover/tooltip:block bg-gray-900 text-white text-[10px] px-2 py-1 rounded whitespace-nowrap z-20">
+                    <FiInfo className="text-gray-400 dark:text-gray-500" />
+                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover/tooltip:block bg-gray-900 dark:bg-df-card text-white dark:text-df-textlight text-[10px] px-2 py-1 rounded whitespace-nowrap z-20 border dark:border-df-border">
                       Module under development
                     </div>
                   </div>

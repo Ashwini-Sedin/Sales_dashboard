@@ -168,11 +168,11 @@ const LeadDetail = () => {
   const strokeDashoffset = circumference - (score / 100) * circumference;
 
   return (
-    <div className="p-6 md:p-8 max-w-7xl mx-auto min-h-screen bg-slate-50/50">
+    <div className="p-6 md:p-8 max-w-7xl mx-auto min-h-screen bg-slate-50/50 dark:bg-[#0f171e]">
       
       {/* Back button */}
       <div className="mb-6">
-        <Link to="/leads" className="inline-flex items-center text-sm font-medium text-slate-500 hover:text-slate-800 transition-colors">
+        <Link to="/leads" className="inline-flex items-center text-sm font-medium text-slate-500 dark:text-df-text hover:text-slate-800 dark:hover:text-df-textlight transition-colors">
           <MdArrowBack className="mr-1.5 w-4 h-4" /> Back to Leads
         </Link>
       </div>
@@ -181,14 +181,14 @@ const LeadDetail = () => {
       <LeadSummaryPanel lead={lead} setActiveTab={setActiveTab} />
 
       {/* Navigation Tabs */}
-      <div className="bg-white border-b border-slate-200 sticky top-0 z-10 mb-6 rounded-t-xl overflow-hidden shadow-sm">
+      <div className="bg-white dark:bg-df-sidebar border-b border-slate-200 dark:border-df-border sticky top-0 z-10 mb-6 rounded-t-xl overflow-hidden shadow-sm">
         <nav className="flex space-x-8 px-6" aria-label="Tabs">
           <button
             onClick={() => setActiveTab('360_overview')}
             className={`whitespace-nowrap py-4 px-1 border-b-2 font-semibold text-sm transition-colors ${
               activeTab === '360_overview'
                 ? 'border-[#0ebf99] text-[#0ebf99]'
-                : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
+                : 'border-transparent text-slate-500 dark:text-df-text hover:text-slate-700 dark:hover:text-df-textlight hover:border-slate-300 dark:hover:border-df-border'
             }`}
           >
             360° Overview
@@ -198,7 +198,7 @@ const LeadDetail = () => {
             className={`whitespace-nowrap py-4 px-1 border-b-2 font-semibold text-sm transition-colors ${
               activeTab === 'timeline'
                 ? 'border-[#0ebf99] text-[#0ebf99]'
-                : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
+                : 'border-transparent text-slate-500 dark:text-df-text hover:text-slate-700 dark:hover:text-df-textlight hover:border-slate-300 dark:hover:border-df-border'
             }`}
           >
             Timeline
@@ -208,7 +208,7 @@ const LeadDetail = () => {
             className={`whitespace-nowrap py-4 px-1 border-b-2 font-semibold text-sm transition-colors ${
               activeTab === 'documents'
                 ? 'border-[#0ebf99] text-[#0ebf99]'
-                : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
+                : 'border-transparent text-slate-500 dark:text-df-text hover:text-slate-700 dark:hover:text-df-textlight hover:border-slate-300 dark:hover:border-df-border'
             }`}
           >
             Documents
@@ -218,7 +218,7 @@ const LeadDetail = () => {
             className={`whitespace-nowrap py-4 px-1 border-b-2 font-semibold text-sm transition-colors ${
               activeTab === 'emails_calls'
                 ? 'border-[#0ebf99] text-[#0ebf99]'
-                : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
+                : 'border-transparent text-slate-500 dark:text-df-text hover:text-slate-700 dark:hover:text-df-textlight hover:border-slate-300 dark:hover:border-df-border'
             }`}
           >
             Emails & Calls
@@ -232,11 +232,11 @@ const LeadDetail = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             
             {/* CARD 1: CONTACT DETAILS */}
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col hover:shadow-md transition-shadow">
+            <div className="bg-white dark:bg-df-sidebar rounded-xl shadow-sm border border-slate-200 dark:border-df-border p-6 flex flex-col hover:shadow-md transition-shadow">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <MdIcons.MdOutlinePersonOutline className="w-5 h-5 text-[#0ebf99]" />
-                  <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Contact Details</h3>
+                  <h3 className="text-xs font-bold text-slate-500 dark:text-df-text uppercase tracking-wider">Contact Details</h3>
                 </div>
                 {!isEditingContact && (
                   <button 
@@ -251,46 +251,46 @@ const LeadDetail = () => {
               {isEditingContact ? (
                 <div className="flex-1 space-y-3 text-sm">
                   <div>
-                    <label className="text-xs font-semibold text-slate-600 block mb-1">Email</label>
+                    <label className="text-xs font-semibold text-slate-600 dark:text-df-text block mb-1">Email</label>
                     <input
                       type="email"
                       value={contactData.email}
                       onChange={(e) => setContactData({...contactData, email: e.target.value})}
-                      className="w-full px-3 py-2 border border-slate-200 rounded focus:outline-none focus:ring-1 focus:ring-[#0ebf99] focus:border-[#0ebf99] text-xs"
+                      className="w-full px-3 py-2 border border-slate-200 dark:border-df-border rounded bg-white dark:bg-df-card focus:outline-none focus:ring-1 focus:ring-[#0ebf99] focus:border-[#0ebf99] text-xs text-slate-900 dark:text-df-textlight"
                     />
                   </div>
                   <div>
-                    <label className="text-xs font-semibold text-slate-600 block mb-1">Phone</label>
+                    <label className="text-xs font-semibold text-slate-600 dark:text-df-text block mb-1">Phone</label>
                     <input
                       type="tel"
                       value={contactData.phone}
                       onChange={(e) => setContactData({...contactData, phone: e.target.value})}
-                      className="w-full px-3 py-2 border border-slate-200 rounded focus:outline-none focus:ring-1 focus:ring-[#0ebf99] focus:border-[#0ebf99] text-xs"
+                      className="w-full px-3 py-2 border border-slate-200 dark:border-df-border rounded bg-white dark:bg-df-card focus:outline-none focus:ring-1 focus:ring-[#0ebf99] focus:border-[#0ebf99] text-xs text-slate-900 dark:text-df-textlight"
                     />
                   </div>
                   <div>
-                    <label className="text-xs font-semibold text-slate-600 block mb-1">Job Title</label>
+                    <label className="text-xs font-semibold text-slate-600 dark:text-df-text block mb-1">Job Title</label>
                     <input
                       type="text"
                       value={contactData.job_title}
                       onChange={(e) => setContactData({...contactData, job_title: e.target.value})}
-                      className="w-full px-3 py-2 border border-slate-200 rounded focus:outline-none focus:ring-1 focus:ring-[#0ebf99] focus:border-[#0ebf99] text-xs"
+                      className="w-full px-3 py-2 border border-slate-200 dark:border-df-border rounded bg-white dark:bg-df-card focus:outline-none focus:ring-1 focus:ring-[#0ebf99] focus:border-[#0ebf99] text-xs text-slate-900 dark:text-df-textlight"
                     />
                   </div>
                   <div>
-                    <label className="text-xs font-semibold text-slate-600 block mb-1">LinkedIn URL</label>
+                    <label className="text-xs font-semibold text-slate-600 dark:text-df-text block mb-1">LinkedIn URL</label>
                     <input
                       type="url"
                       value={contactData.linkedin_id}
                       onChange={(e) => setContactData({...contactData, linkedin_id: e.target.value})}
-                      className="w-full px-3 py-2 border border-slate-200 rounded focus:outline-none focus:ring-1 focus:ring-[#0ebf99] focus:border-[#0ebf99] text-xs"
+                      className="w-full px-3 py-2 border border-slate-200 dark:border-df-border rounded bg-white dark:bg-df-card focus:outline-none focus:ring-1 focus:ring-[#0ebf99] focus:border-[#0ebf99] text-xs text-slate-900 dark:text-df-textlight"
                       placeholder="https://linkedin.com/in/..."
                     />
                   </div>
                   <div className="flex justify-end gap-2 pt-2">
                     <button
                       onClick={() => setIsEditingContact(false)}
-                      className="text-xs font-bold text-slate-500 hover:bg-slate-100 py-1.5 px-3 rounded transition-colors"
+                      className="text-xs font-bold text-slate-500 dark:text-df-text hover:bg-slate-100 dark:hover:bg-df-cardhover py-1.5 px-3 rounded transition-colors"
                     >
                       Cancel
                     </button>
@@ -306,27 +306,27 @@ const LeadDetail = () => {
               ) : (
                 <div className="flex-1 space-y-4 text-sm">
                   <div className="flex justify-between py-2">
-                    <span className="text-slate-400 font-medium">Email</span>
+                    <span className="text-slate-400 dark:text-df-text font-medium">Email</span>
                     {lead.email ? (
                       <a href={`mailto:${lead.email}`} className="text-[#0ebf99] hover:underline font-semibold">{lead.email}</a>
                     ) : (
-                      <span className="text-slate-600 font-semibold">—</span>
+                      <span className="text-slate-600 dark:text-df-text font-semibold">—</span>
                     )}
                   </div>
                   <div className="flex justify-between py-2">
-                    <span className="text-slate-400 font-medium">Phone</span>
-                    <span className="text-slate-800 font-semibold">{lead.phone || '—'}</span>
+                    <span className="text-slate-400 dark:text-df-text font-medium">Phone</span>
+                    <span className="text-slate-800 dark:text-df-textlight font-semibold">{lead.phone || '—'}</span>
                   </div>
                   <div className="flex justify-between py-2">
-                    <span className="text-slate-400 font-medium">Title</span>
-                    <span className="text-slate-800 font-semibold">{lead.job_title || '—'}</span>
+                    <span className="text-slate-400 dark:text-df-text font-medium">Title</span>
+                    <span className="text-slate-800 dark:text-df-textlight font-semibold">{lead.job_title || '—'}</span>
                   </div>
                   <div className="flex justify-between py-2">
-                    <span className="text-slate-400 font-medium">LinkedIn</span>
+                    <span className="text-slate-400 dark:text-df-text font-medium">LinkedIn</span>
                     {lead.linkedin_id ? (
                       <a href={lead.linkedin_id} target="_blank" rel="noopener noreferrer" className="text-[#0ebf99] hover:underline font-semibold">View Profile</a>
                     ) : (
-                      <span className="text-slate-600 font-semibold">—</span>
+                      <span className="text-slate-600 dark:text-df-text font-semibold">—</span>
                     )}
                   </div>
                 </div>
@@ -334,11 +334,11 @@ const LeadDetail = () => {
             </div>
 
             {/* CARD 2: COMPANY */}
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col hover:shadow-md transition-shadow">
+            <div className="bg-white dark:bg-df-sidebar rounded-xl shadow-sm border border-slate-200 dark:border-df-border p-6 flex flex-col hover:shadow-md transition-shadow">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <MdIcons.MdOutlineBusiness className="w-5 h-5 text-[#0ebf99]" />
-                  <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Company</h3>
+                  <h3 className="text-xs font-bold text-slate-500 dark:text-df-text uppercase tracking-wider">Company</h3>
                 </div>
                 {!isEditingCompany && (
                   <button 
@@ -410,7 +410,7 @@ const LeadDetail = () => {
                   <div className="flex justify-end gap-2 pt-2">
                     <button
                       onClick={() => setIsEditingCompany(false)}
-                      className="text-xs font-bold text-slate-500 hover:bg-slate-100 py-1.5 px-3 rounded transition-colors"
+                      className="text-xs font-bold text-slate-500 dark:text-df-text hover:bg-slate-100 dark:hover:bg-df-cardhover py-1.5 px-3 rounded transition-colors"
                     >
                       Cancel
                     </button>
@@ -426,45 +426,45 @@ const LeadDetail = () => {
               ) : (
                 <div className="flex-1 space-y-4 text-sm">
                   <div className="flex justify-between py-2">
-                    <span className="text-slate-400 font-medium">Company</span>
-                    <span className="text-slate-800 font-semibold">{lead.company_name || '—'}</span>
+                    <span className="text-slate-400 dark:text-df-text font-medium">Company</span>
+                    <span className="text-slate-800 dark:text-df-textlight font-semibold">{lead.company_name || '—'}</span>
                   </div>
                   <div className="flex justify-between py-2">
-                    <span className="text-slate-400 font-medium">Industry</span>
-                    <span className="text-slate-800 font-semibold">{lead.industry || '—'}</span>
+                    <span className="text-slate-400 dark:text-df-text font-medium">Industry</span>
+                    <span className="text-slate-800 dark:text-df-textlight font-semibold">{lead.industry || '—'}</span>
                   </div>
                   <div className="flex justify-between py-2">
-                    <span className="text-slate-400 font-medium">Size</span>
-                    <span className="text-slate-800 font-semibold">{getCompanySize(lead.employees)}</span>
+                    <span className="text-slate-400 dark:text-df-text font-medium">Size</span>
+                    <span className="text-slate-800 dark:text-df-textlight font-semibold">{getCompanySize(lead.employees)}</span>
                   </div>
                   <div className="flex justify-between py-2">
-                    <span className="text-slate-400 font-medium">Website</span>
+                    <span className="text-slate-400 dark:text-df-text font-medium">Website</span>
                     {lead.website ? (
                       <a href={lead.website} target="_blank" rel="noopener noreferrer" className="text-[#0ebf99] hover:underline font-semibold">
                         {lead.website.replace('https://', '').replace('http://', '').split('/')[0]}
                       </a>
                     ) : (
-                      <span className="text-slate-600 font-semibold">—</span>
+                      <span className="text-slate-600 dark:text-df-text font-semibold">—</span>
                     )}
                   </div>
                   <div className="flex justify-between py-2">
-                    <span className="text-slate-400 font-medium">HQ</span>
-                    <span className="text-slate-800 font-semibold truncate max-w-[200px]" title={lead.hq_address}>{lead.hq_address || '—'}</span>
+                    <span className="text-slate-400 dark:text-df-text font-medium">HQ</span>
+                    <span className="text-slate-800 dark:text-df-textlight font-semibold truncate max-w-[200px]" title={lead.hq_address}>{lead.hq_address || '—'}</span>
                   </div>
                   <div className="flex justify-between py-2">
-                    <span className="text-slate-400 font-medium">Country</span>
-                    <span className="text-slate-800 font-semibold">{lead.country || '—'}</span>
+                    <span className="text-slate-400 dark:text-df-text font-medium">Country</span>
+                    <span className="text-slate-800 dark:text-df-textlight font-semibold">{lead.country || '—'}</span>
                   </div>
                 </div>
               )}
             </div>
 
             {/* CARD 3: DEAL INFO */}
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col hover:shadow-md transition-shadow">
+            <div className="bg-white dark:bg-df-sidebar rounded-xl shadow-sm border border-slate-200 dark:border-df-border p-6 flex flex-col hover:shadow-md transition-shadow">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <MdIcons.MdOutlineMonetizationOn className="w-5 h-5 text-[#0ebf99]" />
-                  <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Deal Info</h3>
+                  <h3 className="text-xs font-bold text-slate-500 dark:text-df-text uppercase tracking-wider">Deal Info</h3>
                 </div>
                 {!isEditingDeal && (
                   <button 
@@ -483,7 +483,7 @@ const LeadDetail = () => {
                     <select
                       value={dealData.status}
                       onChange={(e) => setDealData({...dealData, status: e.target.value})}
-                      className="w-full px-3 py-2 border border-slate-200 rounded focus:outline-none focus:ring-1 focus:ring-[#0ebf99] focus:border-[#0ebf99] text-xs bg-white"
+                      className="w-full px-3 py-2 border border-slate-200 dark:border-df-border rounded focus:outline-none focus:ring-1 focus:ring-[#0ebf99] focus:border-[#0ebf99] text-xs bg-white dark:bg-df-card text-slate-900 dark:text-df-textlight"
                     >
                       <option value="">Select Stage</option>
                       <option value="new">New</option>
@@ -501,7 +501,7 @@ const LeadDetail = () => {
                     <select
                       value={dealData.source}
                       onChange={(e) => setDealData({...dealData, source: e.target.value})}
-                      className="w-full px-3 py-2 border border-slate-200 rounded focus:outline-none focus:ring-1 focus:ring-[#0ebf99] focus:border-[#0ebf99] text-xs bg-white"
+                      className="w-full px-3 py-2 border border-slate-200 dark:border-df-border rounded focus:outline-none focus:ring-1 focus:ring-[#0ebf99] focus:border-[#0ebf99] text-xs bg-white dark:bg-df-card text-slate-900 dark:text-df-textlight"
                     >
                       <option value="">Select Source</option>
                       <option value="manual">Manual</option>
@@ -533,7 +533,7 @@ const LeadDetail = () => {
                   <div className="flex justify-end gap-2 pt-2">
                     <button
                       onClick={() => setIsEditingDeal(false)}
-                      className="text-xs font-bold text-slate-500 hover:bg-slate-100 py-1.5 px-3 rounded transition-colors"
+                      className="text-xs font-bold text-slate-500 dark:text-df-text hover:bg-slate-100 dark:hover:bg-df-cardhover py-1.5 px-3 rounded transition-colors"
                     >
                       Cancel
                     </button>
@@ -549,38 +549,38 @@ const LeadDetail = () => {
               ) : (
                 <div className="flex-1 space-y-4 text-sm">
                   <div className="flex justify-between py-2">
-                    <span className="text-slate-400 font-medium">Stage</span>
+                    <span className="text-slate-400 dark:text-df-text font-medium">Stage</span>
                     <span className="text-[#0ebf99] font-bold">{statusLabel}</span>
                   </div>
                   <div className="flex justify-between py-2">
-                    <span className="text-slate-400 font-medium">Source</span>
-                    <span className="text-slate-800 font-semibold">{sourceLabel}</span>
+                    <span className="text-slate-400 dark:text-df-text font-medium">Source</span>
+                    <span className="text-slate-800 dark:text-df-textlight font-semibold">{sourceLabel}</span>
                   </div>
                   <div className="flex justify-between py-2">
-                    <span className="text-slate-400 font-medium">Value</span>
-                    <span className="text-slate-800 font-bold">{formatCurrency(lead.estimated_value)}</span>
+                    <span className="text-slate-400 dark:text-df-text font-medium">Value</span>
+                    <span className="text-slate-800 dark:text-df-textlight font-bold">{formatCurrency(lead.estimated_value)}</span>
                   </div>
                   <div className="flex justify-between py-2">
-                    <span className="text-slate-400 font-medium">Budget</span>
-                    <span className="text-slate-800 font-semibold">—</span>
+                    <span className="text-slate-400 dark:text-df-text font-medium">Budget</span>
+                    <span className="text-slate-800 dark:text-df-textlight font-semibold">—</span>
                   </div>
                   <div className="flex justify-between py-2">
-                    <span className="text-slate-400 font-medium">Campaign</span>
-                    <span className="text-slate-800 font-semibold">{lead.campaign_name || '—'}</span>
+                    <span className="text-slate-400 dark:text-df-text font-medium">Campaign</span>
+                    <span className="text-slate-800 dark:text-df-textlight font-semibold">{lead.campaign_name || '—'}</span>
                   </div>
                   <div className="flex justify-between py-2">
-                    <span className="text-slate-400 font-medium">Owner</span>
-                    <span className="text-slate-800 font-semibold">—</span>
+                    <span className="text-slate-400 dark:text-df-text font-medium">Owner</span>
+                    <span className="text-slate-800 dark:text-df-textlight font-semibold">—</span>
                   </div>
                 </div>
               )}
             </div>
 
             {/* CARD 4: LEAD SCORE */}
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col items-center hover:shadow-md transition-shadow">
+            <div className="bg-white dark:bg-df-sidebar rounded-xl shadow-sm border border-slate-200 dark:border-df-border p-6 flex flex-col items-center hover:shadow-md transition-shadow">
               <div className="flex items-center gap-2 mb-6 self-start w-full">
                 <MdIcons.MdOutlineStars className="w-5 h-5 text-[#0ebf99]" />
-                <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Lead Score</h3>
+                <h3 className="text-xs font-bold text-slate-500 dark:text-df-text uppercase tracking-wider">Lead Score</h3>
               </div>
               
               {/* Circular Gauge */}
@@ -591,7 +591,7 @@ const LeadDetail = () => {
                     cx="72"
                     cy="72"
                     r={radius}
-                    className="stroke-slate-100 fill-none"
+                    className="stroke-slate-100 dark:stroke-df-card fill-none"
                     strokeWidth={strokeWidth}
                   />
                   {/* Colored indicator */}
@@ -608,26 +608,26 @@ const LeadDetail = () => {
                 </svg>
                 {/* Center score text */}
                 <div className="absolute flex flex-col items-center justify-center">
-                  <span className="text-3xl font-extrabold text-slate-900">{score}</span>
-                  <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">out of 100</span>
+                  <span className="text-3xl font-extrabold text-slate-900 dark:text-df-textlight">{score}</span>
+                  <span className="text-[10px] text-slate-400 dark:text-df-text uppercase font-bold tracking-wider">out of 100</span>
                 </div>
               </div>
 
               {/* Description */}
               <div className="text-center mt-6">
-                <p className="text-sm font-semibold text-slate-700">
+                <p className="text-sm font-semibold text-slate-700 dark:text-df-textlight">
                   {score >= 70 ? 'High conversion potential' : score >= 40 ? 'Moderate interest registered' : 'Low initial engagement'}
                 </p>
-                <p className="text-xs text-slate-400 mt-1">AI-analyzed activity history and profile parameters.</p>
+                <p className="text-xs text-slate-400 dark:text-df-text mt-1">AI-analyzed activity history and profile parameters.</p>
               </div>
             </div>
 
             {/* CARD 5: TEAM ASSIGNED */}
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col hover:shadow-md transition-shadow">
+            <div className="bg-white dark:bg-df-sidebar rounded-xl shadow-sm border border-slate-200 dark:border-df-border p-6 flex flex-col hover:shadow-md transition-shadow">
               <div className="flex items-center justify-between mb-4 w-full">
                 <div className="flex items-center gap-2">
                   <MdIcons.MdOutlinePeopleOutline className="w-5 h-5 text-[#0ebf99]" />
-                  <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Team Assigned</h3>
+                  <h3 className="text-xs font-bold text-slate-500 dark:text-df-text uppercase tracking-wider">Team Assigned</h3>
                 </div>
                 <button 
                   onClick={() => setIsAddingTeam(!isAddingTeam)}
@@ -639,20 +639,20 @@ const LeadDetail = () => {
 
               {/* Add form inside card */}
               {isAddingTeam && (
-                <form onSubmit={handleAddTeamMember} className="mb-4 p-3 bg-[#e5faef]/20 border border-[#0ebf99]/20 rounded-lg flex flex-col gap-2 transition-all">
+                <form onSubmit={handleAddTeamMember} className="mb-4 p-3 bg-[#e5faef]/20 dark:bg-df-accent/5 border border-[#0ebf99]/20 dark:border-df-accent/20 rounded-lg flex flex-col gap-2 transition-all">
                   <input
                     type="email"
                     value={newMemberEmail}
                     onChange={(e) => setNewMemberEmail(e.target.value)}
                     placeholder="Enter email..."
                     required
-                    className="w-full text-xs py-1.5 px-2.5 border border-slate-200 rounded focus:outline-none focus:ring-1 focus:ring-[#0ebf99] focus:border-[#0ebf99]"
+                    className="w-full text-xs py-1.5 px-2.5 border border-slate-200 dark:border-df-border rounded bg-white dark:bg-df-card focus:outline-none focus:ring-1 focus:ring-[#0ebf99] focus:border-[#0ebf99] text-slate-900 dark:text-df-textlight"
                   />
                   <div className="flex items-center justify-between gap-2">
                     <select
                       value={newMemberRole}
                       onChange={(e) => setNewMemberRole(e.target.value)}
-                      className="text-xs py-1.5 px-2 border border-slate-200 rounded bg-white focus:outline-none focus:ring-1 focus:ring-[#0ebf99]"
+                      className="text-xs py-1.5 px-2 border border-slate-200 dark:border-df-border rounded bg-white dark:bg-df-card focus:outline-none focus:ring-1 focus:ring-[#0ebf99] text-slate-900 dark:text-df-textlight"
                     >
                       <option value="Sales Rep">Sales Rep</option>
                       <option value="Account Executive">Account Executive</option>
@@ -674,14 +674,14 @@ const LeadDetail = () => {
               <div className="flex-1 overflow-y-auto max-h-[220px] space-y-3">
                 {lead.team && lead.team.length > 0 ? (
                   lead.team.map((member, idx) => (
-                    <div key={idx} className="flex items-center justify-between p-2.5 rounded-lg border border-slate-100 hover:border-slate-200 hover:bg-slate-50/50 transition-colors group">
+                    <div key={idx} className="flex items-center justify-between p-2.5 rounded-lg border border-slate-100 dark:border-df-border hover:border-slate-200 dark:hover:border-df-accent/30 hover:bg-slate-50/50 dark:hover:bg-df-cardhover transition-colors group">
                       <div className="flex items-center gap-3 min-w-0">
-                        <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center font-bold text-[#0ebf99] text-sm shrink-0 border border-slate-200">
+                        <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-df-card flex items-center justify-center font-bold text-[#0ebf99] text-sm shrink-0 border border-slate-200 dark:border-df-border">
                           {member.email.charAt(0).toUpperCase()}
                         </div>
                         <div className="min-w-0">
-                          <p className="text-xs font-semibold text-slate-800 truncate" title={member.email}>{member.email}</p>
-                          <span className="text-[10px] bg-slate-100 text-slate-500 font-medium px-1.5 py-0.5 rounded mt-0.5 inline-block">
+                          <p className="text-xs font-semibold text-slate-800 dark:text-df-textlight truncate" title={member.email}>{member.email}</p>
+                          <span className="text-[10px] bg-slate-100 dark:bg-df-card text-slate-500 dark:text-df-text font-medium px-1.5 py-0.5 rounded mt-0.5 inline-block">
                             {member.role}
                           </span>
                         </div>
@@ -704,11 +704,11 @@ const LeadDetail = () => {
             </div>
 
             {/* CARD 6: NOTES */}
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col hover:shadow-md transition-shadow">
+            <div className="bg-white dark:bg-df-sidebar rounded-xl shadow-sm border border-slate-200 dark:border-df-border p-6 flex flex-col hover:shadow-md transition-shadow">
               <div className="flex items-center justify-between mb-4 w-full">
                 <div className="flex items-center gap-2">
                   <MdIcons.MdOutlineDescription className="w-5 h-5 text-[#0ebf99]" />
-                  <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Notes</h3>
+                  <h3 className="text-xs font-bold text-slate-500 dark:text-df-text uppercase tracking-wider">Notes</h3>
                 </div>
                 {!isEditingNotes && (
                   <button 
@@ -726,13 +726,13 @@ const LeadDetail = () => {
                     <textarea
                       value={noteContent}
                       onChange={(e) => setNoteContent(e.target.value)}
-                      className="w-full text-xs p-2.5 border border-slate-200 rounded focus:outline-none focus:ring-1 focus:ring-[#0ebf99] focus:border-[#0ebf99] min-h-[120px] flex-1 resize-none"
+                      className="w-full text-xs p-2.5 border border-slate-200 dark:border-df-border rounded bg-white dark:bg-df-card focus:outline-none focus:ring-1 focus:ring-[#0ebf99] focus:border-[#0ebf99] min-h-[120px] flex-1 resize-none text-slate-900 dark:text-df-textlight"
                       placeholder="Write permanent notes for this lead..."
                     />
                     <div className="flex justify-end gap-2">
                       <button
                         onClick={() => setIsEditingNotes(false)}
-                        className="text-xs font-bold text-slate-500 hover:bg-slate-100 py-1.5 px-3 rounded transition-colors"
+                        className="text-xs font-bold text-slate-500 dark:text-df-text hover:bg-slate-100 dark:hover:bg-df-cardhover py-1.5 px-3 rounded transition-colors"
                       >
                         Cancel
                       </button>
@@ -746,7 +746,7 @@ const LeadDetail = () => {
                     </div>
                   </div>
                 ) : (
-                  <div className="text-slate-600 text-xs leading-relaxed whitespace-pre-wrap flex-1 italic bg-slate-50/50 p-3 rounded-lg border border-slate-100/50">
+                  <div className="text-slate-600 dark:text-df-text text-xs leading-relaxed whitespace-pre-wrap flex-1 italic bg-slate-50/50 dark:bg-df-card/50 p-3 rounded-lg border border-slate-100/50 dark:border-df-border/30">
                     {currentNotes ? currentNotes : 'No notes yet.'}
                   </div>
                 )}
