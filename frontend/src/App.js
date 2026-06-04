@@ -19,8 +19,8 @@ import Reports from './pages/Reports';
 import DocumentCenter from './pages/DocumentCenter';
 import GenerateDoc from './pages/GenerateDoc';
 import ESignature from './pages/ESignature';
-
 import Notifications from './pages/admin/Notifications';
+import CommunicationHub from './pages/CommunicationHub';
 
 // Placeholder components for routes
 const Placeholder = ({ name }) => (
@@ -53,7 +53,8 @@ function App() {
                             <Route path="/generate-doc" element={<GenerateDoc />} />
                             <Route path="/e-signature" element={<ESignature />} />
                             <Route path="/reports" element={<Reports />} />
-                            <Route path="/communication" element={<Placeholder name="Communication Hub" />} />
+                            <Route path="/communication" element={<CommunicationHub />} />
+                            <Route path="/emails" element={<CommunicationHub />} />
 
                             <Route path="/admin" element={
                                 <ProtectedRoute allowedRoles={['admin', 'division_head', 'Chief Executive Officer', 'Division Head']}>

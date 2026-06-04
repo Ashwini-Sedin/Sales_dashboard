@@ -40,11 +40,14 @@ def login(
     access_token = create_access_token(data={"sub": str(user.id)})
     refresh_token = create_refresh_token(data={"sub": str(user.id)})
     
+    # Cookie settings: secure only in production, allow HTTP in development
+    is_secure = settings.ENVIRONMENT == "production"
+    
     response.set_cookie(
         key="refresh_token",
         value=refresh_token,
         httponly=True,
-        secure=True,  # In production use True
+        secure=is_secure,  # True in production (HTTPS), False in development (HTTP)
         samesite="lax",
         max_age=settings.REFRESH_TOKEN_EXPIRE_DAYS * 24 * 60 * 60
     )
@@ -53,19 +56,49 @@ def login(
 
 @router.post("/refresh", response_model=Token)
 def refresh(request: Request, response: Response):
+    """
+    Refresh access token using refresh token from cookies or Authorization header.
+    Supports both cookie-based and header-based refresh tokens.
+    """
+    # Try to get refresh token from cookies first
     refresh_token = request.cookies.get("refresh_token")
+    
+    # Fallback: Try to get from Authorization header (for mobile/special clients)
     if not refresh_token:
-        raise HTTPException(status_code=401, detail="Refresh token missing")
+        auth_header = request.headers.get("Authorization", "")
+        if auth_header.startswith("Bearer "):
+            refresh_token = auth_header.split("Bearer ")[1]
+    
+    if not refresh_token:
+        raise HTTPException(
+            status_code=401, 
+            detail="Refresh token not found. Please login again."
+        )
     
     try:
         payload = verify_token(refresh_token)
         user_id = payload.get("sub")
         if not user_id:
-            raise HTTPException(status_code=401, detail="Invalid refresh token")
-    except Exception:
-        raise HTTPException(status_code=401, detail="Invalid refresh token")
+            raise HTTPException(status_code=401, detail="Invalid refresh token: missing user ID")
+    except Exception as e:
+        raise HTTPException(status_code=401, detail=f"Invalid refresh token: {str(e)}")
     
+    # Create new access token
     access_token = create_access_token(data={"sub": user_id})
+    
+    # Optionally refresh the refresh token as well
+    new_refresh_token = create_refresh_token(data={"sub": user_id})
+    is_secure = settings.ENVIRONMENT == "production"
+    
+    response.set_cookie(
+        key="refresh_token",
+        value=new_refresh_token,
+        httponly=True,
+        secure=is_secure,
+        samesite="lax",
+        max_age=settings.REFRESH_TOKEN_EXPIRE_DAYS * 24 * 60 * 60
+    )
+    
     return {"access_token": access_token, "token_type": "bearer"}
 
 @router.post("/logout")

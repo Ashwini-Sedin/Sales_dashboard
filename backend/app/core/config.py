@@ -2,6 +2,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import Optional
 
 class Settings(BaseSettings):
+    ENVIRONMENT: str = "development"  # development or production
     DATABASE_URL: str
     SECRET_KEY: str
     ALGORITHM: str = "HS256"

@@ -41,7 +41,7 @@ class TestEmailRequest(BaseModel):
 @router.get("/templates", response_model=List[NotificationTemplateSchema])
 def list_notification_templates(
     db: Session = Depends(get_db),
-    current_user: User = Depends(require_roles([UserRole.admin])),
+    current_user: User = Depends(require_roles([UserRole.super_admin])),
 ):
     return db.query(NotificationTemplate).all()
 
@@ -51,16 +51,23 @@ def update_notification_template(
     template_id: UUID,
     template_in: NotificationTemplateUpdate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(require_roles([UserRole.admin])),
+    current_user: User = Depends(require_roles([UserRole.super_admin])),
 ):
-    template = db.query(NotificationTemplate).filter(NotificationTemplate.id == template_id).first()
+    template = (
+        db.query(NotificationTemplate)
+        .filter(NotificationTemplate.id == template_id)
+        .first()
+    )
+
     if not template:
         raise HTTPException(status_code=404, detail="Template not found")
 
     template.subject = template_in.subject
     template.body_html = template_in.body_html
+
     db.commit()
     db.refresh(template)
+
     return template
 
 
@@ -93,10 +100,13 @@ def mark_notification_read(
         )
         .first()
     )
+
     if not notification:
         raise HTTPException(status_code=404, detail="Notification not found")
+
     notification.is_read = True
     db.commit()
+
     return {"status": "success"}
 
 
@@ -105,8 +115,14 @@ def mark_all_notifications_read(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
 ):
-    db.query(Notification).filter(Notification.user_id == current_user.id).update({Notification.is_read: True})
+    db.query(Notification).filter(
+        Notification.user_id == current_user.id
+    ).update(
+        {Notification.is_read: True}
+    )
+
     db.commit()
+
     return {"message": "All notifications marked as read"}
 
 
@@ -126,6 +142,7 @@ def send_test_email(
         "action_url": "https://app.dealflow.com/leads/test",
         "year": datetime.utcnow().year,
     }
+
     background_tasks.add_task(
         notification_service.send_email,
         to_emails=[request.to_email],
@@ -133,4 +150,5 @@ def send_test_email(
         template_name=request.template_name,
         context=context,
     )
+
     return {"status": "email queued"}

@@ -21,3 +21,4 @@ class EmailMessage(Base):
     has_attachments = Column(Boolean)
     is_outgoing = Column(Boolean)
     raw_metadata = Column(JSONB)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))

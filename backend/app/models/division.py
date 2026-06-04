@@ -2,6 +2,7 @@ import uuid
 from datetime import datetime, timezone
 from sqlalchemy import Column, String, Text, DateTime, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID, JSONB
+from sqlalchemy.orm import relationship
 
 from app.core.database import Base
 
@@ -15,3 +16,6 @@ class Division(Base):
     google_ads_campaign_id = Column(String(100))
     branding_config = Column(JSONB)
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+
+    # Relationships
+    users = relationship("User", foreign_keys="[User.division_id]", back_populates="division")
